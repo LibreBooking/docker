@@ -38,6 +38,9 @@ jobs:
       - name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
 
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
       - name: Log into registry ${{ env.REGISTRY }}
         if: github.event_name != 'pull_request'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
@@ -46,9 +49,6 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-
       - name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
@@ -56,4 +56,8 @@ jobs:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-          tags: ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.version }}
+          build-args: |
+            LB_RELEASE=${{ github.event.inputs.version }}
+          tags: |
+            ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.version }}
+             ${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
