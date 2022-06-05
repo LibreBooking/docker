@@ -56,4 +56,4 @@ jobs:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-          tags: ${{ github.actor }}/${{ IMAGE_NAME }}:${{ github.event.inputs.version }}
+          tags: ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.version }}
