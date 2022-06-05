@@ -6,13 +6,13 @@ This project implements the [librebooking](https://github.com/effgarces/BookedSc
 ## Install instructions
 1. Copy the [compose.yaml](https://raw.githubusercontent.com/colisee/docker-librebooking/master/compose.yaml) on your host 
 1. Create the following 3 text files in the same directory as file `compose.yaml` :
-   ```
+   ```Shell
    echo "password_for_database_root_user" > db_root_pwd.txt
    echo "password_for_database_application_user" > db_user_pwd.txt
    echo "password_for_application_installation" > lb_install_pwd.txt
    ```
 1. Start the application:
-   ```
+   ```Shell
    docker compose up --detach
    ```
 1. Point your web browser to http://your_host:8080/Web/install:
