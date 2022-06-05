@@ -8,9 +8,10 @@
 # Ignore all the markdown files
 *.md
 
-# Ignore secrets files
+# Ignore docker secrets files
 db_root_pwd.txt
 db_user_pwd.txt
+lb_install_pwd.txt
 
 # Ignore LICENSE file
 LICENSE 
