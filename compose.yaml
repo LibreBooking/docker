@@ -1,0 +1,57 @@
+services:
+
+  db:
+    image: mariadb
+    container_name: lb-db
+    restart: always
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - lb-db:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=librebooking
+      - MYSQL_ROOT_PASSWORD_FILE=/run/secrets/db_root_pwd
+      - MYSQL_USER=lb_user
+      - MYSQL_PASSWORD_FILE=/run/secrets/db_user_pwd
+    secrets:
+      - db_root_pwd
+      - db_user_pwd
+
+  app:
+    image: librebooking
+    container_name: lb-app
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "8080:80"
+    volumes:
+      - "lb-app:/var/www/html"
+    environment: 
+      - TZ=Europe/Zurich
+      - LB_DB_HOST=lb-db
+      - LB_DB_NAME=librebooking
+      - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
+      - LB_DB_USER=lb_user
+      - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
+    secrets:
+      - lb_install_pwd
+      - lb_user_pwd
+
+networks:
+  lb:
+
+volumes:
+  lb-db:
+    name: lb-db
+  lb-app:
+    name: lb-app
+
+secrets:
+  db_root_pwd:
+    file: ./db_root_pwd.txt
+  db_user_pwd:
+    file: ./db_user_pwd.txt
+  lb_user_pwd:
+    file: ./db_user_pwd.txt
+  lb_install_pwd:
+    file: ./lb_install_pwd.txt

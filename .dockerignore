@@ -1,0 +1,16 @@
+# Ignore git and cache folders
+.git
+.cache
+
+# Ignore GitHub actions
+.github
+
+# Ignore all the markdown files
+*.md
+
+# Ignore secrets files
+db_root_pwd.txt
+db_user_pwd.txt
+
+# Ignore LICENSE file
+LICENSE 
