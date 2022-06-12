@@ -26,9 +26,17 @@ file_env() {
 if ! test -d /var/www/html/config; then
   echo "First-time initialization"
 
-  # Adapt timezone
+  # Set timezone
   if test -f /usr/share/zoneinfo/${TZ}; then
 	  ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+  fi
+
+  # Fixes
+  ## File create-user.sql
+  sed -i /usr/src/lb/database_schema/create-user.sql -e "s:^DROP USER ':DROP USER IF EXISTS ':g"
+  ## Missing directory tpl_c
+  if ! test -d /usr/src/lb/tpl_c; then
+    mkdir /usr/src/lb/tpl_c
   fi
 
   # Copy librebooking application
@@ -46,9 +54,6 @@ if ! test -d /var/www/html/config; then
   sed -i /var/www/html/config/config.php -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DB_NAME}':"
   sed -i /var/www/html/config/config.php -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PWD}':"
 
-  # Correct file create-user.sql
-  sed -i /var/www/html/database_schema/create-user.sql -e "s:^DROP USER ':DROP USER IF EXISTS ':g"
-  
 fi
 
 # Update & upgrade if applicable
