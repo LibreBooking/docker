@@ -58,6 +58,6 @@ fi
 
 # Update & upgrade if applicable
 apt update
-apt upgrade --yes 
+DEBIAN_FRONTEND=noninteractive apt upgrade --yes 
 
 exec "$@"
