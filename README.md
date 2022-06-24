@@ -28,6 +28,6 @@ Run the following commands:
    ```
 
 ## Builder: on github, Image: on a registry, Platform: multiple
-1. Run the github action `Docker-publish`
+1. Run the github action `Docker`
 1. Specify the librebooking release
 1. Seat back and relax
