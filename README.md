@@ -32,3 +32,6 @@ Run the following commands:
 1. Run the github action `Docker`
 1. Specify the librebooking release
 1. Seat back and relax
+
+# How to run the image
+Refer to file [USAGE.md](USAGE.md)
