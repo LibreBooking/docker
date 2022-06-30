@@ -176,6 +176,9 @@ services:
       - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
       - LB_DB_USER=lb_user
       - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
+      - VIRTUAL_HOST=
+      - LETSENCRYPT_HOST=
+      - LETSENCRYPT_EMAIL=
     secrets:
       - lb_install_pwd
       - lb_user_pwd
