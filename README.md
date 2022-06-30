@@ -27,7 +27,8 @@ Run the following commands:
      .
    ```
 
-## Builder: on github, Image: on a registry, Platform: multiple
+## Builder: on github, Image: on docker hub, Platform: multiple
+1. Create a github secret, called `REGISTRY_TOKEN`, to store your docker hub token
 1. Run the github action `Docker`
 1. Specify the librebooking release
 1. Seat back and relax
