@@ -12,12 +12,12 @@ Run the following commands:
      .
    ```
 
-## Builder: on your local host, Image: on a registry, Platform: multiple
+## Builder: on your local host, Image: on your default registry, Platform: multiple
 Run the following commands:
    ```
    LB_RELEASE=2.8.5 # or any other librebooking release
    REGISTRY_USER=your_registry_user
-   docker login
+   docker login --username ${REGISTRY_USER}
    docker run --privileged tonistiigi/binfmt -install all
    docker buildx build \
      --tag ${REGISTRY_USER}/librebooking:${LB_RELEASE} \
