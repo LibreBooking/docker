@@ -241,6 +241,7 @@ echo "your_Mariadb_root_password" > db_root_pwd.txt;
 echo "your_Mariadb_user_password" > db_user_pwd.txt;
 echo "your_Librebooking_installation_password" > lb_install_pwd.txt;
 docker-compose up --detach
+```
 
 # Operations
 ## installation instructions
