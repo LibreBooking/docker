@@ -16,7 +16,6 @@ services:
     image: linuxserver/mariadb
     container_name: lb-db
     restart: unless-stopped
-    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
     volumes:
       - lb-db:/var/lib/mysql
     environment:
