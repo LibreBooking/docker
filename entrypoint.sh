@@ -56,8 +56,4 @@ if ! test -d /var/www/html/config; then
 
 fi
 
-# Update & upgrade if applicable
-apt update
-DEBIAN_FRONTEND=noninteractive apt upgrade --yes 
-
 exec "$@"
