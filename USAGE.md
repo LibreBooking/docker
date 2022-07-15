@@ -9,7 +9,7 @@ This setup features volumes in order to keep your data persistent and is meant t
 
 Create a `docker-compose.yml` file with the following content:
 ```
-version: '3.4'
+version: "3.7"
 
 services:
   db:
