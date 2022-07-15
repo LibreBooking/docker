@@ -62,6 +62,8 @@ As an alternative to passing sensitive information via environment variables, `_
 Create a `docker-compose.yml` file with the following content:
 
 ```
+version: "3.7"
+
 services:
   db:
     image: linuxserver/mariadb
