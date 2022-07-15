@@ -17,7 +17,7 @@ services:
     container_name: lb-db
     restart: unless-stopped
     volumes:
-      - lb-db:/var/lib/mysql
+      - lb-db:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -70,7 +70,7 @@ services:
     container_name: lb-db
     restart: unless-stopped
     volumes:
-      - lb-db:/var/lib/mysql
+      - lb-db:/config
     environment:
       - PUID=1000
       - PGID=1000
