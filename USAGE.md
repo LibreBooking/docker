@@ -14,10 +14,12 @@ version: "3.7"
 services:
   db:
     image: linuxserver/mariadb
-    container_name: lb-db
-    restart: unless-stopped
+    container_name: librebooking-db
+    restart: always
+    networks:
+      - net
     volumes:
-      - lb-db:/config
+      - vol-db:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -28,14 +30,16 @@ services:
       - MYSQL_PASSWORD=
   app:
     image: colisee/librebooking
-    container_name: lb-app
-    restart: unless-stopped
+    container_name: librebooking
+    restart: always
     depends_on:
       - db
+    networks:
+      - net
     ports:
       - "8080:80"
     volumes:
-      - "lb-app:/var/www/html"
+      - vol-app:/var/www/html
     environment: 
       - TZ=
       - LB_DB_HOST=lb-db
@@ -45,10 +49,14 @@ services:
       - LB_DB_USER_PWD=
 
 volumes:
-  lb-db:
-    name: lb-db
-  lb-app:
-    name: lb-app
+  vol-db:
+    name: librebooking_data
+  vol-app:
+    name: librebooking_html
+
+networks:
+  net:
+    name: mynet
 ```
 
 Then run the following command:
@@ -56,7 +64,7 @@ Then run the following command:
 docker-compose up --detach 
 ```
 
-## Docker secrets
+## Docker secrets setup
 As an alternative to passing sensitive information via environment variables, `_FILE` may be appended to some of the previously listed environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in `/run/secrets/<secret_name>` files. The following setup is also meant to be run behind a proxy.
 
 Create a `docker-compose.yml` file with the following content:
@@ -67,10 +75,12 @@ version: "3.7"
 services:
   db:
     image: linuxserver/mariadb
-    container_name: lb-db
-    restart: unless-stopped
+    container_name: librebooking-db
+    restart: always
+    networks:
+      - net
     volumes:
-      - lb-db:/config
+      - vol-db:/config
     environment:
       - PUID=1000
       - PGID=1000
@@ -84,14 +94,16 @@ services:
       - db_user_pwd
   app:
     image: colisee/librebooking
-    container_name: lb-app
-    restart: unless-stopped
+    container_name: librebooking
+    restart: always
     depends_on:
       - db
+    networks:
+      - net
     ports:
       - "8080:80"
     volumes:
-      - lb-app:/var/www/html
+      - vol-app:/var/www/html
     environment: 
       - TZ=
       - LB_DB_HOST=lb-db
@@ -104,10 +116,14 @@ services:
       - lb_user_pwd
 
 volumes:
-  lb-db:
-    name: lb-db
-  lb-app:
-    name: lb-app
+  vol-db:
+    name: librebooking_data
+  vol-app:
+    name: librebooking_html
+
+networks:
+  net:
+    name: mynet
 
 secrets:
   db_root_pwd:
