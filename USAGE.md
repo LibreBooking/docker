@@ -1,13 +1,13 @@
 # What is librebooking
 [Librebooking](https://github.com/effgarces/BookedScheduler) is a simply powerful scheduling solution for any organization, forked from [Booked](https://www.bookedscheduler.com/).
 
-# Running this container with a compose file
+# Docker setup
 This image is designed to be used in a micro-service environment. It contains the apache web server and exposes port 80. But it needs to be linked to a MariaDB database container. The easiest way to get a fully featured and functional setup is using a `docker-compose.yml` file. Here are some examples.
 
 ## Simple setup
-This setup features volumes in order to keep your data persistent and is meant to run behind a proxy.
+This setup features volumes in order to keep your data persistent and is meant to run behind an existing reverse proxy.
 
-Create a `docker-compose.yml` file with the following content:
+Create a `docker-compose.yml` file from the following sample and adapt it to your needs and standards:
 ```
 version: "3.7"
 
@@ -65,9 +65,9 @@ docker-compose up --detach
 ```
 
 ## Docker secrets setup
-As an alternative to passing sensitive information via environment variables, `_FILE` may be appended to some of the previously listed environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in `/run/secrets/<secret_name>` files. The following setup is also meant to be run behind a proxy.
+As an alternative to passing sensitive information via environment variables, `_FILE` may be appended to some of the previously listed environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in `/run/secrets/<secret_name>` files. The following setup is also meant to be run behind an existing reverse proxy.
 
-Create a `docker-compose.yml` file with the following content:
+Create a `docker-compose.yml` file from the following sample and adapt it to your needs and standards:
 
 ```
 version: "3.7"
@@ -144,9 +144,10 @@ echo 'your_Librebooking_installation_password' > lb_install_pwd.txt;
 docker-compose up --detach
 ```
 
-
 ## Internet setup
-This setup is an extension of the simple setup and is meant to provide full internet access. This setup can be adapted to handle Docker secrets as well.
+This setup is an extension of the simple setup and includes the [automated nginx reverse proxy](https://github.com/nginx-proxy/nginx-proxy) with its [automated letsencrypt companion](https://github.com/nginx-proxy/acme-companion). This setup can be adapted to handle Docker secrets as well.
+
+Create a `docker-compose.yml` file from the following sample and adapt it to your needs and standards:
 
 ```
 version: "3.7"
@@ -232,7 +233,8 @@ Then run the following command:
 docker-compose up --detach 
 ```
 
-# Initialization instructions
+# Application setup
+## Database initialization
 1. Point your web browser to http://localhost:8080/Web/install:
    - Enter the installation password
    - Enter the database root user: root
@@ -242,7 +244,7 @@ docker-compose up --detach
    - Fill the register form for the application administrator. The email must be **admin@example.com**
    - Click on the button `Register`
 
-# Setup instructions
+## Application configuration
 1. Point your web browser to http://localhost:8080
 1. Login with your application administrator profile
 1. Configure the web application
