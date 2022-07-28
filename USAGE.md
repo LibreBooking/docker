@@ -128,7 +128,7 @@ echo 'your_Librebooking_installation_password' > lb_install_pwd.txt;
 docker-compose up --detach
 ```
 
-## installation instructions
+# Initialization instructions
 1. Point your web browser to http://localhost:8080/Web/install:
    - Enter the installation password
    - Enter the database root user: root
@@ -138,7 +138,7 @@ docker-compose up --detach
    - Fill the register form for the application administrator. The email must be **admin@example.com**
    - Click on the button `Register`
 
-## Running instructions
+# Setup instructions
 1. Point your web browser to http://localhost:8080
 1. Login with your application administrator profile
 1. Configure the web application
