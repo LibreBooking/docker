@@ -144,6 +144,94 @@ echo 'your_Librebooking_installation_password' > lb_install_pwd.txt;
 docker-compose up --detach
 ```
 
+
+## Internet setup
+This setup is an extension of the simple setup and is meant to provide full internet access. This setup can be adapted to handle Docker secrets as well.
+
+```
+version: "3.7"
+
+services:
+  proxy:
+    image: nginxproxy/nginx-proxy
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - vol_certs:/etc/nginx/certs
+      - vol_vhost:/etc/nginx/vhost.d
+      - vol_html:/usr/share/nginx/html
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+    networks:
+      - net
+  acme:
+    image: nginxproxy/acme-companion
+    container_name: nginx-proxy-acme
+    environment:
+      - DEFAULT_EMAIL=
+    volumes_from:
+      - proxy
+    volumes:
+      - vol_acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - net
+  db:
+    image: linuxserver/mariadb
+    container_name: librebooking-db
+    restart: always
+    depends_on:
+      - proxy
+      - acme
+    networks:
+      - net
+    volumes:
+      - vol-db:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=
+      - MYSQL_DATABASE=librebooking
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_USER=lb_user
+      - MYSQL_PASSWORD=
+  app:
+    image: colisee/librebooking
+    container_name: librebooking
+    restart: always
+    depends_on:
+      - db
+    networks:
+      - net
+    volumes:
+      - vol-app:/var/www/html
+    environment: 
+      - TZ=
+      - LB_DB_HOST=lb-db
+      - LB_DB_NAME=librebooking
+      - LB_INSTALL_PWD=
+      - LB_DB_USER=lb_user
+      - LB_DB_USER_PWD=
+      - VIRTUALHOST=
+      - LETSENCRYPT_HOST=
+
+volumes:
+  vol-db:
+    name: librebooking_data
+  vol-app:
+    name: librebooking_html
+
+networks:
+  net:
+    name: mynet
+```
+
+Then run the following command:
+```
+docker-compose up --detach 
+```
+
 # Initialization instructions
 1. Point your web browser to http://localhost:8080/Web/install:
    - Enter the installation password
