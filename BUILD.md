@@ -34,4 +34,4 @@ Run the following commands:
 1. Seat back and relax
 
 # How to run the image
-Refer to file [USAGE.md](USAGE.md)
+Refer to the [README](README.md) file
