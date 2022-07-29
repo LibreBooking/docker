@@ -4,6 +4,16 @@
 # Docker setup
 This image is designed to be used in a micro-service environment. It contains the apache web server and exposes port 80. But it needs to be linked to a MariaDB database container. The easiest way to get a fully featured and functional setup is using a `docker-compose.yml` file. Here are some examples.
 
+## Environment variables
+
+| Env | Default | Example | Required | Description |
+| - | - | - | - | - |
+| `LB_DB_HOST` | - | `lb-db` | Yes | Sets the value of ['settings']['database']['hostspec'] in config.php |
+| `LB_DB_NAME` | - | `librebooking` | Yes | Sets the value of ['settings']['database']['name'] in config.php |
+| `LB_DB_USER` | - | `lb_user` | Yes | Sets the value of ['settings']['database']['user'] in config.php |
+| `LB_DB_USER_PWD` | - | `myPassw0rd` | Yes | Sets the value of ['settings']['database']['password'] in config.php |
+| `LB_INSTALL_PWD` | - | `installPWD` | Yes | Sets the value of ['settings']['install.password'] in config.php |
+
 ## Simple setup
 This setup features volumes in order to keep your data persistent and is meant to run behind an existing reverse proxy.
 
@@ -50,13 +60,13 @@ services:
 
 volumes:
   vol-db:
-    name: librebooking_data
+    name: librebooking-db_data
   vol-app:
     name: librebooking_html
 
 networks:
   net:
-    name: mynet
+    name: librebooking
 ```
 
 Then run the following command:
@@ -117,13 +127,13 @@ services:
 
 volumes:
   vol-db:
-    name: librebooking_data
+    name: librebooking-db_data
   vol-app:
     name: librebooking_html
 
 networks:
   net:
-    name: mynet
+    name: librebooking
 
 secrets:
   db_root_pwd:
@@ -155,7 +165,8 @@ version: "3.7"
 services:
   proxy:
     image: nginxproxy/nginx-proxy
-    container_name: nginx-proxy
+    container_name: librebooking-proxy
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -168,16 +179,16 @@ services:
       - net
   acme:
     image: nginxproxy/acme-companion
-    container_name: nginx-proxy-acme
-    environment:
-      - DEFAULT_EMAIL=
+    container_name: librebooking-acme
+    networks:
+      - net
     volumes_from:
       - proxy
     volumes:
       - vol_acme:/etc/acme.sh
       - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - net
+    environment:
+      - DEFAULT_EMAIL=
   db:
     image: linuxserver/mariadb
     container_name: librebooking-db
@@ -218,14 +229,22 @@ services:
       - LETSENCRYPT_HOST=
 
 volumes:
+  vol-certs:
+    name: librebooking-proxy_certs
+  vol-vhosts:
+    name: librebooking-proxy_vhosts
+  vol-html:
+    name: librebooking-proxy_html
+  vol-acme:
+    name: librebooking-acme_acme
   vol-db:
-    name: librebooking_data
+    name: librebooking-db_data
   vol-app:
     name: librebooking_html
 
 networks:
   net:
-    name: mynet
+    name: librebooking
 ```
 
 Then run the following command:
