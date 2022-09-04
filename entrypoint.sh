@@ -35,6 +35,7 @@ if ! test -d /var/www/html/config; then
   ## File create-user.sql
   sed -i /usr/src/lb/database_schema/create-user.sql -e "s:^DROP USER ':DROP USER IF EXISTS ':g"
   sed -i /usr/src/lb/database_schema/create-user.sql -e "s:booked_user:schedule_user:g"
+  sed -i /usr/src/lb/database_schema/create-user.sql -e "s:localhost:%:g"
   ## Missing directory tpl_c
   if ! test -d /usr/src/lb/tpl_c; then
     mkdir /usr/src/lb/tpl_c
