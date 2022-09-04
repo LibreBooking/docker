@@ -1,24 +1,18 @@
 name: Docker
 
-# This workflow uses actions that are not certified by GitHub.
-# They are provided by a third-party and are governed by
-# separate terms of service, privacy policy, and support
-# documentation.
-
 on:
   workflow_dispatch:
     inputs:
-      version:
+      app_version:
         description: 'Librebooking version'
         required: true
-
+      docker_version:
+        description: 'Docker version'
+        required: true
 
 env:
-  # Use docker.io for Docker Hub if empty
   REGISTRY: docker.io
-  # github.repository as <account>/<repo>
   IMAGE_NAME: librebooking
-
 
 jobs:
   build:
@@ -27,8 +21,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
       id-token: write
 
     steps:
@@ -42,7 +34,6 @@ jobs:
         uses: docker/setup-qemu-action@v1
 
       - name: Log into registry ${{ env.REGISTRY }}
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           registry: ${{ env.REGISTRY }}
@@ -57,7 +48,7 @@ jobs:
           push: ${{ github.event_name != 'pull_request' }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           build-args: |
-            LB_RELEASE=${{ github.event.inputs.version }}
+            LB_RELEASE=${{ github.event.inputs.app_version }}
           tags: |
-            ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.version }}
-             ${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
+            ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.app_version }}-${{ github.event.inputs.docker_version }}
+            ${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
