@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Librebooking version'
+        description: 'Dev: Librebooking version'
         required: true
 
 env:
@@ -49,5 +49,5 @@ jobs:
           build-args: |
             LB_RELEASE=${{ github.event.inputs.version }}
           tags: |
-            ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.version }}
-             ${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
+            ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.version }}-dev
+             ${{ github.actor }}/${{ env.IMAGE_NAME }}:dev
