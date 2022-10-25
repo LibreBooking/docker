@@ -52,7 +52,7 @@ services:
       - vol-app:/var/www/html
     environment: 
       - TZ=
-      - LB_DB_HOST=lb-db
+      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
       - LB_INSTALL_PWD=
       - LB_DB_USER=lb_user
@@ -116,7 +116,7 @@ services:
       - vol-app:/var/www/html
     environment: 
       - TZ=
-      - LB_DB_HOST=lb-db
+      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
       - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
       - LB_DB_USER=lb_user
@@ -148,9 +148,9 @@ secrets:
 
 Then run the following commands:
 ```
-echo 'your_Mariadb_root_password' > db_root_pwd.txt;
-echo 'your_Mariadb_user_password' > db_user_pwd.txt;
-echo 'your_Librebooking_installation_password' > lb_install_pwd.txt;
+echo -n 'your_Mariadb_root_password' > db_root_pwd.txt;
+echo -n 'your_Mariadb_user_password' > db_user_pwd.txt;
+echo -n 'your_Librebooking_installation_password' > lb_install_pwd.txt;
 docker-compose up --detach
 ```
 
@@ -220,7 +220,7 @@ services:
       - vol-app:/var/www/html
     environment: 
       - TZ=
-      - LB_DB_HOST=lb-db
+      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
       - LB_INSTALL_PWD=
       - LB_DB_USER=lb_user
