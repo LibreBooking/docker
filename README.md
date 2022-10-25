@@ -52,7 +52,7 @@ services:
       - vol-app:/var/www/html
     environment: 
       - TZ=
-      - LB_DB_HOST=lb-db
+      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
       - LB_INSTALL_PWD=
       - LB_DB_USER=lb_user
@@ -116,7 +116,7 @@ services:
       - vol-app:/var/www/html
     environment: 
       - TZ=
-      - LB_DB_HOST=lb-db
+      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
       - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
       - LB_DB_USER=lb_user
@@ -220,7 +220,7 @@ services:
       - vol-app:/var/www/html
     environment: 
       - TZ=
-      - LB_DB_HOST=lb-db
+      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
       - LB_INSTALL_PWD=
       - LB_DB_USER=lb_user
