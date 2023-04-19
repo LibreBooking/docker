@@ -1,7 +1,31 @@
-This project implements the [librebooking](https://github.com/effgarces/BookedScheduler) web application as a container.
+You have 2 ways to get the docker image on your host:
+1. Getting the image from the docker's hub
+1. Building the image yourself
+
+# How to get the image from the docker's hub
+
+This is the easiest and fastest way.
+```
+docker image pull librebooking/librebooking
+```
 
 # How to build the image
-## Builder: on your local host, Image: on your local host, Platform: single
+
+You have 3 ways to build the docker image.
+
+Regardless of the chosen option, you need to clone this repository:
+```
+git clone https://github.com/librebooking/docker.git
+```
+
+## Option-1
+
+| Item | Value |
+| --- | --- |
+| Builder | On your host |
+| Image | On your host |
+| Platform | your host architecture |
+
 Run the following commands:
    ```
    LB_RELEASE=2.8.5 # or any other librebooking release
@@ -12,7 +36,14 @@ Run the following commands:
      .
    ```
 
-## Builder: on your local host, Image: on your default registry, Platform: multiple
+## Option-2
+
+| Item | Value |
+| --- | --- |
+| Builder | On your host |
+| Image | On hub.docker.com |
+| Platform | linux/amd64,linux/arm64,linux/arm/v7 |
+
 Run the following commands:
    ```
    LB_RELEASE=2.8.5 # or any other librebooking release
@@ -27,11 +58,16 @@ Run the following commands:
      .
    ```
 
-## Builder: on github, Image: on docker hub, Platform: multiple
-1. Create a github secret, called `REGISTRY_TOKEN`, to store your docker hub token
+## Option-3
+
+| Item | Value |
+| --- | --- |
+| Builder | On github.com |
+| Image | On hub.docker.com |
+| Platform | linux/amd64,linux/arm64,linux/arm/v7 |
+
+1. Create a github secret, called `REGISTRY_TOKEN`, to store your registry personal access token
 1. Run the github action `Docker`
 1. Specify the librebooking release
+1. If necessary, modify the registry name and login name
 1. Seat back and relax
-
-# How to run the image
-Refer to the [README](README.md) file
