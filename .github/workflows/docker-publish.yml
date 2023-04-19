@@ -6,11 +6,17 @@ on:
       app_version:
         description: 'Librebooking version'
         required: true
+      registry:
+        description: 'Registry'
+        required: true
+        default: 'docker.io'
+      reg_logname:
+        description: 'Registry login name'
+        required: true
+        default: 'librebooking'
 
 env:
-  REGISTRY: docker.io
-  REGISTRY_LOGIN: librebooking
-  IMAGE_NAME: librebooking
+  IMAGE_NAME: librebooking/librebooking
 
 jobs:
   build:
@@ -31,16 +37,16 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
 
-      - name: Log into registry ${{ env.REGISTRY }}
-        uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
+      - name: Log into registry
+        uses: docker/login-action@v2
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ env.REGISTRY_LOGIN }}
+          registry: ${{ github.event.inputs.registry }}
+          username: ${{ github.event.inputs.reg_logname }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
       - name: Build and push Docker image
         id: build-and-push
-        uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
+        uses: docker/build-push-action@v4
         with:
           context: .
           push: ${{ github.event_name != 'pull_request' }}
@@ -48,5 +54,5 @@ jobs:
           build-args: |
             LB_RELEASE=${{ github.event.inputs.app_version }}
           tags: |
-            ${{ env.REGISTRY_LOGIN }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.app_version }}
-            ${{ env.REGISTRY_LOGIN }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ github.event.inputs.app_version }}
+            ${{ env.IMAGE_NAME }}:latest
