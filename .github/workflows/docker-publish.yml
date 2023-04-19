@@ -12,6 +12,7 @@ on:
 
 env:
   REGISTRY: docker.io
+  REGISTRY_LOGIN: librebooking
   IMAGE_NAME: librebooking
 
 jobs:
@@ -37,7 +38,7 @@ jobs:
         uses: docker/login-action@28218f9b04b4f3f62068d7b6ce6ca5b26e35336c
         with:
           registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
+          username: ${{ env.REGISTRY_LOGIN }}
           password: ${{ secrets.REGISTRY_TOKEN }}
 
       - name: Build and push Docker image
