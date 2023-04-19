@@ -6,9 +6,6 @@ on:
       app_version:
         description: 'Librebooking version'
         required: true
-      docker_version:
-        description: 'Docker version'
-        required: true
 
 env:
   REGISTRY: docker.io
@@ -51,5 +48,5 @@ jobs:
           build-args: |
             LB_RELEASE=${{ github.event.inputs.app_version }}
           tags: |
-            ${{ github.actor }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.app_version }}-${{ github.event.inputs.docker_version }}
-            ${{ github.actor }}/${{ env.IMAGE_NAME }}:latest
+            ${{ env.REGISTRY_LOGIN }}/${{ env.IMAGE_NAME }}:${{ github.event.inputs.app_version }}
+            ${{ env.REGISTRY_LOGIN }}/${{ env.IMAGE_NAME }}:latest
