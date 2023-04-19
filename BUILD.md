@@ -66,7 +66,8 @@ Run the following commands:
 | Image | On hub.docker.com |
 | Platform | linux/amd64,linux/arm64,linux/arm/v7 |
 
-1. Create a github secret, called `REGISTRY_TOKEN`, to store your docker hub token
+1. Create a github secret, called `REGISTRY_TOKEN`, to store your registry personal access token
 1. Run the github action `Docker`
 1. Specify the librebooking release
+1. If necessary, modify the registry name and login name
 1. Seat back and relax
