@@ -36,7 +36,7 @@ services:
       - MYSQL_USER=lb_user
       - MYSQL_PASSWORD=
   app:
-    image: colisee/librebooking
+    image: librebooking/librebooking
     container_name: librebooking
     restart: always
     depends_on:
@@ -100,7 +100,7 @@ services:
       - db_root_pwd
       - db_user_pwd
   app:
-    image: colisee/librebooking
+    image: librebooking/librebooking
     container_name: librebooking
     restart: always
     depends_on:
@@ -206,7 +206,7 @@ services:
       - MYSQL_USER=lb_user
       - MYSQL_PASSWORD=
   app:
-    image: colisee/librebooking
+    image: librebooking/librebooking
     container_name: librebooking
     restart: always
     depends_on:
