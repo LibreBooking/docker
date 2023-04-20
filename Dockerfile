@@ -13,7 +13,6 @@ RUN set -ex; \
     curl \
       --fail \
       --silent \
-      #--location https://github.com/effgarces/BookedScheduler/archive/refs/tags/${LB_RELEASE-2.8.5.5}.tar.gz \
       --location https://github.com/LibreBooking/app/archive/refs/tags/${LB_RELEASE}.tar.gz \
     | tar --extract --gzip --directory=/usr/src/lb --strip-components=1; \
     # Make entrypoint executable \
