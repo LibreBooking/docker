@@ -1,5 +1,5 @@
 # What is librebooking
-[Librebooking](https://github.com/effgarces/BookedScheduler) is a simply powerful scheduling solution for any organization, forked from [Booked](https://www.bookedscheduler.com/).
+[Librebooking](https://github.com/librebooking/app) is a simply powerful scheduling solution for any organization, forked from [Booked](https://www.bookedscheduler.com/).
 
 # Project goal
 This project implements the librebooking web application as a docker image.
