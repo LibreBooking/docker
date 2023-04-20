@@ -55,6 +55,7 @@ if ! test -d /var/www/html/config; then
   sed -i /var/www/html/config/config.php -e "s:\(\['database'\]\['hostspec'\]\) = '127.0.0.1':\1 = '${LB_DB_HOST}':"
   sed -i /var/www/html/config/config.php -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DB_NAME}':"
   sed -i /var/www/html/config/config.php -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PWD}':"
+  sed -i /var/www/html/config/config.php -e "s:\(\['default.timezone'\]\) = '.*':\1 = '${TZ}':"
 
 fi
 
