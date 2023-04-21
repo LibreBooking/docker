@@ -1,5 +1,9 @@
 FROM php:7-apache
 
+RUN apt-get -y install gcc make autoconf libc-dev pkg-config \
+    && pecl install timezonedb \
+    && bash -c "echo extension=timezonedb.so > /usr/local/etc/php/conf.d/docker-php-ext-timezonedb.ini"
+
 # Copy the entrypoint program
 COPY ./entrypoint.sh /usr/local/bin/ 
 
