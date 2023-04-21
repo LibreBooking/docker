@@ -28,7 +28,10 @@ if ! test -d /var/www/html/config; then
 
   # Set timezone
   if test -f /usr/share/zoneinfo/${TZ}; then
-	  ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+    INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
+    echo "[date]" > ${INI_FILE}
+    echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
   fi
 
   # Fixes
