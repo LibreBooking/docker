@@ -21,6 +21,8 @@ RUN set -ex; \
     | tar --extract --gzip --directory=/usr/src/lb --strip-components=1; \
     # Make entrypoint executable \
     chmod ugo+x /usr/local/bin/entrypoint.sh; \
+    # Set a php.ini file as recommended by the authors of php:?-apache
+    mv "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     # Clear apt cache
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
