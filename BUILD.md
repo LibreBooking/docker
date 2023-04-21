@@ -29,10 +29,9 @@ git clone https://github.com/librebooking/docker.git
 Run the following commands:
    ```
    LB_RELEASE=2.8.5 # or any other librebooking release
-   docker buildx build \
-     --tag librebooking:${LB_RELEASE} \
+   docker build \
+     --tag librebooking/librebooking:${LB_RELEASE} \
      --build-arg LB_RELEASE=${LB_RELEASE} \
-     --output type=docker \
      .
    ```
 
