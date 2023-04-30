@@ -22,9 +22,16 @@ file_env() {
     unset "$fileVar"
 }
 
+file_env LB_INSTALL_PWD
+file_env LB_DB_USER_PWD
+
 # First-time volume initialization
 if ! test -d /var/www/html/config; then
   echo "First-time initialization"
+
+  # Copy librebooking application
+  cp -r /usr/src/lb/* /var/www/html/
+  cp /var/www/html/config/config.dist.php /var/www/html/config/config.php
 
   # Set timezone
   if test -f /usr/share/zoneinfo/${TZ}; then
@@ -43,19 +50,14 @@ if ! test -d /var/www/html/config; then
   sed -i /usr/src/lb/database_schema/create-user.sql -e "s:^DROP USER ':DROP USER IF EXISTS ':g"
   sed -i /usr/src/lb/database_schema/create-user.sql -e "s:booked_user:schedule_user:g"
   sed -i /usr/src/lb/database_schema/create-user.sql -e "s:localhost:%:g"
+
   ## Missing directory tpl_c
-  if ! test -d /usr/src/lb/tpl_c; then
-    mkdir /usr/src/lb/tpl_c
+  if ! test -d /var/www/html/tpl_c; then
+    mkdir /var/www/html/tpl_c
+    chown www-data:www-data /var/www/html/tpl_c
   fi
 
-  # Copy librebooking application
-  cp -r /usr/src/lb/* /var/www/html/
-  cp /var/www/html/config/config.dist.php /var/www/html/config/config.php
-  chown -R www-data:www-data /var/www/html
-
   # Set initial configuration
-  file_env LB_INSTALL_PWD
-  file_env LB_DB_USER_PWD
   sed -i /var/www/html/config/config.php -e "s:\(\['registration.captcha.enabled'\]\) = 'true':\1 = 'false':"
   sed -i /var/www/html/config/config.php -e "s:\(\['database'\]\['user'\]\) = '.*':\1 = '${LB_DB_USER}':"
   sed -i /var/www/html/config/config.php -e "s:\(\['database'\]\['password'\]\) = '.*':\1 = '${LB_DB_USER_PWD}':"
@@ -63,7 +65,27 @@ if ! test -d /var/www/html/config; then
   sed -i /var/www/html/config/config.php -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DB_NAME}':"
   sed -i /var/www/html/config/config.php -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PWD}':"
   sed -i /var/www/html/config/config.php -e "s:\(\['default.timezone'\]\) = '.*':\1 = '${TZ}':"
+  sed -i /var/www/html/config/config.php -e "s:\(\['logging'\]\['folder'\]\) = '/var/log/librebooking/log':\1 = '/var/log/librebooking':"
+  sed -i /var/www/html/config/config.php -e "s:\(\['logging'\]\['level'\]\) = 'debug':\1 = 'none':"
+fi
 
+# Fixes
+## Missing log directory
+if ! test -d /var/log/librebooking; then
+  mkdir /var/log/librebooking
+  chown www-data:www-data /var/log/librebooking
+fi
+
+# Install and run composer
+if ! test -f /var/www/html/composer-setup.php; then
+  pushd /var/www/html
+  php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+  php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
+  php composer-setup.php
+  php -r "unlink('composer-setup.php');"
+  php composer.phar install --ignore-platform-req=ext-gd
+  chown -R www-data:www-data /var/www/html
+  popd
 fi
 
 exec "$@"
