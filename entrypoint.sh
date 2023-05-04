@@ -74,6 +74,7 @@ fi
 if ! test -d /var/log/librebooking; then
   mkdir /var/log/librebooking
   chown www-data:www-data /var/log/librebooking
+  touch /var/log/librebooking/app.log
 fi
 
 # Install and run composer
