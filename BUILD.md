@@ -28,7 +28,7 @@ git clone https://github.com/librebooking/docker.git
 
 Run the following commands:
    ```
-   LB_RELEASE=2.8.5 # or any other librebooking release
+   LB_RELEASE=2.8.6
    docker build \
      --tag librebooking/librebooking:${LB_RELEASE} \
      --build-arg LB_RELEASE=${LB_RELEASE} \
@@ -45,7 +45,7 @@ Run the following commands:
 
 Run the following commands:
    ```
-   LB_RELEASE=2.8.5 # or any other librebooking release
+   LB_RELEASE=2.8.6
    REGISTRY_USER=your_registry_user
    docker login --username ${REGISTRY_USER}
    docker run --privileged tonistiigi/binfmt -install all

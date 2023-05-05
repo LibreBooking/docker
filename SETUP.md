@@ -1,9 +1,9 @@
 # How to setup the application
 
-## Fresh install
+## First-time fresh install
 
 ### Database initialization
-1. Point your web browser to http://\<YOUR_HOST\>/Web/install:
+1. Point your web browser to `http://<YOUR_HOST>/Web/install`
    - Enter the installation password
    - Enter the database root user: root
    - Enter the database root password
@@ -17,21 +17,29 @@
 1. Login with your application administrator profile
 1. Configure the web application
 
-## Upgrade
+## Upgrade from a previous version
+1. Stop the service
+```
+sudo docker-compose down
+```
 1. Define the From and To versions
 ```
 V_OLD=2.8.5
 V_NEW=2.8.6
 ```
-
-1. Run the following commands on your host:
+1. Upgrade the application
 ```
-sudo docker cp librebooking:/var/www/html/config/config.php ./config.php
-sudo docker-compose down
-sudo docker volume rm librebooking_html
-sed -e "s/librebooking:${V_OLD}/librebooking:${V_NEW}/g" -i docker-compose.yml
+sudo docker run \
+  --rm \
+  --volume librebooking_html:/var/www/html \
+  librebooking/librebooking:${V_NEW} \
+  upgrade
+```
+1. Restart the service
+```
+sed \
+  -i docker-compose.yml \
+  -e "s/librebooking:${V_OLD}/librebooking:${V_NEW}/g" 
 sudo docker-compose up --detach
-sudo docker cp ./config.php librebooking:/var/www/html/config/config.php
-sudo docker exec -t librebooking sh -c 'chown www-data:www-data /var/www/html/config/config.php'
 ```
-1. Upgrade the application settings and database by pointing your web browser to `Web/install/configure.php`. You can ignore the thrown exceptions
+1. Upgrade the application database by pointing your web browser to `http://<YOUR_HOST>/Web/install/configure.php`
