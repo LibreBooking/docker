@@ -2,6 +2,7 @@
 The image contains the apache web server and the librebooking application files. It needs to be linked to a MariaDB database container.
 
 ## Environment variables
+Environment variables are used on first invocation of the container (when the file config/config.php does not yet exist)
 
 | Env | Default | Example | Required | Description |
 | - | - | - | - | - |
@@ -10,6 +11,9 @@ The image contains the apache web server and the librebooking application files.
 | `LB_DB_USER` | - | lb_user | **Yes** | Sets the value of ['settings']['database']['user'] in config.php |
 | `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | Sets the value of ['settings']['database']['password'] in config.php |
 | `LB_INSTALL_PWD` | - | installPWD | **Yes** | Sets the value of ['settings']['install.password'] in config.php |
+| `LB_LOG_FOLDER` | /var/log/librebooking/log | | **No** | Sets the value of ['settings']['logging']['folder'] in config.php |
+| `LB_LOG_LEVEL` | debug | none | **No** | Sets the value of ['settings']['logging']['level'] in config.php |
+| `LB_LOG_SQL` | false | true | **No** | Sets the value of ['settings']['logging']['sql'] in config.php |
 
 ## docker-compose: simple setup
 This setup features volumes in order to keep your data persistent and is meant to run behind an existing reverse proxy.
