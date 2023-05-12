@@ -53,18 +53,6 @@ if ! test -d /var/www/html/config; then
   # Install application
   install
 
-  # Set timezone
-  if test -f /usr/share/zoneinfo/${TZ}; then
-    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
-    pecl install timezonedb
-
-    INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
-    echo "[date]" > ${INI_FILE}
-    echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
-    echo "" >> ${INI_FILE}
-    echo "extension=timezonedb.so" >> ${INI_FILE}
-  fi
-
   # Fixes
   ## File create-user.sql
   sed \
@@ -123,6 +111,19 @@ if test "${1}" = "upgrade"; then
 else
 # Not an upgrade invocation
 
+  ## Set timezone
+  if test -f /usr/share/zoneinfo/${TZ}; then
+    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
+    pecl install timezonedb
+
+    INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
+    echo "[date]" > ${INI_FILE}
+    echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
+    echo "" >> ${INI_FILE}
+    echo "extension=timezonedb.so" >> ${INI_FILE}
+  fi
+
+  ## Get log directory
   log_flr=$(grep \
     -e "\['logging'\]\['folder'\]" \
     /var/www/html/config/config.php \
