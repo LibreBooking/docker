@@ -48,5 +48,5 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           build-args: |
-            LB_RELEASE=${{ inputs.app-gh-ref }}
+            APP_GH_REF=${{ inputs.app-gh-ref }}
           tags: ${{ inputs.img-tag }}
