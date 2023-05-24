@@ -50,3 +50,4 @@ jobs:
           build-args: |
             APP_GH_REF=${{ inputs.app-gh-ref }}
           tags: ${{ inputs.img-tag }}
+          push: true
