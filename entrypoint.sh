@@ -44,6 +44,9 @@ install() {
     php composer.phar install --ignore-platform-req=ext-gd
     popd
   fi
+
+  # Install the timezonedb php extension
+  pecl install timezonedb
 }
 
 # First-time volume initialization
@@ -114,7 +117,6 @@ else
   ## Set timezone
   if test -f /usr/share/zoneinfo/${TZ}; then
     ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
-    pecl install timezonedb
 
     INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
     echo "[date]" > ${INI_FILE}
