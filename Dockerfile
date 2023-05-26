@@ -1,4 +1,4 @@
-FROM php:8.1-apache
+FROM php:7-apache
 
 # Copy the entrypoint program
 COPY ./entrypoint.sh /usr/local/bin/ 
