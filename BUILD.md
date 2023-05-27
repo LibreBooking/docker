@@ -6,7 +6,11 @@ You have 2 ways to get the docker image on your host:
 
 This is the easiest and fastest way.
 ```
-docker image pull librebooking/librebooking
+# Stable release
+sudo docker image pull librebooking/librebooking:2.8.6
+
+# Development branch
+sudo docker image pull librebooking/librebooking:develop
 ```
 
 # How to build the image
@@ -28,10 +32,20 @@ git clone https://github.com/librebooking/docker.git
 
 Run the following commands:
    ```
+   # Stable release
    LB_RELEASE=2.8.6
-   docker build \
+   APP_GH_REF=refs/tags/${LB_RELEASE}
+   sudo docker build \
      --tag librebooking/librebooking:${LB_RELEASE} \
-     --build-arg LB_RELEASE=${LB_RELEASE} \
+     --build-arg APP_GH_REF=${APP_GH_REF} \
+     .
+
+   # Development branch
+   LB_RELEASE=develop
+   APP_GH_REF=refs/heads/${LB_RELEASE}
+   sudo docker build \
+     --tag librebooking/librebooking:${LB_RELEASE} \
+     --build-arg APP_GH_REF=${APP_GH_REF} \
      .
    ```
 
@@ -45,13 +59,28 @@ Run the following commands:
 
 Run the following commands:
    ```
+   # Stable release
    LB_RELEASE=2.8.6
+   APP_GH_REF=refs/tags/${LB_RELEASE}
    REGISTRY_USER=your_registry_user
-   docker login --username ${REGISTRY_USER}
-   docker run --privileged tonistiigi/binfmt -install all
-   docker buildx build \
+   sudo docker login --username ${REGISTRY_USER}
+   sudo docker run --privileged tonistiigi/binfmt -install all
+   sudo docker buildx build \
      --tag ${REGISTRY_USER}/librebooking:${LB_RELEASE} \
-     --build-arg LB_RELEASE=${LB_RELEASE} \
+     --build-arg APP_GH_REF=${APP_GH_REF} \
+     --output type=registry \
+     --platform=linux/amd64,linux/arm64,linux/arm/v7  \
+     .
+
+   # Development branch
+   LB_RELEASE=develop
+   APP_GH_REF=refs/heads/${LB_RELEASE}
+   REGISTRY_USER=your_registry_user
+   sudo docker login --username ${REGISTRY_USER}
+   sudo docker run --privileged tonistiigi/binfmt -install all
+   sudo docker buildx build \
+     --tag ${REGISTRY_USER}/librebooking:${LB_RELEASE} \
+     --build-arg APP_GH_REF=${APP_GH_REF} \
      --output type=registry \
      --platform=linux/amd64,linux/arm64,linux/arm/v7  \
      .
@@ -66,7 +95,9 @@ Run the following commands:
 | Platform | linux/amd64,linux/arm64,linux/arm/v7 |
 
 1. Create a github secret, called `REGISTRY_TOKEN`, to store your registry personal access token
-1. Run the github action `Docker`
-1. Specify the librebooking release
-1. If necessary, modify the registry name and login name
-1. Seat back and relax
+1. Create a github variable, called `REGISTRY_NAME` to store the registry name (ex: docker.io)
+1. Create a github variable, called `REGISTRY_LOGIN` to store your registry user profile
+1. Run the github action `Build and publish docker images`
+1. Specify the librebooking release (ex: 2.8.6)
+1. Specify the librebooking application github reference (ex: refs/tags/2.8.6)
+1. Click on the `Run workflow` button
