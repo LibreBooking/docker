@@ -14,6 +14,8 @@ RUN set -ex; \
     apt-get install --yes --no-install-recommends git unzip; \
     # Install mysqli extension for php
     docker-php-ext-install -j$(nproc) mysqli; \
+    # Install the timezonedb php extension
+    pecl install timezonedb; \
     # Copy librebooking source code
     mkdir /usr/src/lb; \
     curl \
