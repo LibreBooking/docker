@@ -44,9 +44,6 @@ install() {
     php composer.phar install --ignore-platform-req=ext-gd
     popd
   fi
-
-  # Install the timezonedb php extension
-  pecl install timezonedb
 }
 
 # First-time volume initialization
@@ -59,7 +56,7 @@ if ! test -d /var/www/html/config; then
   # Fixes
   ## File create-user.sql
   sed \
-    -i /usr/src/lb/database_schema/create-user.sql \
+    -i /var/www/html/database_schema/create-user.sql \
     -e "s:^DROP USER ':DROP USER IF EXISTS ':g" \
     -e "s:booked_user:schedule_user:g" \
     -e "s:localhost:%:g"
@@ -104,7 +101,7 @@ if test "${1}" = "upgrade"; then
 
   ## Install application
   install
-    
+
   ## Restore original config.php
   mv /tmp/config.php /var/www/html/config/config.php
 
