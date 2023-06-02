@@ -36,7 +36,7 @@ jobs:
       -
         name: get tag name
         id: get_tag
-        run: echo "img-tag=$(basename ${{ inputs.app-gh-ref }})" >> "$GITHUB_OUTPUT"
+        run: echo "IMG_TAG=$(basename ${{ inputs.app-gh-ref }})" >> "$GITHUB_OUTPUT"
       -
         name: Build and push Docker image
         id: build-and-push
@@ -46,5 +46,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           build-args: |
             APP_GH_REF=${{ inputs.app-gh-ref }}
-          tags: ${{ steps.get_tag.outputs.img_tag }}
+          tags: ${{ steps.get_tag.outputs.IMG_TAG }}
           push: true
