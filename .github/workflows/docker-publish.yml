@@ -6,23 +6,16 @@ on:
       app-gh-ref:
         required: true
         type: string
-      img-tag:
-        required: true
-        type: string
   workflow_dispatch:
     inputs:
       app-gh-ref:
         required: true
         description: 'Application github reference'
-      img-tag:
-        required: true
-        description: 'Image tag'
+        default: 'refs/heads/develop'
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       -
         name: Checkout github repository
@@ -41,6 +34,10 @@ jobs:
           username: ${{ vars.REGISTRY_LOGIN }}
           password: ${{ secrets.REGISTRY_TOKEN }}
       -
+        name: get tag name
+        id: get_tag
+        run: echo "img-tag=$(basename ${{ inputs.app-gh-ref }})" >> "$GITHUB_OUTPUT"
+      -
         name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v4
@@ -49,5 +46,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           build-args: |
             APP_GH_REF=${{ inputs.app-gh-ref }}
-          tags: ${{ inputs.img-tag }}
+          tags: ${{ steps.get_tag.outputs.img_tag }}
           push: true
