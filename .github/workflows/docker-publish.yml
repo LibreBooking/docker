@@ -46,7 +46,7 @@ jobs:
         with:
           images: ${{ vars.REGISTRY_LOGIN }}/librebooking
           tags: |
-            type=raw,suffix="-${{ github.action_ref }}",value=${{ steps.get_tag.outputs.IMG_TAG }}
+            type=raw,suffix=-${{ github.action_ref }},value=${{ steps.get_tag.outputs.IMG_TAG }}
       -
         name: Build and push Docker image
         id: build-and-push
