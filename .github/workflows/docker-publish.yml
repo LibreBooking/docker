@@ -36,17 +36,19 @@ jobs:
           username: ${{ vars.REGISTRY_LOGIN }}
           password: ${{ secrets.REGISTRY_TOKEN }}
       -
-        name: Get the application version
-        id: get_tag
-        run: echo "IMG_TAG=$(basename ${{ inputs.app-gh-ref }})" >> "$GITHUB_OUTPUT"
+        name: Get the docker image metadate
+        id: get_meta
+        run: |
+          echo "APP_TAG=$(basename ${{ inputs.app-gh-ref }})" >> "$GITHUB_OUTPUT"
+          echo "ACT_TAG=$(basename ${{ github.ref }})" >> "$GITHUB_OUTPUT"
       -
         name: Set the docker image metadata
         id: set_meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ vars.REGISTRY_LOGIN }}/librebooking
+          images: ${{ github.repository_owner }}/librebooking
           tags: |
-            type=raw,suffix=-${{ github.action_ref }},value=${{ steps.get_tag.outputs.IMG_TAG }}
+            type=raw,suffix=-${{ steps.get_meta.outputs.ACT_TAG }},value=${{ steps.get_meta.outputs.APP_TAG }}
       -
         name: Build and push Docker image
         id: build-and-push
