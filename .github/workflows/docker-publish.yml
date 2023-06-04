@@ -49,6 +49,7 @@ jobs:
           images: ${{ github.repository_owner }}/librebooking
           tags: |
             type=raw,suffix=-${{ steps.get_meta.outputs.ACT_TAG }},value=${{ steps.get_meta.outputs.APP_TAG }}
+            type=raw,value=${{ steps.get_meta.outputs.APP_TAG }}
       -
         name: Build and push Docker image
         id: build-and-push
