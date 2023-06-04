@@ -6,27 +6,22 @@ on:
       app-gh-ref:
         required: true
         type: string
-      img-tag:
-        required: true
-        type: string
   workflow_dispatch:
     inputs:
       app-gh-ref:
         required: true
         description: 'Application github reference'
-      img-tag:
-        required: true
-        description: 'Image tag'
+        default: 'refs/heads/develop'
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
       -
         name: Checkout github repository
         uses: actions/checkout@v3
+        with: 
+          repository: ${{ github.repository }}
       -
         name: Setup Docker buildx
         uses: docker/setup-buildx-action@v2
@@ -41,6 +36,21 @@ jobs:
           username: ${{ vars.REGISTRY_LOGIN }}
           password: ${{ secrets.REGISTRY_TOKEN }}
       -
+        name: Get the docker image metadate
+        id: get_meta
+        run: |
+          echo "APP_TAG=$(basename ${{ inputs.app-gh-ref }})" >> "$GITHUB_OUTPUT"
+          echo "ACT_TAG=$(basename ${{ github.ref }})" >> "$GITHUB_OUTPUT"
+      -
+        name: Set the docker image metadata
+        id: set_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ github.repository_owner }}/librebooking
+          tags: |
+            type=raw,suffix=-${{ steps.get_meta.outputs.ACT_TAG }},value=${{ steps.get_meta.outputs.APP_TAG }}
+            type=raw,value=${{ steps.get_meta.outputs.APP_TAG }}
+      -
         name: Build and push Docker image
         id: build-and-push
         uses: docker/build-push-action@v4
@@ -49,5 +59,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           build-args: |
             APP_GH_REF=${{ inputs.app-gh-ref }}
-          tags: ${{ inputs.img-tag }}
+          tags: ${{ steps.set_meta.outputs.tags }}
           push: true
