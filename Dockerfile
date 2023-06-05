@@ -4,7 +4,7 @@ FROM php:7-apache
 COPY ./entrypoint.sh /usr/local/bin/ 
 
 # Customize
-ARG LB_RELEASE
+ARG APP_GH_REF
 ENV DEBIAN_FRONTEND=noninteractive
 RUN set -ex; \
     # Update debian packages
@@ -14,12 +14,14 @@ RUN set -ex; \
     apt-get install --yes --no-install-recommends git unzip; \
     # Install mysqli extension for php
     docker-php-ext-install -j$(nproc) mysqli; \
+    # Install the timezonedb php extension
+    pecl install timezonedb; \
     # Copy librebooking source code
     mkdir /usr/src/lb; \
     curl \
       --fail \
       --silent \
-      --location https://github.com/LibreBooking/app/archive/refs/tags/${LB_RELEASE}.tar.gz \
+      --location https://github.com/LibreBooking/app/archive/${APP_GH_REF}.tar.gz \
     | tar --extract --gzip --directory=/usr/src/lb --strip-components=1; \
     # Make entrypoint executable
     chmod ugo+x /usr/local/bin/entrypoint.sh; \
@@ -33,3 +35,11 @@ RUN set -ex; \
 VOLUME /var/www/html
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]
+
+# Labels
+LABEL org.opencontainers.image.title="LibreBooking"
+LABEL org.opencontainers.image.description="LibreBooking as a container"
+LABEL org.opencontainers.image.url="https://github.com/librebooking/docker"
+LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
+LABEL org.opencontainers.image.licenses="GPL-3.0"
+LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
