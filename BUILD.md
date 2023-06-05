@@ -95,9 +95,6 @@ Run the following commands:
 | Platform | linux/amd64,linux/arm64,linux/arm/v7 |
 
 1. Create a github secret, called `REGISTRY_TOKEN`, to store your registry personal access token
-1. Create a github variable, called `REGISTRY_NAME` to store the registry name (ex: docker.io)
-1. Create a github variable, called `REGISTRY_LOGIN` to store your registry user profile
-1. Run the github action `Build and publish docker images`
-1. Specify the librebooking release (ex: 2.8.6)
+1. Run the github action `Build and publish docker images` from the latest repository tag
 1. Specify the librebooking application github reference (ex: refs/tags/2.8.6)
 1. Click on the `Run workflow` button
