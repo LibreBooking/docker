@@ -28,7 +28,7 @@ file_env() {
 }
 
 # Exit if incompatible mount (images prior to V2)
-if [ -n "$(mount | grep /var/www/html)" ]; then
+if [ "$(mount | grep /var/www/html)" = "/var/www/html" ]; then
   echo "The volume must be mapped to container directory /config" >2
   exit 1
 fi
