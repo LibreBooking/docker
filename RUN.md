@@ -16,16 +16,16 @@ Environment variables are used on first invocation of the container (when the fi
 | `LB_LOG_LEVEL` | debug | none | **No** | ['settings']['logging']['level'] |
 | `LB_LOG_SQL` | false | true | **No** | ['settings']['logging']['sql'] |
 
-## docker-compose: simple setup
-This setup features volumes in order to keep your data persistent and is meant to run behind an existing reverse proxy.
+## docker-compose: test environment
+This simple setup is meant for testing the application within your private network.
 
-Create a `docker-compose.yml` file from the following sample and fill the value of the required environment variables:
+Create a `docker-compose.yml` file from the following sample and adapt the value of the environment variables to your needs:
 ```
 version: "3.7"
 
 services:
   db:
-    image: linuxserver/mariadb
+    image: linuxserver/mariadb:10.6.13
     container_name: librebooking-db
     restart: always
     networks:
@@ -35,13 +35,13 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=
+      - TZ=Europe/Zurich
       - MYSQL_DATABASE=librebooking
-      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_ROOT_PASSWORD=your_Mariadb_root_password
       - MYSQL_USER=lb_user
-      - MYSQL_PASSWORD=
+      - MYSQL_PASSWORD=your_Mariadb_user_password
   app:
-    image: librebooking/librebooking:2.8.6
+    image: librebooking/librebooking:2.8.6-2.0
     container_name: librebooking
     restart: always
     depends_on:
@@ -49,150 +49,68 @@ services:
     networks:
       - net
     ports:
-      - "8080:80"
+      - "80:80"
     volumes:
-      - vol-app:/var/www/html
+      - vol-app:/config
     environment: 
-      - TZ=
+      - TZ=Europe/Zurich
       - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
-      - LB_INSTALL_PWD=
+      - LB_INSTALL_PWD=your_Librebooking_installation_password
       - LB_DB_USER=lb_user
-      - LB_DB_USER_PWD=
+      - LB_DB_USER_PWD=your_Mariadb_user_password
 
 volumes:
   vol-db:
-    name: librebooking-db_data
+    name: librebooking_data
   vol-app:
-    name: librebooking_html
+    name: librebooking_conf
 
 networks:
   net:
     name: librebooking
 ```
 
-Then run the following command:
+Start the application with the following command:
 ```
 docker-compose up --detach 
 ```
 
-## docker-compose: simple setup with docker secrets
-As an alternative to passing sensitive information via environment variables, `_FILE` may be appended to some of the previously listed environment variables, causing the initialization script to load the values for those variables from files present in the container. In particular, this can be used to load passwords from Docker secrets stored in `/run/secrets/<secret_name>` files. The following setup is also meant to be run behind an existing reverse proxy.
+## docker-compose: production environment
+This setup is meant for accessing the application from the internet. It features:
+- The [traefik reverse proxy](https://traefik.io/traefik/) 
+- The usage of secrets to pass passwords to the docker container
 
-Create a `docker-compose.yml` file from the following sample and fill the value of the required environment variables:
-
-```
-version: "3.7"
-
-services:
-  db:
-    image: linuxserver/mariadb
-    container_name: librebooking-db
-    restart: always
-    networks:
-      - net
-    volumes:
-      - vol-db:/config
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=
-      - MYSQL_DATABASE=librebooking
-      - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/db_root_pwd
-      - MYSQL_USER=lb_user
-      - FILE__MYSQL_PASSWORD=/run/secrets/db_user_pwd
-    secrets:
-      - db_root_pwd
-      - db_user_pwd
-  app:
-    image: librebooking/librebooking:2.8.6
-    container_name: librebooking
-    restart: always
-    depends_on:
-      - db
-    networks:
-      - net
-    ports:
-      - "8080:80"
-    volumes:
-      - vol-app:/var/www/html
-    environment: 
-      - TZ=
-      - LB_DB_HOST=db
-      - LB_DB_NAME=librebooking
-      - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
-      - LB_DB_USER=lb_user
-      - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-    secrets:
-      - lb_install_pwd
-      - lb_user_pwd
-
-volumes:
-  vol-db:
-    name: librebooking-db_data
-  vol-app:
-    name: librebooking_html
-
-networks:
-  net:
-    name: librebooking
-
-secrets:
-  db_root_pwd:
-    file: ./db_root_pwd.txt   # put the MariaDB root password in this file
-  db_user_pwd:
-    file: ./db_user_pwd.txt   # put the MariaDB user password in this file
-  lb_user_pwd:
-    file: ./db_user_pwd.txt
-  lb_install_pwd:
-    file: ./lb_install_pwd.txt   # put the app installation password in this file
-```
-
-Then run the following commands:
-```
-echo -n 'your_Mariadb_root_password' > db_root_pwd.txt;
-echo -n 'your_Mariadb_user_password' > db_user_pwd.txt;
-echo -n 'your_Librebooking_installation_password' > lb_install_pwd.txt;
-docker-compose up --detach
-```
-
-## docker-compose: complete setup with reverse proxy
-This setup is an extension of the simple setup and includes the [automated nginx reverse proxy](https://github.com/nginx-proxy/nginx-proxy) with its [automated letsencrypt companion](https://github.com/nginx-proxy/acme-companion). This setup can be adapted to handle Docker secrets as well.
-
-Create a `docker-compose.yml` file from the following sample and fill the value of the required environment variables:
+Create a `docker-compose.yml` file from the following sample and adapt the value of the environment variables to your needs:
 
 ```
 version: "3.7"
 
 services:
-  proxy:
-    image: nginxproxy/nginx-proxy
-    container_name: librebooking-proxy
+  rproxy:
+    image: traefik:2.10
+    container_name: traefik
     restart: always
+    networks:
+      net:
     ports:
-      - "80:80"
-      - "443:443"
+      - 80:80
+      - 443:443
+      - 8080:8080
+    command:
+      - "--api.insecure=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.web.http.redirections.entryPoint.to=webs"
+      - "--entrypoints.web.http.redirections.entryPoint.scheme=https"
+      - "--entrypoints.webs.address=:443"
+      - "--certificatesresolvers.myresolver.acme.email=your@email"
+      - "--certificatesresolvers.myresolver.acme.httpchallenge.entrypoint=web"
     volumes:
-      - vol_certs:/etc/nginx/certs
-      - vol_vhost:/etc/nginx/vhost.d
-      - vol_html:/usr/share/nginx/html
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-    networks:
-      - net
-  acme:
-    image: nginxproxy/acme-companion
-    container_name: librebooking-acme
-    networks:
-      - net
-    volumes_from:
-      - proxy
-    volumes:
-      - vol_acme:/etc/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - DEFAULT_EMAIL=
+      - "vol-rproxy:/etc/traefik/acme"
+      - "/var/run/docker.sock:/var/run/docker.sock"
   db:
-    image: linuxserver/mariadb
+    image: linuxserver/mariadb:10.6.13
     container_name: librebooking-db
     restart: always
     depends_on:
@@ -205,13 +123,16 @@ services:
     environment:
       - PUID=1000
       - PGID=1000
-      - TZ=
+      - TZ=Europe/Zurich
       - MYSQL_DATABASE=librebooking
-      - MYSQL_ROOT_PASSWORD=
+      - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/db_root_pwd
       - MYSQL_USER=lb_user
-      - MYSQL_PASSWORD=
+      - FILE__MYSQL_PASSWORD=/run/secrets/db_user_pwd
+    secrets:
+      - db_root_pwd
+      - db_user_pwd
   app:
-    image: librebooking/librebooking:2.8.6
+    image: librebooking/librebooking:2.8.6-2.0
     container_name: librebooking
     restart: always
     depends_on:
@@ -219,37 +140,53 @@ services:
     networks:
       - net
     volumes:
-      - vol-app:/var/www/html
+      - vol-app:/config
     environment: 
-      - TZ=
+      - TZ=Europe/Zurich
       - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
-      - LB_INSTALL_PWD=
+      - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
       - LB_DB_USER=lb_user
-      - LB_DB_USER_PWD=
-      - VIRTUALHOST=
-      - LETSENCRYPT_HOST=
+      - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
+    secrets:
+      - lb_install_pwd
+      - lb_user_pwd
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.librebooking.rule=Host(`www.domain.com`)"
+      - "traefik.http.routers.librebooking.tls.certresolver=myresolver"
+      - "traefik.http.services.librebooking.loadbalancer.server.port=80"
 
 volumes:
-  vol-certs:
-    name: librebooking-proxy_certs
-  vol-vhosts:
-    name: librebooking-proxy_vhosts
-  vol-html:
-    name: librebooking-proxy_html
-  vol-acme:
-    name: librebooking-acme_acme
+  vol-rproxy:
+    name: traefik_certs
   vol-db:
-    name: librebooking-db_data
+    name: librebooking_data
   vol-app:
-    name: librebooking_html
+    name: librebooking_conf
 
 networks:
   net:
     name: librebooking
+
+secrets:
+  db_root_pwd:
+    file: ./db_root_pwd.txt
+  db_user_pwd:
+    file: ./db_user_pwd.txt
+  lb_user_pwd:
+    file: ./db_user_pwd.txt
+  lb_install_pwd:
+    file: ./lb_install_pwd.txt
 ```
 
-Then run the following command:
+Set the secrets with the following commands:
+```
+echo -n 'your_Mariadb_root_password' > db_root_pwd.txt;
+echo -n 'your_Mariadb_user_password' > db_user_pwd.txt;
+echo -n 'your_Librebooking_installation_password' > lb_install_pwd.txt;
+```
+Start the application with the following command:
 ```
 docker-compose up --detach 
 ```

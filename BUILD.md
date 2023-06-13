@@ -30,7 +30,7 @@ git clone https://github.com/librebooking/docker.git
 | Image | On your host |
 | Platform | your host architecture |
 
-Run the following commands:
+Run the following commands on your host:
    ```
    # Stable release
    LB_RELEASE=2.8.6
@@ -57,7 +57,7 @@ Run the following commands:
 | Image | On hub.docker.com |
 | Platform | linux/amd64,linux/arm64,linux/arm/v7 |
 
-Run the following commands:
+Run the following commands on your host:
    ```
    # Stable release
    LB_RELEASE=2.8.6
@@ -96,5 +96,6 @@ Run the following commands:
 
 1. Create a github secret, called `REGISTRY_TOKEN`, to store your registry personal access token
 1. Run the github action `Build and publish docker images` from the latest repository tag
-1. Specify the librebooking application github reference (ex: refs/tags/2.8.6)
+1. Click on `Run workflow`. Then click on `Branch: develop` and select instead the latest version tag
+1. Specify the librebooking application github reference (ex: refs/tags/2.8.6 or refs/heads/develop)
 1. Click on the `Run workflow` button
