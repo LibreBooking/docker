@@ -2,9 +2,10 @@
 
 set -ex
 
-DFT_LOG_FLR="/var/log/librebooking/log"
-DFT_LOG_LEVEL="debug"
-DFT_LOG_SQL=false
+# Constants
+readonly DFT_LOG_FLR="/var/log/librebooking/log"
+readonly DFT_LOG_LEVEL="debug"
+readonly DFT_LOG_SQL=false
 
 file_env() {
   local var="$1"
@@ -26,58 +27,40 @@ file_env() {
   unset "$fileVar"
 }
 
-install() {
+# Exit if incompatible mount (images prior to V2)
+if [ -n "$(mount | grep /var/www/html)" ]; then
+  echo "The volume must be mapped to container directory /config" >2
+  exit 1
+fi
 
-  # Clean directory
-  rm -rf /var/www/html/*
+# Initialize variables
+file_env LB_INSTALL_PWD
+file_env LB_DB_USER_PWD
 
-  # Copy librebooking application
-  cp -r /usr/src/lb/* /var/www/html/
+LB_LOG_FOLDER=${LB_LOG_FOLDER:-${DFT_LOG_FLR}}
+LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
+LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
 
-  # Install and run composer
-  if ! test -f /var/www/html/composer-setup.php; then
-    pushd /var/www/html
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
-    php -r "if (hash_file('sha384', 'composer-setup.php') === '55ce33d7678c5a611085589f1f3ddf8b3c52d662cd01d4ba75c0ee0459970c2200a51f492d557530c71c15d8dba01eae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
-    php composer-setup.php
-    php -r "unlink('composer-setup.php');"
-    php composer.phar install --ignore-platform-req=ext-gd
-    popd
+# If volume was used with images older than v2, then archive useless files
+pushd /config
+if [ -d Web ]; then
+  mkdir archive
+  chown www-data:www-data archive
+  mv $(ls --ignore=archive) archive
+  if [ -f archive/config/config.php ]; then
+    cp archive/config/config.php config.php
+    chown www-data:www-data config.php
   fi
-}
+fi
+popd
 
-# First-time volume initialization
-if ! test -d /var/www/html/config; then
-  echo "First-time initialization"
-
-  # Install application
-  install
-
-  # Fixes
-  ## File create-user.sql
+# No configuration file inside the volume
+if ! [ -f /config/config.php ]; then
+  echo "Initialize file config.php"
+  cp /var/www/html/config/config.dist.php /config/config.php
+  chown www-data:www-data /config/config.php
   sed \
-    -i /var/www/html/database_schema/create-user.sql \
-    -e "s:^DROP USER ':DROP USER IF EXISTS ':g" \
-    -e "s:booked_user:schedule_user:g" \
-    -e "s:localhost:%:g"
-
-  ## Missing directory tpl_c
-  if ! test -d /var/www/html/tpl_c; then
-    mkdir /var/www/html/tpl_c
-    chown www-data:www-data /var/www/html/tpl_c
-  fi
-
-  # Set initial configuration
-  file_env LB_INSTALL_PWD
-  file_env LB_DB_USER_PWD
-
-  LB_LOG_FOLDER=${LB_LOG_FOLDER:-${DFT_LOG_FLR}}
-  LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
-  LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
-
-  cp /var/www/html/config/config.dist.php /var/www/html/config/config.php
-  sed \
-    -i /var/www/html/config/config.php \
+    -i /config/config.php \
     -e "s:\(\['registration.captcha.enabled'\]\) = 'true':\1 = 'false':" \
     -e "s:\(\['database'\]\['user'\]\) = '.*':\1 = '${LB_DB_USER}':" \
     -e "s:\(\['database'\]\['password'\]\) = '.*':\1 = '${LB_DB_USER_PWD}':" \
@@ -88,62 +71,37 @@ if ! test -d /var/www/html/config; then
     -e "s:\(\['logging'\]\['folder'\]\) = '/var/log/librebooking/log':\1 = '${LB_LOG_FOLDER}':" \
     -e "s:\(\['logging'\]\['level'\]\) = 'debug':\1 = '${LB_LOG_LEVEL}':" \
     -e "s:\(\['logging'\]\['sql'\]\) = 'false':\1 = '${LB_LOG_SQL}':"
-
-  # Change ownership
-  chown -R www-data:www-data /var/www/html
 fi
 
-# Upgrade invocation
-if test "${1}" = "upgrade"; then
+# Link the configuration file
+ln -s /config/config.php /var/www/html/config/config.php
 
-  ## Backup existing config.php
-  cp /var/www/html/config/config.php /tmp/config.php
+# Set timezone
+if test -f /usr/share/zoneinfo/${TZ}; then
+  ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
-  ## Install application
-  install
-
-  ## Restore original config.php
-  mv /tmp/config.php /var/www/html/config/config.php
-
-  ## Change ownership
-  chown -R www-data:www-data /var/www/html
-
-else
-# Not an upgrade invocation
-
-  ## Set timezone
-  if test -f /usr/share/zoneinfo/${TZ}; then
-    ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
-
-    INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
-    echo "[date]" > ${INI_FILE}
-    echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
-    echo "" >> ${INI_FILE}
-    echo "extension=timezonedb.so" >> ${INI_FILE}
-  fi
-
-  ## Get log directory
-  log_flr=$(grep \
-    -e "\['logging'\]\['folder'\]" \
-    /var/www/html/config/config.php \
-    | cut -d " " -f3 | cut -d "'" -f2)
-  log_flr=${log_flr:-${DFT_LOG_FLR}}
-
-  ## Missing log directory
-  if ! test -d "${log_flr}"; then
-    mkdir -p "${log_flr}"
-    chown -R www-data:www-data "${log_flr}"
-  fi
-
-  ## Missing log file
-  if ! test -f "${log_flr}/app.log"; then
-    touch "${log_flr}/app.log"
-    chown www-data:www-data "${log_flr}/app.log"
-  fi
-
-  ## Workaround for configure.php
-  touch /app.log
-  chown www-data:www-data /app.log
-
-  exec "$@"
+  INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
+  echo "[date]" > ${INI_FILE}
+  echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
 fi
+
+# Get log directory
+log_flr=$(grep \
+  -e "\['logging'\]\['folder'\]" \
+  /var/www/html/config/config.php \
+  | cut -d " " -f3 | cut -d "'" -f2)
+log_flr=${log_flr:-${DFT_LOG_FLR}}
+
+# Missing log directory
+if ! test -d "${log_flr}"; then
+  mkdir -p "${log_flr}"
+  chown -R www-data:www-data "${log_flr}"
+fi
+
+# Missing log file
+if ! test -f "${log_flr}/app.log"; then
+  touch "${log_flr}/app.log"
+  chown www-data:www-data "${log_flr}/app.log"
+fi
+
+exec "$@"
