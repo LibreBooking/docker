@@ -58,7 +58,7 @@ jobs:
         run: |
           APP_TAG=$(basename ${{ inputs.app-gh-ref }})
           ACT_TAG=$(basename ${{ github.ref }})
-          if [ ${APP_TAG} < "2.8.6" ]; then 
+          if [ "${APP_TAG}" \< "2.8.6" ]; then 
             PHP_VERSION="7"
           else
             PHP_VERSION="8"
