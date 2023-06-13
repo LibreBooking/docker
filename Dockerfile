@@ -1,4 +1,5 @@
-FROM php:7-apache
+ARG  PHP_VERSION
+FROM php:${PHP_VERSION}-apache
 
 # Install composer
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer

@@ -6,19 +6,33 @@ on:
       app-gh-ref:
         required: true
         type: string
+        default: 'refs/heads/develop'
+      reg_name:
+        required: true
+        type: string
+        default: 'docker.io'
+      reg_login:
+        required: true
+        type: string
+        default: 'librebooking'
   workflow_dispatch:
     inputs:
       app-gh-ref:
         required: true
         description: 'Application github reference'
         default: 'refs/heads/develop'
+      reg_name:
+        required: true
+        description: 'Registry name'
+        default: 'docker.io'
+      reg_login:
+        required: true
+        description: 'Registry login'
+        default: 'librebooking'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      REG_NAME: docker.io
-      REG_LOGIN: librebooking
     steps:
       -
         name: Checkout github repository
@@ -35,15 +49,23 @@ jobs:
         name: Log into registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REG_NAME }}
-          username: ${{ env.REG_LOGIN }}
+          registry: ${{ inputs.reg_name }}
+          username: ${{ inputs.reg_login }}
           password: ${{ secrets.REGISTRY_TOKEN }}
       -
-        name: Get the docker image metadate
+        name: Get the docker image metadata
         id: get_meta
         run: |
-          echo "APP_TAG=$(basename ${{ inputs.app-gh-ref }})" >> "$GITHUB_OUTPUT"
-          echo "ACT_TAG=$(basename ${{ github.ref }})" >> "$GITHUB_OUTPUT"
+          APP_TAG=$(basename ${{ inputs.app-gh-ref }})
+          ACT_TAG=$(basename ${{ github.ref }})
+          if [ "${APP_TAG}" \< "2.8.6" ]; then 
+            PHP_VERSION="7"
+          else
+            PHP_VERSION="8"
+          fi
+          echo "APP_TAG=${APP_TAG}" >> "$GITHUB_OUTPUT"
+          echo "ACT_TAG=${ACT_TAG}" >> "$GITHUB_OUTPUT"
+          echo "PHP_VERSION=${PHP_VERSION}" >> "$GITHUB_OUTPUT"
       -
         name: Set the docker image metadata
         id: set_meta
@@ -61,6 +83,7 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           build-args: |
+            PHP_VERSION=${{ steps.get_meta.outputs.PHP_VERSION }}
             APP_GH_REF=${{ inputs.app-gh-ref }}
           tags: ${{ steps.set_meta.outputs.tags }}
           push: true
