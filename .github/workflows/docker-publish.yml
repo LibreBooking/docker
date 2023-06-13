@@ -6,19 +6,33 @@ on:
       app-gh-ref:
         required: true
         type: string
+        default: 'refs/heads/develop'
+      reg_name:
+        required: true
+        type: string
+        default: 'docker.io'
+      reg_login:
+        required: true
+        type: string
+        default: 'librebooking'
   workflow_dispatch:
     inputs:
       app-gh-ref:
         required: true
         description: 'Application github reference'
         default: 'refs/heads/develop'
+      reg_name:
+        required: true
+        description: 'Registry name'
+        default: 'docker.io'
+      reg_login:
+        required: true
+        description: 'Registry login'
+        default: 'librebooking'
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      REG_NAME: docker.io
-      REG_LOGIN: librebooking
     steps:
       -
         name: Checkout github repository
@@ -35,8 +49,8 @@ jobs:
         name: Log into registry
         uses: docker/login-action@v2
         with:
-          registry: ${{ env.REG_NAME }}
-          username: ${{ env.REG_LOGIN }}
+          registry: ${{ inputs.reg_name }}
+          username: ${{ inputs.reg_login }}
           password: ${{ secrets.REGISTRY_TOKEN }}
       -
         name: Get the docker image metadata
