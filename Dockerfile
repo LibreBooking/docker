@@ -67,4 +67,3 @@ RUN  chmod +x /usr/local/bin/entrypoint.sh
 VOLUME /config
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]
-
