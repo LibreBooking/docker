@@ -1,0 +1,48 @@
+networks:
+  librebooking:
+
+services:
+
+  mariadb:
+    image: mariadb
+    restart: always
+    ports:
+      - 3306:3306
+    #volumes:
+    #  - /var/lib/mysql:/var/lib/mysql
+    environment:
+      - MARIADB_DATABASE=$LB_DB_NAME
+      - MARIADB_USER=$LB_DB_USER
+      - MARIADB_PASSWORD=$LB_DB_USER_PWD
+      - MARIADB_ROOT_PASSWORD=$LB_DB_ROOT_PASSWORD
+    networks:
+      - librebooking
+
+
+  lb:
+    image: librebooking/librebooking:$TAG 
+    build: 
+      context: .
+      args: 
+        PHP_VERSION: 8.1
+        APP_GH_REF: $TAG
+    volumes:
+      - ./config:/config
+      - ./log/:/var/log/librebooking/log
+    #user: 1000:1001  # Use your own UID:GID for development. In production, remove this line.
+    #restart: always
+    depends_on:
+      - mariadb
+    ports:
+      - 8080:80
+    environment:
+      - LB_DB_NAME=$LB_DB_NAME
+      - LB_DB_USER=$LB_DB_USER      
+      - LB_DB_USER_PWD=$LB_DB_USER_PWD
+      - LB_DB_HOST=mariadb
+      - LB_ENV=dev  # In production, remove this line
+      - LB_LOG_LEVEL=debug
+      - LB_INSTALL_PWD=$LB_INSTALL_PWD
+    networks:
+      - librebooking
+  

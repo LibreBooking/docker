@@ -73,8 +73,10 @@ if ! [ -f /config/config.php ]; then
     -e "s:\(\['logging'\]\['sql'\]\) = 'false':\1 = '${LB_LOG_SQL}':"
 fi
 
-# Link the configuration file
-ln -s /config/config.php /var/www/html/config/config.php
+if ! [ -f /var/www/html/config/config.php ]; then
+    # Link the configuration file
+    ln -s /config/config.php /var/www/html/config/config.php
+fi
 
 # Set timezone
 if test -f /usr/share/zoneinfo/${TZ}; then
