@@ -74,7 +74,9 @@ if ! [ -f /config/config.php ]; then
 fi
 
 # Link the configuration file
-ln -s /config/config.php /var/www/html/config/config.php
+if ! [ -f /var/www/html/config/config.php ]; then
+  ln -s /config/config.php /var/www/html/config/config.php
+fi
 
 # Set timezone
 if test -f /usr/share/zoneinfo/${TZ}; then
