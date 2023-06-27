@@ -6,6 +6,7 @@ set -ex
 readonly DFT_LOG_FLR="/var/log/librebooking/log"
 readonly DFT_LOG_LEVEL="debug"
 readonly DFT_LOG_SQL=false
+readonly DFT_LB_ENV="production"
 
 file_env() {
   local var="$1"
@@ -40,6 +41,7 @@ file_env LB_DB_USER_PWD
 LB_LOG_FOLDER=${LB_LOG_FOLDER:-${DFT_LOG_FLR}}
 LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
 LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
+LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
 
 # If volume was used with images older than v2, then archive useless files
 pushd /config
@@ -57,7 +59,11 @@ popd
 # No configuration file inside the volume
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"
-  cp /var/www/html/config/config.dist.php /config/config.php
+  if [ "${LB_ENV}" = "dev" ]; then
+    cp /var/www/html/config/config.devel.php /config/config.php
+  else
+    cp /var/www/html/config/config.dist.php /config/config.php
+  fi
   chown www-data:www-data /config/config.php
   sed \
     -i /config/config.php \
