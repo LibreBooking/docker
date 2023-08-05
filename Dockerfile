@@ -20,6 +20,7 @@ RUN set -ex; \
 RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     a2enmod rewrite; \
+    a2enmod headers; \
     docker-php-ext-install -j$(nproc) mysqli; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb
