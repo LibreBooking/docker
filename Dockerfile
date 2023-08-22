@@ -8,11 +8,12 @@ COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 ARG APP_GH_REF
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update debian packages
+# Update and install required debian packages
 RUN set -ex; \
     apt-get update; \
     apt-get upgrade --yes; \
     apt-get install --yes --no-install-recommends git unzip; \
+    apt-get install --yes libpng-dev libjpeg-dev; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
@@ -21,6 +22,8 @@ RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     a2enmod rewrite; \
     a2enmod headers; \
+    docker-php-ext-configure gd --with-jpeg; \
+    docker-php-ext-install -j$(nproc) gd; \
     docker-php-ext-install -j$(nproc) mysqli; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb
