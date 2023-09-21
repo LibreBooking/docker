@@ -29,7 +29,7 @@ RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     a2enmod rewrite; \
     a2enmod headers; \
-    install-php-extensions mysqli gd; \
+    install-php-extensions mysqli gd ldap; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb
 
