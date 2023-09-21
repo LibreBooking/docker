@@ -1,6 +1,10 @@
 ARG  PHP_VERSION
 FROM php:${PHP_VERSION}-apache
 
+# Copy the entrypoint program
+COPY entrypoint.sh /usr/local/bin/ 
+RUN  chmod +x /usr/local/bin/entrypoint.sh
+
 # Install composer
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
@@ -55,10 +59,6 @@ RUN set -ex; \
     touch /app.log; \
     chown www-data:www-data /app.log; \
     mkdir /config
-
-# Copy the entrypoint program
-COPY entrypoint.sh /usr/local/bin/ 
-RUN  chmod +x /usr/local/bin/entrypoint.sh
 
 # Declarations
 VOLUME /config
