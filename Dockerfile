@@ -56,14 +56,6 @@ RUN set -ex; \
     chown www-data:www-data /app.log; \
     mkdir /config
 
-# Labels
-LABEL org.opencontainers.image.title="LibreBooking"
-LABEL org.opencontainers.image.description="LibreBooking as a container"
-LABEL org.opencontainers.image.url="https://github.com/librebooking/docker"
-LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
-LABEL org.opencontainers.image.licenses="GPL-3.0"
-LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
-
 # Copy the entrypoint program
 COPY entrypoint.sh /usr/local/bin/ 
 RUN  chmod +x /usr/local/bin/entrypoint.sh
@@ -72,3 +64,11 @@ RUN  chmod +x /usr/local/bin/entrypoint.sh
 VOLUME /config
 ENTRYPOINT ["entrypoint.sh"]
 CMD ["apache2-foreground"]
+
+# Labels
+LABEL org.opencontainers.image.title="LibreBooking"
+LABEL org.opencontainers.image.description="LibreBooking as a container"
+LABEL org.opencontainers.image.url="https://github.com/librebooking/docker"
+LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
+LABEL org.opencontainers.image.licenses="GPL-3.0"
+LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
