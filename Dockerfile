@@ -4,6 +4,10 @@ FROM php:${PHP_VERSION}-apache
 # Install composer
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
+# Add command install-php-extensions
+ADD https://github.com/mlocati/docker-php-extension-installer/releases/latest/download/install-php-extensions /usr/local/bin/
+RUN chmod +x /usr/local/bin/install-php-extensions
+
 # Customize
 ARG APP_GH_REF
 ENV DEBIAN_FRONTEND=noninteractive
@@ -13,7 +17,6 @@ RUN set -ex; \
     apt-get update; \
     apt-get upgrade --yes; \
     apt-get install --yes --no-install-recommends git unzip; \
-    apt-get install --yes libpng-dev libjpeg-dev; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
@@ -22,9 +25,7 @@ RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     a2enmod rewrite; \
     a2enmod headers; \
-    docker-php-ext-configure gd --with-jpeg; \
-    docker-php-ext-install -j$(nproc) gd; \
-    docker-php-ext-install -j$(nproc) mysqli; \
+    install-php-extensions mysqli gd; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb
 
