@@ -84,6 +84,14 @@ if ! [ -f /var/www/html/config/config.php ]; then
   ln -s /config/config.php /var/www/html/config/config.php
 fi
 
+# Create the plugins configuration file inside the volume
+for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
+  target=$(echo "${source}" | sed -e "s/.dist//")
+  cp --no-clobber "${source}" "/config/$(basename ${target})"
+  chown www-data:www-data "/config/$(basename ${target})"
+  ln -s "/config/$(basename ${target})" "${target}"
+done
+
 # Set timezone
 if test -f /usr/share/zoneinfo/${TZ}; then
   ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
