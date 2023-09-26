@@ -90,6 +90,8 @@ for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
   if ! [ -f "/config/$(basename ${target})" ]; then
     cp --no-clobber "${source}" "/config/$(basename ${target})"
     chown www-data:www-data "/config/$(basename ${target})"
+  fi
+  if ! [ -f ${target} ]; then
     ln -s "/config/$(basename ${target})" "${target}"
   fi
 done
