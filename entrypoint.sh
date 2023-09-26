@@ -87,9 +87,11 @@ fi
 # Create the plugins configuration file inside the volume
 for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
   target=$(echo "${source}" | sed -e "s/.dist//")
-  cp --no-clobber "${source}" "/config/$(basename ${target})"
-  chown www-data:www-data "/config/$(basename ${target})"
-  ln -s "/config/$(basename ${target})" "${target}"
+  if ! [ -f "/config/$(basename ${target})" ]; then
+    cp --no-clobber "${source}" "/config/$(basename ${target})"
+    chown www-data:www-data "/config/$(basename ${target})"
+    ln -s "/config/$(basename ${target})" "${target}"
+  fi
 done
 
 # Set timezone
