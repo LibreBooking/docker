@@ -13,23 +13,28 @@ Version 1 of the docker images exposed the container directory `/var/www/html`. 
 - Longer container startup time
 
 From version 2, the docker images expose the container directory `/config`. This implies:
-- To store the application configuration file `config.php` only
+- To store the application configuration files only
 - A simple upgrade procedure
 - A faster container startup time
 
 Docker images are tagged as follows:
 
-librebooking/librebooking:\<*application-version*\>-\<**docker-image-version**\>
+librebooking/librebooking:\<*application-version*\>-\<**image-version**\>
 
 Examples:
-- image v1: librebooking/librebooking:2.8.6-`1.2.3`
-- image v2: librebooking/librebooking:2.8.6-`2.0`
+- image v1: librebooking/librebooking:2.8.5.5-`1.2.3`
+- image v2: librebooking/librebooking:2.8.5.5-`2.3.2`
 
-To upgrade from a version-1 docker image to a version-2 docker image, you just need to:
-1. Replace the v1-docker image with the corresponding v2
-1. Change the mapping from /var/www/html to `/config`
+To upgrade from a version-1 docker image to a version-2 docker image, you need to:
+1. Stop your running librebooking-V1 instance
+1. Edit your `docker-compose.yml` file to replace the:
+   1. v1-docker image with the corresponding v2
+	 1. container mapped folder `/var/www/html` with `/config`
+1. Start your librebooking-V2 instance
 
-On first run, all the application files will be moved to the folder `/config/archive` on your host docker volume/host local directory and the file `config.php` will be moved to `/config` on your host docker volume/host local directory. You can delete the `config/archive` folder later on.
+On first run:
+- The former content of your librebooking volume will be moved to the folder `archive`
+- The librebooking configuration files will be copied under the root of the librebooking volume and linked to the application container folder
 
 # Table of contents
 1. [Get or build the docker image](BUILD.md)
