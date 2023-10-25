@@ -29,7 +29,7 @@ To upgrade from a version-1 docker image to a version-2 docker image, you need t
 1. Stop your running librebooking-V1 instance
 1. Edit your `docker-compose.yml` file to replace the:
    1. v1-docker image with the corresponding v2
-	 1. container mapped folder `/var/www/html` with `/config`
+   2. container mapped folder `/var/www/html` with `/config`
 1. Start your librebooking-V2 instance
 
 On first run:
