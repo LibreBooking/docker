@@ -1,9 +1,9 @@
 ARG  PHP_VERSION
 FROM php:${PHP_VERSION}-apache
 
-# Copy the entrypoint program
-COPY entrypoint.sh /usr/local/bin/ 
+COPY entrypoint.sh /usr/local/bin/
 RUN  chmod +x /usr/local/bin/entrypoint.sh
+COPY security.conf /etc/apache2/conf-available/security.conf
 
 # Install composer
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
@@ -30,7 +30,7 @@ RUN set -ex; \
     docker-php-ext-configure gd --with-jpeg; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
-    docker-php-ext-enable timezonedb
+    docker-php-ext-enable timezonedb;
 
 # Get application and customize
 USER www-data
