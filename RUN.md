@@ -54,7 +54,7 @@ docker run \
   --env LB_DB_USER=lb_user \
   --env LB_DB_USER_PWD=your_Mariadb_user_password \
   --env LB_ENV=dev \
-  librebooking/librebooking:develop-2.2.0
+  librebooking/librebooking:develop
 ```
 
 ## Development environment: using docker compose
@@ -82,7 +82,7 @@ services:
       - MYSQL_USER=lb_user
       - MYSQL_PASSWORD=your_Mariadb_user_password
   app:
-    image: librebooking/librebooking:develop-2.2.0
+    image: librebooking/librebooking:develop
     container_name: librebooking
     restart: always
     depends_on:
@@ -174,7 +174,7 @@ services:
       - db_root_pwd
       - db_user_pwd
   app:
-    image: librebooking/librebooking:2.8.6-2.2.0
+    image: librebooking/librebooking:2.8.6.1
     container_name: librebooking
     restart: always
     depends_on:
