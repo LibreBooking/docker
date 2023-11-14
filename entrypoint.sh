@@ -56,7 +56,7 @@ if [ -d Web ]; then
 fi
 popd
 
-# No configuration file inside the volume
+# No configuration file inside directory /config
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"
   if [ "${LB_ENV}" = "dev" ]; then
@@ -70,19 +70,23 @@ if ! [ -f /config/config.php ]; then
     -e "s:\(\['registration.captcha.enabled'\]\) = 'true':\1 = 'false':" \
     -e "s:\(\['database'\]\['user'\]\) = '.*':\1 = '${LB_DB_USER}':" \
     -e "s:\(\['database'\]\['password'\]\) = '.*':\1 = '${LB_DB_USER_PWD}':" \
-    -e "s:\(\['database'\]\['hostspec'\]\) = '127.0.0.1':\1 = '${LB_DB_HOST}':" \
-    -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DB_NAME}':" \
-    -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PWD}':" \
-    -e "s:\(\['default.timezone'\]\) = '.*':\1 = '${TZ}':" \
-    -e "s:\(\['logging'\]\['folder'\]\) = '/var/log/librebooking/log':\1 = '${LB_LOG_FOLDER}':" \
-    -e "s:\(\['logging'\]\['level'\]\) = 'debug':\1 = '${LB_LOG_LEVEL}':" \
-    -e "s:\(\['logging'\]\['sql'\]\) = 'false':\1 = '${LB_LOG_SQL}':"
+    -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DB_NAME}':"
 fi
 
 # Link the configuration file
 if ! [ -f /var/www/html/config/config.php ]; then
   ln -s /config/config.php /var/www/html/config/config.php
 fi
+
+# Set secondary configuration settings
+sed \
+  -i /config/config.php \
+  -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PWD}':" \
+  -e "s:\(\['default.timezone'\]\) = '.*':\1 = '${TZ}':" \
+  -e "s:\(\['database'\]\['hostspec'\]\) = '.*':\1 = '${LB_DB_HOST}':" \
+  -e "s:\(\['logging'\]\['folder'\]\) = '.*':\1 = '${LB_LOG_FOLDER}':" \
+  -e "s:\(\['logging'\]\['level'\]\) = '.*':\1 = '${LB_LOG_LEVEL}':" \
+  -e "s:\(\['logging'\]\['sql'\]\) = '.*':\1 = '${LB_LOG_SQL}':"
 
 # Create the plugins configuration file inside the volume
 for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
