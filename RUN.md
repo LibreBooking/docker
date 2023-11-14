@@ -23,13 +23,13 @@ This simple setup is meant for testing the application within your private netwo
 Run the following commands:
 ```
 # Create the container network
-docker network create magnolias
+docker network create mynet
 
 # Run the database
 docker run \
   --name librebooking-db \
   --detach \
-  --network magnolias \
+  --network mynet \
   --volume librebooking-db:/config \
   --env PUID=1000 \
   --env PGID=1000 \
@@ -44,16 +44,19 @@ docker run \
 docker run \
   --name librebooking \
   --detach \
-  --network magnolias \
+  --network mynet \
   --publish 80:80 \
   --volume librebooking-conf:/config \
-  --env TZ=Europe/Zurich \
-  --env LB_DB_HOST=librebooking-db \
   --env LB_DB_NAME=librebooking \
-  --env LB_INSTALL_PWD=your_Librebooking_installation_password \
   --env LB_DB_USER=lb_user \
   --env LB_DB_USER_PWD=your_Mariadb_user_password \
+  --env LB_DB_HOST=librebooking-db \
+  --env LB_INSTALL_PWD=your_Librebooking_installation_password \
   --env LB_ENV=dev \
+  --env LB_LOG_FOLDER=/var/log/librebooking \
+  --env LB_LOG_LEVEL=debug \
+  --env LB_LOG_SQL=false \
+  --env TZ=Europe/Zurich \
   librebooking/librebooking:develop
 ```
 
@@ -70,7 +73,7 @@ services:
     container_name: librebooking-db
     restart: always
     networks:
-      - net
+      - mynet
     volumes:
       - vol-db:/config
     environment:
@@ -88,19 +91,22 @@ services:
     depends_on:
       - db
     networks:
-      - net
+      - mynet
     ports:
       - "80:80"
     volumes:
       - vol-app:/config
     environment: 
-      - TZ=Europe/Zurich
-      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
-      - LB_INSTALL_PWD=your_Librebooking_installation_password
       - LB_DB_USER=lb_user
       - LB_DB_USER_PWD=your_Mariadb_user_password
+      - LB_DB_HOST=db
+      - LB_INSTALL_PWD=your_Librebooking_installation_password
       - LB_ENV=dev
+      - LB_LOG_FOLDER=/var/log/librebooking
+      - LB_LOG_LEVEL=debug
+      - LB_LOG_SQL=false
+      - TZ=Europe/Zurich
 
 volumes:
   vol-db:
@@ -109,8 +115,7 @@ volumes:
     name: librebooking_conf
 
 networks:
-  net:
-    name: librebooking
+  mynet:
 ```
 
 Start the application with the following command:
@@ -134,7 +139,7 @@ services:
     container_name: traefik
     restart: always
     networks:
-      net:
+      mynet:
     ports:
       - 80:80
       - 443:443
@@ -159,7 +164,7 @@ services:
       - proxy
       - acme
     networks:
-      - net
+      - mynet
     volumes:
       - vol-db:/config
     environment:
@@ -180,17 +185,21 @@ services:
     depends_on:
       - db
     networks:
-      - net
+      - mynet
     volumes:
       - vol-app:/config
     environment: 
-      - TZ=Europe/Zurich
-      - LB_DB_HOST=db
       - LB_DB_NAME=librebooking
       - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
       - LB_DB_USER=lb_user
       - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
+      - LB_DB_HOST=db
       - LB_ENV=production
+      - LB_LOG_FOLDER=/var/log/librebooking
+      - LB_LOG_LEVEL=error
+      - LB_LOG_SQL=false
+      - TZ=Europe/Zurich
+
     secrets:
       - lb_install_pwd
       - lb_user_pwd
@@ -209,8 +218,7 @@ volumes:
     name: librebooking_conf
 
 networks:
-  net:
-    name: librebooking
+  mynet:
 
 secrets:
   db_root_pwd:
