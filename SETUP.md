@@ -20,39 +20,26 @@
 ## Upgrade from a previous application version
 1. Stop the service
    ```
-   sudo docker-compose down
+   docker-compose down
    ```
-1. Change the `docker-compose.yml` file
-   ```
-   V_OLD=2.8.5.5
-   V_NEW=2.8.6
-   sed \
-     -i docker-compose.yml \
-     -e "s/librebooking:${V_OLD}/librebooking:${V_NEW}/g" 
-   ```
+1. Change the image name inside your `docker-compose.yml` file
 1. Restart the service
    ```
-   sudo docker-compose up --detach
+   docker-compose up --detach
    ```
 1. Upgrade the application database by pointing your web browser to `http://<YOUR_HOST>/Web/install/configure.php`
 
 ## Upgrade to docker-image v2 from docker-image v1
 1. Stop the service
    ```
-   sudo docker-compose down
+   docker-compose down
    ```
-1. Change the `docker-compose.yml` file
-   ```
-   sed \
-     -i docker-compose.yml \
-     -e "s|\(librebooking/librebooking:.*\)-1.*|\1-2.0|g" \
-     -e "s|/var/www/html|/config|g" 
-   ```
+1. Change the image name inside your `docker-compose.yml` file
 1. Restart the service
    ```
-   sudo docker-compose up --detach
+   docker-compose up --detach
    ```
 1. If you didn't customize the `/var/www/html` directory, you can delete the /config/archive folder at your convenience
    ```
-   sudo docker exec -t librebooking bash -c 'rm -rf /config/archive'
-      ```
+   docker exec librebooking bash -c 'rm -rf /config/archive'
+   ```

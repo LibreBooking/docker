@@ -2,18 +2,18 @@ You have 2 ways to get the docker image on your host:
 1. Getting the image from the docker's hub
 1. Building the image yourself
 
-# How to get the image from the docker's hub
+# Getting the image from the docker's hub
 
 This is the easiest and fastest way.
 ```
 # Stable release
-sudo docker image pull librebooking/librebooking:2.8.6
+docker image pull librebooking/librebooking:2.8.6.1
 
 # Development branch
-sudo docker image pull librebooking/librebooking:develop
+docker image pull librebooking/librebooking:develop
 ```
 
-# How to build the image
+# Building the image
 
 You have 3 ways to build the docker image.
 
@@ -32,20 +32,20 @@ git clone https://github.com/librebooking/docker.git
 
 Run the following commands on your host:
    ```
-   # Stable release
-   LB_RELEASE=2.8.6
-   APP_GH_REF=refs/tags/${LB_RELEASE}
-   sudo docker build \
-     --tag librebooking/librebooking:${LB_RELEASE} \
-     --build-arg APP_GH_REF=${APP_GH_REF} \
-     .
-
-   # Development branch
+   # Set the application release (ex: develop or 2.8.6.1)
    LB_RELEASE=develop
-   APP_GH_REF=refs/heads/${LB_RELEASE}
-   sudo docker build \
-     --tag librebooking/librebooking:${LB_RELEASE} \
+   if [ "${LB_RELEASE}" == "develop" ]; then
+     APP_GH_REF="refs/heads/${LB_RELEASE}"
+   else
+     APP_GH_REF="refs/tags/${LB_RELEASE}"
+   fi
+
+   # Build the docker image
+   docker buildx build \
+     --build-arg PHP_VERSION=8 \
      --build-arg APP_GH_REF=${APP_GH_REF} \
+     --tag librebooking/librebooking:${LB_RELEASE} \
+     --output type=docker \
      .
    ```
 
@@ -59,28 +59,25 @@ Run the following commands on your host:
 
 Run the following commands on your host:
    ```
-   # Stable release
-   LB_RELEASE=2.8.6
-   APP_GH_REF=refs/tags/${LB_RELEASE}
-   REGISTRY_USER=your_registry_user
-   sudo docker login --username ${REGISTRY_USER}
-   sudo docker run --privileged tonistiigi/binfmt -install all
-   sudo docker buildx build \
-     --tag ${REGISTRY_USER}/librebooking:${LB_RELEASE} \
-     --build-arg APP_GH_REF=${APP_GH_REF} \
-     --output type=registry \
-     --platform=linux/amd64,linux/arm64,linux/arm/v7  \
-     .
-
-   # Development branch
+   # Set the application release (ex: develop or 2.8.6.1)
    LB_RELEASE=develop
-   APP_GH_REF=refs/heads/${LB_RELEASE}
-   REGISTRY_USER=your_registry_user
-   sudo docker login --username ${REGISTRY_USER}
-   sudo docker run --privileged tonistiigi/binfmt -install all
-   sudo docker buildx build \
-     --tag ${REGISTRY_USER}/librebooking:${LB_RELEASE} \
+   if [ "${LB_RELEASE}" == "develop" ]; then
+     APP_GH_REF="refs/heads/${LB_RELEASE}"
+   else
+     APP_GH_REF="refs/tags/${LB_RELEASE}"
+   fi
+
+   # Log to the docker hub
+   docker login --username <your_docker_hub_profile>
+
+   # Setup the QEMU emulation for foreign architectures
+   docker run --privileged tonistiigi/binfmt -install all
+
+   # Build the docker image
+   docker buildx build \
+     --build-arg PHP_VERSION=8 \
      --build-arg APP_GH_REF=${APP_GH_REF} \
+     --tag ${REGISTRY_USER}/librebooking:${LB_RELEASE} \
      --output type=registry \
      --platform=linux/amd64,linux/arm64,linux/arm/v7  \
      .
