@@ -12,8 +12,8 @@ Environment variables are used on first invocation of the container (when the fi
 | `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | ['settings']['database']['password'] |
 | `LB_INSTALL_PWD` | - | installPWD | **Yes** | ['settings']['install.password'] |
 | `TZ` | - | Europe/Zurich | **Yes** | ['settings']['default.timezone'] |
-| `LB_LOG_FOLDER` | /var/log/librebooking/log | | **No** | ['settings']['logging']['folder'] |
-| `LB_LOG_LEVEL` | debug | none | **No** | ['settings']['logging']['level'] |
+| `LB_LOG_FOLDER` | /var/log/librebooking | | **No** | ['settings']['logging']['folder'] |
+| `LB_LOG_LEVEL` | none | debug | **No** | ['settings']['logging']['level'] |
 | `LB_LOG_SQL` | false | true | **No** | ['settings']['logging']['sql'] |
 | `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
 

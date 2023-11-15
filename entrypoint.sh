@@ -3,8 +3,8 @@
 set -ex
 
 # Constants
-readonly DFT_LOG_FLR="/var/log/librebooking/log"
-readonly DFT_LOG_LEVEL="debug"
+readonly DFT_LOG_FLR="/var/log/librebooking"
+readonly DFT_LOG_LEVEL="none"
 readonly DFT_LOG_SQL=false
 readonly DFT_LB_ENV="production"
 
