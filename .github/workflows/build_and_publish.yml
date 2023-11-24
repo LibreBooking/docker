@@ -43,7 +43,7 @@ jobs:
         name: Get the docker image metadata
         id: get_meta
         run: |
-          appVersion=$(basename "$appGitRefs")
+          appVersion=$(basename ${{ inputs.appGitRefs }})
           echo "appVersion=$appVersion" >> $GITHUB_OUTPUT
           if [ "$appVersion" \< "2.8.6" ]; then 
             phpVersion="7"
