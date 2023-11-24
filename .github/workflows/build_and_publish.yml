@@ -48,7 +48,7 @@ jobs:
           if [ "$appVersion" \< "2.8.6" ]; then 
             phpVersion="7"
           else
-            PhpVersion="8"
+            phpVersion="8"
           fi
           echo "phpVersion=$phpVersion" >> $GITHUB_OUTPUT
       -
