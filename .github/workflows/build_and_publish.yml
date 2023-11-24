@@ -43,16 +43,14 @@ jobs:
         name: Get the docker image metadata
         id: get_meta
         run: |
-          echo "::debug::appGitRefs = ${appGitRefs}"
-          appVersion=$(basename "${appGitRefs}")
-          echo "::debug::appVersion = ${appVersion}"
-          echo "appVersion=${appVersion}" >> $GITHUB_OUTPUT
-          if [ "${appVersion}" \< "2.8.6" ]; then 
+          appVersion=$(basename "$appGitRefs")
+          echo "appVersion=$appVersion" >> $GITHUB_OUTPUT
+          if [ "$appVersion" \< "2.8.6" ]; then 
             phpVersion="7"
           else
             PhpVersion="8"
           fi
-          echo "phpVersion=${phpVersion}" >> $GITHUB_OUTPUT
+          echo "phpVersion=$phpVersion" >> $GITHUB_OUTPUT
       -
         name: Set the docker image metadata
         id: set_meta
