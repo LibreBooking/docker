@@ -1,0 +1,32 @@
+name: Build and publish docker images on request
+
+on:
+  workflow_dispatch:
+    inputs:
+      appGitRefs:
+        required: true
+        description: 'Application git reference'
+        default: 'refs/heads/develop'
+      imgBuild:
+        required: true
+        description: 'Image build'
+        default: '2.3.2'
+      regName:
+        required: true
+        description: 'Registry name'
+        default: 'docker.io'
+      regLogin:
+        required: true
+        description: 'Registry login'
+        default: 'librebooking'
+
+jobs:
+  call-builder:
+    uses: ./.github/workflows/build_and_publish.yml
+    with:
+      appGitRefs: ${{ inputs.appGitRefs }}
+      imgBuild: ${{ inputs.imgBuild }}
+      regName: ${{ inputs.regName }}
+      regLogin: ${{ inputs.regLogin }}
+    secrets:
+      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
