@@ -1,0 +1,16 @@
+name: Build and publish librebooking/librebooking:develop on schedule
+
+on:
+  schedule:
+    - cron: '0 1 * * 6'
+
+jobs:
+  call-builder:
+    uses: ./.github/workflows/build_and_publish.yml
+    with:
+      appGitRefs: refs/heads/develop
+      imgBuild: ${{ vars.IMAGE_BUILD }}
+      regName: ${{ vars.REGISTRY_URL }}
+      regLogin: ${{ vars.REGISTRY_LOGIN }}
+    secrets:
+      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
