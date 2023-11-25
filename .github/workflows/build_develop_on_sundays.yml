@@ -2,7 +2,7 @@ name: Build and publish librebooking/librebooking:develop on schedule
 
 on:
   schedule:
-    - cron: '0 11 * * 6'
+    - cron: '0 1 * * 6'
 
 jobs:
   call-builder:
