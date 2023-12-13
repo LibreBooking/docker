@@ -3,7 +3,6 @@ FROM php:${PHP_VERSION}-apache
 
 COPY entrypoint.sh /usr/local/bin/
 RUN  chmod +x /usr/local/bin/entrypoint.sh
-COPY security.conf /etc/apache2/conf-available/security.conf
 
 # Install composer
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
@@ -22,17 +21,25 @@ RUN set -ex; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-# Customize php environment
+# Customize apache and php settings
 RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
+    { \
+     echo 'RemoteIPHeader X-Real-IP'; \
+     echo 'RemoteIPInternalProxy 10.0.0.0/8'; \
+     echo 'RemoteIPInternalProxy 172.16.0.0/12'; \
+     echo 'RemoteIPInternalProxy 192.168.0.0/16'; \
+    } > /etc/apache2/conf-available/remoteip.conf; \
+    a2enconf remoteip; \
     a2enmod rewrite; \
     a2enmod headers; \
+    a2enmod remoteip; \
     docker-php-ext-configure gd --with-jpeg; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb;
 
-# Get application and customize
+# Get and customize librebooking
 USER www-data
 RUN set -ex; \
     curl \
