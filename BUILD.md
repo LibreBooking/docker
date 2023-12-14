@@ -70,8 +70,8 @@ Run the following commands on your host:
    # Log to the docker hub
    docker login --username <your_docker_hub_profile>
 
-   # Setup the QEMU emulation for foreign architectures
-   docker run --privileged tonistiigi/binfmt -install all
+   # If needed, create a docker-container based build instance
+   docker buildx create --driver docker-container --use
 
    # Build the docker image
    docker buildx build \
