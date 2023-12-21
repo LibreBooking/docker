@@ -162,7 +162,6 @@ services:
     restart: always
     depends_on:
       - proxy
-      - acme
     networks:
       - mynet
     volumes:
