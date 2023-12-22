@@ -134,7 +134,7 @@ Create a `docker-compose.yml` file from the following sample and adapt the value
 version: "3.7"
 
 services:
-  rproxy:
+  proxy:
     image: traefik:2.10
     container_name: traefik
     restart: always
@@ -162,7 +162,6 @@ services:
     restart: always
     depends_on:
       - proxy
-      - acme
     networks:
       - mynet
     volumes:
