@@ -1,3 +1,5 @@
+name: Build 1 container on workflow call
+
 on:
   workflow_call:
     inputs:
@@ -35,7 +37,7 @@ jobs:
         name: Setup QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          platforms: 'amd64,arm64,arm' 
+          platforms: 'amd64,arm64,arm'
       -
         name: Setup Docker buildx
         uses: docker/setup-buildx-action@v3
@@ -45,7 +47,7 @@ jobs:
         run: |
           appVersion=$(basename ${{ inputs.appGitRefs }})
           echo "appVersion=$appVersion" >> $GITHUB_OUTPUT
-          if [ "$appVersion" \< "2.8.6" ]; then 
+          if [ "$appVersion" \< "2.8.6" ]; then
             phpVersion="7"
           else
             phpVersion="8"
