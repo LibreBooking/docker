@@ -1,4 +1,4 @@
-name: Build 1 container on workflow call
+name: Build and publish a container image on workflow call
 
 on:
   workflow_call:
