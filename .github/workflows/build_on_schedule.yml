@@ -3,6 +3,7 @@ name: Build and publish develop and last release container images on schedule
 on:
   schedule:
     - cron: '0 1 * * 6'
+  workflow_dispatch:
 
 jobs:
   build-develop:
