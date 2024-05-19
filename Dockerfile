@@ -45,7 +45,7 @@ RUN set -ex; \
     curl \
       --fail \
       --silent \
-      --location https://github.com/LibreBooking/app/archive/${APP_GH_REF}.tar.gz \
+      --location https://api.github.com/repos/OWNER/REPO/tarball/${APP_GH_REF}/ \
     | tar --extract --gzip --directory=/var/www/html --strip-components=1; \
     if [ -f /var/www/html/composer.json ]; then \
       composer install --ignore-platform-req=ext-gd; \
