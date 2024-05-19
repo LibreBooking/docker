@@ -9,7 +9,7 @@ jobs:
   build-develop:
     uses: ./.github/workflows/build_and_publish.yml
     with:
-      appGitRefs: refs/heads/develop
+      appGitRefs: develop
       imgBuild: ${{ vars.IMAGE_BUILD }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
@@ -18,7 +18,7 @@ jobs:
   build-release:
     uses: ./.github/workflows/build_and_publish.yml
     with:
-      appGitRefs: refs/tags/${{ vars.APP_LAST_RELEASE }}
+      appGitRefs: ${{ vars.APP_LAST_RELEASE }}
       imgBuild: ${{ vars.IMAGE_BUILD }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
