@@ -5,12 +5,12 @@ on:
     inputs:
       appGitRefs:
         required: true
-        description: 'Application git reference'
-        default: 'refs/heads/develop'
+        description: 'Librebooking/app git reference'
+        default: 'develop'
       imgBuild:
         required: true
         description: 'Image build'
-        default: '2.3.2'
+        default: '2.4.0'
       regName:
         required: true
         description: 'Registry name'
