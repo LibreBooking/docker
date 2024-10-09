@@ -18,6 +18,7 @@ RUN set -ex; \
     apt-get install --yes --no-install-recommends git unzip; \
     apt-get install --yes --no-install-recommends libpng-dev libjpeg-dev; \
     apt-get install --yes --no-install-recommends libldap-dev; \
+    apt-get install --yes --no-install-recommends cron; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
@@ -65,6 +66,9 @@ RUN set -ex; \
     touch /app.log; \
     chown www-data:www-data /app.log; \
     mkdir /config
+
+ADD ./crontab /tmp/crontab
+RUN crontab -u www-data /tmp/crontab
 
 # Declarations
 VOLUME /config

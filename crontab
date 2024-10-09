@@ -1,0 +1,3 @@
+* * * * *    /usr/local/bin/php -f /var/www/html/Jobs/sendreminders.php
+* * * * *    /usr/local/bin/php -f /var/www/html/Jobs/sendwaitlist.php
+* * * * *    /usr/local/bin/php -f /var/www/html/Jobs/sessioncleanup.php

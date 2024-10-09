@@ -128,4 +128,6 @@ if ! test -f "${log_flr}/app.log"; then
   chown www-data:www-data "${log_flr}/app.log"
 fi
 
+service cron start
+
 exec "$@"
