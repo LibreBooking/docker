@@ -9,6 +9,7 @@ COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
 # Customize
 ARG APP_GH_REF
+ARG LB_HOMEPAGE
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Update and install required debian packages
@@ -25,10 +26,10 @@ RUN set -ex; \
 RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     { \
-     echo 'RemoteIPHeader X-Real-IP'; \
-     echo 'RemoteIPInternalProxy 10.0.0.0/8'; \
-     echo 'RemoteIPInternalProxy 172.16.0.0/12'; \
-     echo 'RemoteIPInternalProxy 192.168.0.0/16'; \
+    echo 'RemoteIPHeader X-Real-IP'; \
+    echo 'RemoteIPInternalProxy 10.0.0.0/8'; \
+    echo 'RemoteIPInternalProxy 172.16.0.0/12'; \
+    echo 'RemoteIPInternalProxy 192.168.0.0/16'; \
     } > /etc/apache2/conf-available/remoteip.conf; \
     a2enconf remoteip; \
     a2enmod rewrite; \
@@ -40,23 +41,23 @@ RUN set -ex; \
     docker-php-ext-enable timezonedb;
 
 # Get and customize librebooking
+COPY . /var/www/html/${LB_HOMEPAGE}
+RUN chown -R www-data:www-data /var/www/html/${LB_HOMEPAGE}
+RUN chmod -R 755 /var/www/html/${LB_HOMEPAGE}
+
 USER www-data
+
 RUN set -ex; \
-    curl \
-      --fail \
-      --silent \
-      --location https://api.github.com/repos/librebooking/app/tarball/${APP_GH_REF} \
-    | tar --extract --gzip --directory=/var/www/html --strip-components=1; \
-    if [ -f /var/www/html/composer.json ]; then \
-      composer install --ignore-platform-req=ext-gd; \
+    if [ -f /var/www/html/${LB_HOMEPAGE}/composer.json ]; then \
+    cd /var/www/html/${LB_HOMEPAGE} && composer install --ignore-platform-req=ext-gd; \
     fi; \
     sed \
-      -i /var/www/html/database_schema/create-user.sql \
-      -e "s:^DROP USER ':DROP USER IF EXISTS ':g" \
-      -e "s:booked_user:schedule_user:g" \
-      -e "s:localhost:%:g"; \
-    if ! [ -d /var/www/html/tpl_c ]; then \
-      mkdir /var/www/html/tpl_c; \
+    -i /var/www/html/${LB_HOMEPAGE}/database_schema/create-user.sql \
+    -e "s:^DROP USER ':DROP USER IF EXISTS ':g" \
+    -e "s:booked_user:schedule_user:g" \
+    -e "s:localhost:%:g"; \
+    if ! [ -d /var/www/html/${LB_HOMEPAGE}/tpl_c ]; then \
+    mkdir /var/www/html/${LB_HOMEPAGE}/tpl_c; \
     fi
 
 # Final customization
@@ -65,6 +66,7 @@ RUN set -ex; \
     touch /app.log; \
     chown www-data:www-data /app.log; \
     mkdir /config
+
 
 # Declarations
 VOLUME /config

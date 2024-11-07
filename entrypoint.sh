@@ -29,7 +29,7 @@ file_env() {
 }
 
 # Exit if incompatible mount (images prior to V2)
-if [ "$(mount | grep /var/www/html)" = "/var/www/html" ]; then
+if [ "$(mount | grep /var/www/html/${LB_HOMEPAGE})" = "/var/www/html/${LB_HOMEPAGE}" ]; then
   echo "The volume must be mapped to container directory /config" >2
   exit 1
 fi
@@ -60,9 +60,9 @@ popd
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"
   if [ "${LB_ENV}" = "dev" ]; then
-    cp /var/www/html/config/config.devel.php /config/config.php
+    cp /var/www/html/${LB_HOMEPAGE}/config/config.devel.php /config/config.php
   else
-    cp /var/www/html/config/config.dist.php /config/config.php
+    cp /var/www/html/${LB_HOMEPAGE}/config/config.dist.php /config/config.php
   fi
   chown www-data:www-data /config/config.php
   sed \
@@ -74,8 +74,8 @@ if ! [ -f /config/config.php ]; then
 fi
 
 # Link the configuration file
-if ! [ -f /var/www/html/config/config.php ]; then
-  ln -s /config/config.php /var/www/html/config/config.php
+if ! [ -f /var/www/html/${LB_HOMEPAGE}/config/config.php ]; then
+  ln -s /config/config.php /var/www/html/${LB_HOMEPAGE}/config/config.php
 fi
 
 # Set secondary configuration settings
@@ -89,7 +89,7 @@ sed \
   -e "s:\(\['logging'\]\['sql'\]\) = '.*':\1 = '${LB_LOG_SQL}':"
 
 # Create the plugins configuration file inside the volume
-for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
+for source in $(find /var/www/html/${LB_HOMEPAGE}/plugins -type f -name "*dist*"); do
   target=$(echo "${source}" | sed -e "s/.dist//")
   if ! [ -f "/config/$(basename ${target})" ]; then
     cp --no-clobber "${source}" "/config/$(basename ${target})"
@@ -112,7 +112,7 @@ fi
 # Get log directory
 log_flr=$(grep \
   -e "\['logging'\]\['folder'\]" \
-  /var/www/html/config/config.php \
+  /var/www/html/${LB_HOMEPAGE}/config/config.php \
   | cut -d " " -f3 | cut -d "'" -f2)
 log_flr=${log_flr:-${DFT_LOG_FLR}}
 
@@ -128,4 +128,35 @@ if ! test -f "${log_flr}/app.log"; then
   chown www-data:www-data "${log_flr}/app.log"
 fi
 
+# Check and update .htaccess with LB_HOMEPAGE environment variable
+HTACCESS_PATH="/var/www/html/${LB_HOMEPAGE}/.htaccess"
+
+if [ -f "$HTACCESS_PATH" ]; then
+  echo "Updating .htaccess with LB_HOMEPAGE=${LB_HOMEPAGE}"
+
+  # Replace hardcoded paths with the environment variable value in .htaccess
+  sed -i "s|RewriteCond %{REQUEST_URI} !^/Web/|RewriteCond %{REQUEST_URI} !^/${LB_HOMEPAGE}/Web/|" "$HTACCESS_PATH"
+  sed -i "s|RewriteRule ^(.*)$ /Web/\(.*\) \[R\]|RewriteRule ^(.*)$ /${LB_HOMEPAGE}/Web/\1 [R]|" "$HTACCESS_PATH"
+
+  # Confirmación del cambio
+  echo "Updated .htaccess content:"
+  cat "$HTACCESS_PATH"
+else
+  echo "Warning: .htaccess file not found at $HTACCESS_PATH"
+fi
+
 exec "$@"
+
+if ! [ -f config/config.php ]; then \
+  if [ "$LB_ENV" = "production" ]; then cp config/config.dist.php config/config.php; fi; \
+  if [ "$LB_ENV" = "dev" ]; then cp config/config.devel.php config/config.php; fi; \
+  echo '$conf["settings"]["database"]["user"] = ' "'$DB_USER';" >>config/config.php; \
+  echo '$conf["settings"]["database"]["password"] = ' "'$DB_PASSWORD';" >>config/config.php; \
+  echo '$conf["settings"]["database"]["hostspec"] = ' "'$DB_HOST';" >>config/config.php; \
+  echo '$conf["settings"]["database"]["name"] = ' "'$DB_DATABASE';" >>config/config.php; \
+  echo '$conf["settings"]["install.password"] = ' "'$INSTALL_PASSWORD';" >>config/config.php; \
+  echo '$conf["settings"]["sript.url"] = ' "'$SCRIPT_URL';" >>config/config.php; \
+  echo '$conf["settings"]["admin.email"] = ' "'$ADMIN_EMAIL';" >>config/config.php; \
+fi
+
+apache2-foreground

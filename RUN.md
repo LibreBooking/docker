@@ -69,53 +69,61 @@ version: "3.7"
 
 services:
   db:
-    image: linuxserver/mariadb:10.6.13
+    image: linuxserver/mariadb:${DB_IMAGE_VERSION}
     container_name: librebooking-db
     restart: always
     networks:
-      - mynet
+      - librebooking
     volumes:
-      - vol-db:/config
+      - librebooking_data:/config
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Zurich
-      - MYSQL_DATABASE=librebooking
-      - MYSQL_ROOT_PASSWORD=your_Mariadb_root_password
-      - MYSQL_USER=lb_user
-      - MYSQL_PASSWORD=your_Mariadb_user_password
+      - PUID=${PUID}
+      - PGID=${PGID}
+      - TZ=${TZ_DB}
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+
   app:
-    image: librebooking/librebooking:develop
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - PHP_VERSION=${PHP_VERSION}
+        - LB_HOMEPAGE=${LB_HOMEPAGE}
     container_name: librebooking
+    ports:
+      - 80:80
     restart: always
     depends_on:
       - db
     networks:
-      - mynet
-    ports:
-      - "80:80"
+      - librebooking
+      - webservices
     volumes:
-      - vol-app:/config
-    environment: 
-      - LB_DB_NAME=librebooking
-      - LB_DB_USER=lb_user
-      - LB_DB_USER_PWD=your_Mariadb_user_password
-      - LB_DB_HOST=db
-      - LB_INSTALL_PWD=your_Librebooking_installation_password
-      - LB_ENV=dev
-      - LB_LOG_FOLDER=/var/log/librebooking
-      - LB_LOG_LEVEL=debug
-      - LB_LOG_SQL=false
-      - TZ=Europe/Zurich
+      - ./librebooking_conf:/config
+    environment:
+      - LB_DB_NAME=${LB_DB_NAME}
+      - LB_INSTALL_PWD=${LB_INSTALL_PWD}
+      - LB_DB_USER=${MYSQL_USER}
+      - LB_DB_USER_PWD=${MYSQL_PASSWORD}
+      - LB_DB_HOST=${LB_DB_HOST}
+      - LB_ENV=${LB_ENV}
+      - LB_LOG_FOLDER=${LB_LOG_FOLDER}
+      - LB_LOG_LEVEL=${LB_LOG_LEVEL}
+      - LB_LOG_SQL=${LB_LOG_SQL}
+      - TZ=${TZ_APP}
+      - LB_HOMEPAGE=${LB_HOMEPAGE}
 
 volumes:
-  vol-db:
-    name: librebooking_data
-  vol-app:
-    name: librebooking_conf
+  librebooking_data:
+
 
 networks:
-  mynet:
+  webservices:
+    external: true
+  librebooking:
 ```
 
 Start the application with the following command:
