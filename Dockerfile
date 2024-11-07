@@ -26,10 +26,10 @@ RUN set -ex; \
 RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     { \
-    echo 'RemoteIPHeader X-Real-IP'; \
-    echo 'RemoteIPInternalProxy 10.0.0.0/8'; \
-    echo 'RemoteIPInternalProxy 172.16.0.0/12'; \
-    echo 'RemoteIPInternalProxy 192.168.0.0/16'; \
+     echo 'RemoteIPHeader X-Real-IP'; \
+     echo 'RemoteIPInternalProxy 10.0.0.0/8'; \
+     echo 'RemoteIPInternalProxy 172.16.0.0/12'; \
+     echo 'RemoteIPInternalProxy 192.168.0.0/16'; \
     } > /etc/apache2/conf-available/remoteip.conf; \
     a2enconf remoteip; \
     a2enmod rewrite; \
@@ -40,10 +40,11 @@ RUN set -ex; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb;
 
-# Get and customize librebooking
-COPY . /var/www/html/${LB_HOMEPAGE}
-RUN chown -R www-data:www-data /var/www/html/${LB_HOMEPAGE}
-RUN chmod -R 755 /var/www/html/${LB_HOMEPAGE}
+# Clone LibreBooking repository and customize with dynamic LB_HOMEPAGE
+RUN set -ex; \
+    git clone --branch "${APP_GH_REF}" https://github.com/librebooking/app.git /var/www/html/${LB_HOMEPAGE}; \
+    chown -R www-data:www-data /var/www/html/${LB_HOMEPAGE}; \
+    chmod -R 755 /var/www/html/${LB_HOMEPAGE}
 
 USER www-data
 
@@ -66,7 +67,6 @@ RUN set -ex; \
     touch /app.log; \
     chown www-data:www-data /app.log; \
     mkdir /config
-
 
 # Declarations
 VOLUME /config
