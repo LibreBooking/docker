@@ -16,6 +16,7 @@ Environment variables are used on first invocation of the container (when the fi
 | `LB_LOG_LEVEL` | none | debug | **No** | ['settings']['logging']['level'] |
 | `LB_LOG_SQL` | false | true | **No** | ['settings']['logging']['sql'] |
 | `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
+| `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
 
 ## Development environment: using the command line interface
 This simple setup is meant for testing the application within your private network.
