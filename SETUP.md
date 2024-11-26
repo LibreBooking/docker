@@ -8,12 +8,14 @@
    - Enter the database root user: `root`
    - Enter the database root password (docker variable `LB_DB_USER_PWD`)
    - Select `Create the database`
+   - Select `Create the database user`
    - Click on the register link, at the bottom of the web page
    - Fill the register form for the application administrator
    - Click on the button `Register`
 
 ### Application configuration
-1. Point your web browser to `http://<YOUR_HOST>`
+1. Point your web browser to `http://<YOUR_HOST>` or `https://<YOUR_HOST>`
+if you are using a reverse-proxy
 1. Login with your application administrator profile
 1. Configure the web application
 
