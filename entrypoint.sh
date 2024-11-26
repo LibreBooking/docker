@@ -7,6 +7,7 @@ readonly DFT_LOG_FLR="/var/log/librebooking"
 readonly DFT_LOG_LEVEL="none"
 readonly DFT_LOG_SQL=false
 readonly DFT_LB_ENV="production"
+readonly DFT_LB_PATH=""
 
 file_env() {
   local var="$1"
@@ -42,6 +43,7 @@ LB_LOG_FOLDER=${LB_LOG_FOLDER:-${DFT_LOG_FLR}}
 LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
 LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
 LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
+LB_PATH=${LB_PATH:-${DFT_LB_PATH}}
 
 # If volume was used with images older than v2, then archive useless files
 pushd /config
@@ -128,4 +130,23 @@ if ! test -f "${log_flr}/app.log"; then
   chown www-data:www-data "${log_flr}/app.log"
 fi
 
+# A URL path prefix was set
+if ! test -z "${LB_PATH}"; then
+  ## Set server document root 1 directory up
+  sed \
+    -i /etc/apache2/sites-enabled/000-default.conf \
+    -e "s:/var/www/html:/var/www:"
+
+  ## Rename the html directory as the URL prefix
+  ln -s /var/www/html "/var/www/${LB_PATH}"
+  chown www-data:www-data "/var/www/${LB_PATH}"
+
+  ## Adapt the .htaccess file
+  sed \
+    -i /var/www/${LB_PATH}/.htaccess \
+    -e "s:\(RewriteCond .*\)/Web/:\1\.\*/Web/:" \
+    -e "s:\(RewriteRule .*\) /Web/:\1 /${LB_PATH}/Web/:"
+fi
+
+# Run the apache server
 exec "$@"

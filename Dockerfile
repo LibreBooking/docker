@@ -1,9 +1,6 @@
 ARG  PHP_VERSION
 FROM php:${PHP_VERSION}-apache
 
-COPY entrypoint.sh /usr/local/bin/
-RUN  chmod +x /usr/local/bin/entrypoint.sh
-
 # Install composer
 COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
 
@@ -66,10 +63,11 @@ RUN set -ex; \
     chown www-data:www-data /app.log; \
     mkdir /config
 
-# Declarations
-VOLUME /config
-ENTRYPOINT ["entrypoint.sh"]
-CMD ["apache2-foreground"]
+# Environment
+WORKDIR    /
+VOLUME     /config
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+CMD        ["apache2-foreground"]
 
 # Labels
 LABEL org.opencontainers.image.title="LibreBooking"
@@ -78,3 +76,7 @@ LABEL org.opencontainers.image.url="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
 LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
+
+# Set entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN  chmod +x /usr/local/bin/entrypoint.sh
