@@ -37,10 +37,7 @@ docker run \
   --env PUID=1000 \
   --env PGID=1000 \
   --env TZ=Europe/Zurich \
-  --env MYSQL_DATABASE=librebooking \
   --env MYSQL_ROOT_PASSWORD=your_Mariadb_root_password \
-  --env MYSQL_USER=lb_user \
-  --env MYSQL_PASSWORD=your_Mariadb_user_password \
   linuxserver/mariadb:10.6.13
 
 # Run librebooking
@@ -171,7 +168,6 @@ services:
       - PGID=1000
       - TZ=Europe/Zurich
       - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/db_root_pwd
-      - FILE__MYSQL_PASSWORD=/run/secrets/db_user_pwd
     secrets:
       - db_root_pwd
       - db_user_pwd
