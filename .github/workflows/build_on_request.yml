@@ -1,4 +1,4 @@
-name: Build and publish a container image on request
+name: Build and publish on request
 
 on:
   workflow_dispatch:
