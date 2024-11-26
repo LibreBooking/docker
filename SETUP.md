@@ -3,7 +3,8 @@
 ## First-time fresh install
 
 ### Database initialization
-1. Point your web browser to `http://<YOUR_HOST>/Web/install`
+1. Point your web browser to `<YOUR_HOST>/install` or `<YOUR_HOST>/<YOUR_PATH>/install`
+(if you are using a custom URL-path)
    - Enter the installation password (docker variable `LB_INSTALL_PWD`)
    - Enter the database root user: `root`
    - Enter the database root password (docker variable `LB_DB_USER_PWD`)
@@ -14,7 +15,7 @@
    - Click on the button `Register`
 
 ### Application configuration
-1. Point your web browser to `http://<YOUR_HOST>` or `https://<YOUR_HOST>`
+1. Point your web browser to `<YOUR_HOST>` or `<YOUR_HOST>/<YOUR_PATH>`
 if you are using a reverse-proxy
 1. Login with your application administrator profile
 1. Configure the web application
@@ -29,7 +30,8 @@ if you are using a reverse-proxy
    ```
    docker-compose up --detach
    ```
-1. Upgrade the application database by pointing your web browser to `http://<YOUR_HOST>/Web/install/configure.php`
+1. Upgrade the application database by accessing `<YOUR_HOST>/install/configure.php`
+or `<YOUR_HOST>/<YOUR_PATH>/install/configure.php`
 
 ## Upgrade to docker-image v2 from docker-image v1
 1. Stop the service
