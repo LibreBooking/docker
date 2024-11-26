@@ -1,4 +1,4 @@
-name: Build and publish develop and last release container images on schedule
+name: Build and publish on schedule
 
 on:
   schedule:
