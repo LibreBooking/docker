@@ -23,12 +23,13 @@ Environment variables are used on first invocation of the container
 ## Development environment: using the command line interface
 This simple setup is meant for testing the application within your private network.
 
-Run the following commands:
+Create the container network
 ```
-# Create the container network
 docker network create mynet
+```
 
-# Run the database
+Run the database
+```
 docker run \
   --name librebooking-db \
   --detach \
@@ -39,8 +40,10 @@ docker run \
   --env TZ=Europe/Zurich \
   --env MYSQL_ROOT_PASSWORD=your_Mariadb_root_password \
   linuxserver/mariadb:10.6.13
+```
 
-# Run librebooking
+Run librebooking
+```
 docker run \
   --name librebooking \
   --detach \
