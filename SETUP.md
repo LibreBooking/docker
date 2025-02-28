@@ -32,18 +32,3 @@ if you are using a reverse-proxy
    ```
 1. Upgrade the application database by accessing `<YOUR_HOST>/install/configure.php`
 or `<YOUR_HOST>/<YOUR_PATH>/install/configure.php`
-
-## Upgrade to docker-image v2 from docker-image v1
-1. Stop the service
-   ```
-   docker-compose down
-   ```
-1. Change the image name inside your `docker-compose.yml` file
-1. Restart the service
-   ```
-   docker-compose up --detach
-   ```
-1. If you didn't customize the `/var/www/html` directory, you can delete the /config/archive folder at your convenience
-   ```
-   docker exec librebooking bash -c 'rm -rf /config/archive'
-   ```
