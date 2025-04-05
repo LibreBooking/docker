@@ -1,7 +1,7 @@
 ARG VERSION_PHP
 ARG VERSION_COMPOSER
 
-FROM composer:{VERSION_COMPOSER} AS comp
+FROM composer:${VERSION_COMPOSER} AS comp
 FROM php:${VERSION_PHP}-apache
 
 # Install composer
