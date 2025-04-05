@@ -47,12 +47,6 @@ jobs:
         run: |
           appVersion=$(basename ${{ inputs.appGitRefs }})
           echo "appVersion=$appVersion" >> $GITHUB_OUTPUT
-          if [ "$appVersion" \< "2.8.6" ]; then
-            phpVersion="7"
-          else
-            phpVersion="8"
-          fi
-          echo "phpVersion=$phpVersion" >> $GITHUB_OUTPUT
       -
         name: Set the docker image metadata
         id: set_meta
@@ -77,7 +71,8 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           build-args: |
-            PHP_VERSION=${{ steps.get_meta.outputs.phpVersion }}
+            VERSION_PHP=${{ vars.VERSION_PHP }}
+            VERSION_COMPOSER=${{ vars.VERSION_COMPOSER }}
             APP_GH_REF=${{ inputs.appGitRefs }}
           tags: ${{ steps.set_meta.outputs.tags }}
           push: true

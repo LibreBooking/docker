@@ -1,8 +1,9 @@
-ARG  PHP_VERSION
-FROM php:${PHP_VERSION}-apache
+ARG  VERSION_PHP
+FROM php:${VERSION_PHP}-apache
 
 # Install composer
-COPY --from=composer/composer:latest-bin /composer /usr/bin/composer
+ARG VERSION_COMPOSER
+COPY --from=composer:${VERSION_COMPOSER} /usr/bin/composer /usr/bin/composer
 
 # Customize
 ARG APP_GH_REF
@@ -45,7 +46,7 @@ RUN set -ex; \
       --location https://api.github.com/repos/librebooking/app/tarball/${APP_GH_REF} \
     | tar --extract --gzip --directory=/var/www/html --strip-components=1; \
     if [ -f /var/www/html/composer.json ]; then \
-      composer install --ignore-platform-req=ext-gd; \
+      composer install; \
     fi; \
     sed \
       -i /var/www/html/database_schema/create-user.sql \
