@@ -20,9 +20,6 @@ on:
         description: docker registry access token
         required: true
 
-env:
-  dockerRepository: ${{ vars.DOCKER_REPOSITORY }}
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,7 +28,7 @@ jobs:
         name: Checkout github repository
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.dockerRepository }}
+          repository: ${{ vars.DOCKER_REPOSITORY }}
           ref: ${{ inputs.imgBuild }}
       -
         name: Setup QEMU
