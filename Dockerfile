@@ -4,20 +4,32 @@ ARG VERSION_COMPOSER
 FROM composer:${VERSION_COMPOSER} AS comp
 FROM php:${VERSION_PHP}-apache
 
+# Labels
+LABEL org.opencontainers.image.title="LibreBooking"
+LABEL org.opencontainers.image.description="LibreBooking as a container"
+LABEL org.opencontainers.image.url="https://github.com/librebooking/docker"
+LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
+LABEL org.opencontainers.image.licenses="GPL-3.0"
+LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
+
+# Set entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN  chmod +x /usr/local/bin/entrypoint.sh
+
 # Install composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
 
-# Customize
-ARG APP_GH_REF
-ENV DEBIAN_FRONTEND=noninteractive
-
 # Update and install required debian packages
+ENV DEBIAN_FRONTEND=noninteractive
 RUN set -ex; \
     apt-get update; \
     apt-get upgrade --yes; \
-    apt-get install --yes --no-install-recommends git unzip; \
-    apt-get install --yes --no-install-recommends libpng-dev libjpeg-dev; \
-    apt-get install --yes --no-install-recommends libldap-dev; \
+    apt-get install --yes --no-install-recommends \
+      git \
+      libjpeg-dev \
+      libldap-dev \
+      libpng-dev \
+      unzip; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
@@ -41,6 +53,7 @@ RUN set -ex; \
 
 # Get and customize librebooking
 USER www-data
+ARG APP_GH_REF
 RUN set -ex; \
     curl \
       --fail \
@@ -71,15 +84,3 @@ WORKDIR    /
 VOLUME     /config
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD        ["apache2-foreground"]
-
-# Labels
-LABEL org.opencontainers.image.title="LibreBooking"
-LABEL org.opencontainers.image.description="LibreBooking as a container"
-LABEL org.opencontainers.image.url="https://github.com/librebooking/docker"
-LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
-LABEL org.opencontainers.image.licenses="GPL-3.0"
-LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
-
-# Set entrypoint
-COPY entrypoint.sh /usr/local/bin/
-RUN  chmod +x /usr/local/bin/entrypoint.sh
