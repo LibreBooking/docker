@@ -1,0 +1,17 @@
+name: Build release
+
+on:
+  schedule:
+    - cron: '0 1 * * 6'
+  workflow_dispatch:
+
+jobs:
+  build-stable:
+    uses: ./.github/workflows/build_and_publish.yml
+    with:
+      appGitRefs: ${{ vars.VERSION_LIBREBOOKING }}
+      imgBuild: ${{ vars.IMAGE_BUILD }}
+      regName: ${{ vars.REGISTRY_URL }}
+      regLogin: ${{ vars.REGISTRY_LOGIN }}
+    secrets:
+      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
