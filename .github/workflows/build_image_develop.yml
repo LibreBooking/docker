@@ -1,4 +1,4 @@
-name: Build nightly develop image
+name: Build develop image
 
 on:
   schedule:
@@ -15,4 +15,3 @@ jobs:
       regLogin: ${{ vars.REGISTRY_LOGIN }}
     secrets:
       REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
-
