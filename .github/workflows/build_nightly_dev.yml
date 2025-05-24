@@ -1,0 +1,18 @@
+name: Build nightly develop image
+
+on:
+  schedule:
+    - cron: '0 1 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-develop:
+    uses: ./.github/workflows/build_and_publish.yml
+    with:
+      appGitRefs: develop
+      imgBuild: ${{ vars.IMAGE_BUILD }}
+      regName: ${{ vars.REGISTRY_URL }}
+      regLogin: ${{ vars.REGISTRY_LOGIN }}
+    secrets:
+      REGISTRY_TOKEN: ${{ secrets.REGISTRY_TOKEN }}
+
