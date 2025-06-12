@@ -5,18 +5,25 @@ It needs to be linked to a MariaDB database container.
 
 ## Environment variables
 
+The following environment variables are used when the file `/config/config.php` **does not exist**:
+
 | Env | Default | Example | Required | config.php settings |
 | - | - | - | - | - |
-| `LB_DB_HOST` | - | lb-db | **Yes** | `['settings']['database']['hostspec']` |
 | `LB_DB_NAME` | - | librebooking | **Yes** | `['settings']['database']['name']` |
 | `LB_DB_USER` | - | lb_user | **Yes** | `['settings']['database']['user']` |
 | `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | `['settings']['database']['password']` |
+| `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
+
+The following environment variables are **always** used:
+
+| Env | Default | Example | Required | config.php settings |
+| - | - | - | - | - |
+| `LB_DB_HOST` | - | lb-db | **Yes** | `['settings']['database']['hostspec']` |
 | `LB_INSTALL_PWD` | - | installPWD | **Yes** | `['settings']['install.password']` |
 | `TZ` | - | Europe/Zurich | **Yes** | `['settings']['default.timezone']` |
 | `LB_LOG_FOLDER` | /var/log/librebooking | | **No** | `['settings']['logging']['folder']` |
 | `LB_LOG_LEVEL` | none | debug | **No** | `['settings']['logging']['level']` |
 | `LB_LOG_SQL` | false | true | **No** | `['settings']['logging']['sql']` |
-| `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
 | `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
 
 ## Optional mounts
@@ -134,11 +141,11 @@ value of the environment variables to your needs:
 
 This setup is meant for accessing the application from the internet. It features:
 
-- A reverse proxy based on nginx that automatically handle certificates
-- The usage of secrets to pass passwords to the docker container
-- A librebooking service accessible without a URL-path
+* A reverse proxy based on nginx that automatically handle certificates
+* The usage of secrets to pass passwords to the docker container
+* A librebooking service accessible without a URL-path
 (ex: <https://librebooking.your-domain.com>)
-- A librebooking service accessible with a URL-path
+* A librebooking service accessible with a URL-path
 (ex: <https://your-domain.com/book>)
 
 1. Create a `docker-compose.yml` file from the following sample and adapt the value of the environment variables to your needs:
