@@ -1,35 +1,40 @@
-# How to run the docker image
+# Run the docker container
+
 The image contains the apache web server and the librebooking application files.
 It needs to be linked to a MariaDB database container.
 
 ## Environment variables
+
 Environment variables are used on first invocation of the container
 (when the file config/config.php does not yet exist)
 
 | Env | Default | Example | Required | config.php settings |
 | - | - | - | - | - |
-| `LB_DB_HOST` | - | lb-db | **Yes** | ['settings']['database']['hostspec'] |
-| `LB_DB_NAME` | - | librebooking | **Yes** | ['settings']['database']['name'] |
-| `LB_DB_USER` | - | lb_user | **Yes** | ['settings']['database']['user'] |
-| `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | ['settings']['database']['password'] |
-| `LB_INSTALL_PWD` | - | installPWD | **Yes** | ['settings']['install.password'] |
-| `TZ` | - | Europe/Zurich | **Yes** | ['settings']['default.timezone'] |
-| `LB_LOG_FOLDER` | /var/log/librebooking | | **No** | ['settings']['logging']['folder'] |
-| `LB_LOG_LEVEL` | none | debug | **No** | ['settings']['logging']['level'] |
-| `LB_LOG_SQL` | false | true | **No** | ['settings']['logging']['sql'] |
+| `LB_DB_HOST` | - | lb-db | **Yes** | `['settings']['database']['hostspec']` |
+| `LB_DB_NAME` | - | librebooking | **Yes** | `['settings']['database']['name']` |
+| `LB_DB_USER` | - | lb_user | **Yes** | `['settings']['database']['user']` |
+| `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | `['settings']['database']['password']` |
+| `LB_INSTALL_PWD` | - | installPWD | **Yes** | `['settings']['install.password']` |
+| `TZ` | - | Europe/Zurich | **Yes** | `['settings']['default.timezone']` |
+| `LB_LOG_FOLDER` | /var/log/librebooking | | **No** | `['settings']['logging']['folder']` |
+| `LB_LOG_LEVEL` | none | debug | **No** | `['settings']['logging']['level']` |
+| `LB_LOG_SQL` | false | true | **No** | `['settings']['logging']['sql']` |
 | `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
 | `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
 
 ## Development environment: using the command line interface
+
 This simple setup is meant for testing the application within your private network.
 
 Create the container network
-```
+
+```sh
 docker network create mynet
 ```
 
 Run the database
-```
+
+```sh
 docker run \
   --name librebooking-db \
   --detach \
@@ -43,7 +48,8 @@ docker run \
 ```
 
 Run librebooking
-```
+
+```sh
 docker run \
   --name librebooking \
   --detach \
@@ -64,11 +70,13 @@ docker run \
 ```
 
 ## Development environment: using docker compose
+
 This simple setup is meant for testing the application within your private network.
 
 Create a `docker-compose.yml` file from the following sample and adapt the
 value of the environment variables to your needs:
-```
+
+```sh
 version: "3.7"
 
 services:
@@ -116,20 +124,25 @@ networks:
 ```
 
 Start the application with the following command:
-```
+
+```sh
 docker-compose up --detach 
 ```
 
 ## Production environment: using docker compose
+
 This setup is meant for accessing the application from the internet. It features:
-- A reverse proxy based on nginx that automatically handle certificates 
+
+- A reverse proxy based on nginx that automatically handle certificates
 - The usage of secrets to pass passwords to the docker container
-- A librebooking service accessible without a URL-path (ex: https://librebooking.your-domain.com)
-- A librebooking service accessible with a URL-path (ex: https://your-domain.com/book)
+- A librebooking service accessible without a URL-path
+(ex: <https://librebooking.your-domain.com>)
+- A librebooking service accessible with a URL-path
+(ex: <https://your-domain.com/book>)
 
 Create a `docker-compose.yml` file from the following sample and adapt the value of the environment variables to your needs:
 
-```
+```sh
 version: "3.7"
 
 services:
@@ -250,12 +263,15 @@ secrets:
 ```
 
 Set the secrets with the following commands:
-```
+
+```sh
 echo -n 'your_Mariadb_root_password'              > pwd_db_root.txt;
 echo -n 'your_Mariadb_user_password'              > pwd_db_user.txt;
 echo -n 'your_Librebooking_installation_password' > pwd_lb_inst.txt;
 ```
+
 Start the application with the following command:
-```
+
+```sh
 docker-compose up --detach 
 ```
