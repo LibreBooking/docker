@@ -26,108 +26,101 @@ Environment variables are used on first invocation of the container
 
 This simple setup is meant for testing the application within your private network.
 
-Create the container network
+1. Create the container network
 
-```sh
-docker network create mynet
-```
+   ```sh
+   docker network create mynet
+   ```
 
-Run the database
+1. Run the database
 
-```sh
-docker run \
-  --name librebooking-db \
-  --detach \
-  --network mynet \
-  --volume librebooking-db:/config \
-  --env PUID=1000 \
-  --env PGID=1000 \
-  --env TZ=Europe/Zurich \
-  --env MYSQL_ROOT_PASSWORD=your_Mariadb_root_password \
-  linuxserver/mariadb:10.6.13
-```
+   ```sh
+   docker run \
+     --name librebooking-db \
+     --detach \
+     --network mynet \
+     --volume librebooking-db:/config \
+     --env PUID=1000 \
+     --env PGID=1000 \
+     --env TZ=Europe/Zurich \
+     --env MYSQL_ROOT_PASSWORD=your_Mariadb_root_password \
+      linuxserver/mariadb:10.6.13
+   ```
 
-Run librebooking
+1. Run librebooking
 
-```sh
-docker run \
-  --name librebooking \
-  --detach \
-  --network mynet \
-  --publish 80:80 \
-  --volume librebooking-conf:/config \
-  --env LB_DB_NAME=librebooking \
-  --env LB_DB_USER=lb_user \
-  --env LB_DB_USER_PWD=your_Mariadb_user_password \
-  --env LB_DB_HOST=librebooking-db \
-  --env LB_INSTALL_PWD=your_Librebooking_installation_password \
-  --env LB_ENV=dev \
-  --env LB_LOG_FOLDER=/var/log/librebooking \
-  --env LB_LOG_LEVEL=debug \
-  --env LB_LOG_SQL=false \
-  --env TZ=Europe/Zurich \
-  librebooking/librebooking:develop
-```
+   ```sh
+   docker run \
+     --name librebooking \
+     --detach \
+     --network mynet \
+     --publish 80:80 \
+     --volume librebooking-conf:/config \
+     --env LB_DB_NAME=librebooking \
+     --env LB_DB_USER=lb_user \
+     --env LB_DB_USER_PWD=your_Mariadb_user_password \
+     --env LB_DB_HOST=librebooking-db \
+     --env LB_INSTALL_PWD=your_Librebooking_installation_password \
+     --env LB_ENV=dev \
+     --env LB_LOG_FOLDER=/var/log/librebooking \
+     --env LB_LOG_LEVEL=debug \
+     --env LB_LOG_SQL=false \
+    --env TZ=Europe/Zurich \
+    librebooking/librebooking:develop
+   ```
 
 ## Development environment: using docker compose
 
 This simple setup is meant for testing the application within your private network.
 
-Create a `docker-compose.yml` file from the following sample and adapt the
+1. Create a `docker-compose.yml` file from the following sample and adapt the
 value of the environment variables to your needs:
 
-```sh
-version: "3.7"
+   ```yaml
+   name: librebooking
 
-services:
-  db:
-    image: linuxserver/mariadb:10.6.13
-    restart: always
-    networks:
-      - mynet
-    volumes:
-      - db_conf:/config
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Zurich
-      - MYSQL_ROOT_PASSWORD=your_Mariadb_root_password
-  app:
-    image: librebooking/librebooking:develop
-    restart: always
-    depends_on:
-      - db
-    networks:
-      - mynet
-    ports:
-      - "80:80"
-    volumes:
-      - app_conf:/config
-    environment: 
-      - LB_DB_NAME=librebooking
-      - LB_DB_USER=lb_user
-      - LB_DB_USER_PWD=your_Mariadb_user_password
-      - LB_DB_HOST=db
-      - LB_INSTALL_PWD=your_Librebooking_installation_password
-      - LB_ENV=dev
-      - LB_LOG_FOLDER=/var/log/librebooking
-      - LB_LOG_LEVEL=debug
-      - LB_LOG_SQL=false
-      - TZ=Europe/Zurich
+   services:
+     db:
+       image: linuxserver/mariadb:10.6.13
+       restart: always
+       volumes:
+         - db_conf:/config
+       environment:
+         - PUID=1000
+         - PGID=1000
+         - TZ=Europe/Zurich
+         - MYSQL_ROOT_PASSWORD=your_Mariadb_root_password
+     app:
+       image: librebooking/librebooking:develop
+       restart: always
+       depends_on:
+         - db
+       ports:
+         - "80:80"
+       volumes:
+         - app_conf:/config
+       environment: 
+         - LB_DB_NAME=librebooking
+         - LB_DB_USER=lb_user
+         - LB_DB_USER_PWD=your_Mariadb_user_password
+         - LB_DB_HOST=db
+         - LB_INSTALL_PWD=your_Librebooking_installation_password
+         - LB_ENV=dev
+         - LB_LOG_FOLDER=/var/log/librebooking
+         - LB_LOG_LEVEL=debug
+         - LB_LOG_SQL=false
+         - TZ=Europe/Zurich
 
-volumes:
-  db_conf:
-  app_conf:
+   volumes:
+     db_conf:
+     app_conf:
+   ```
 
-networks:
-  mynet:
-```
+1. Start the application with the following command:
 
-Start the application with the following command:
-
-```sh
-docker-compose up --detach 
-```
+   ```sh
+   docker-compose up --detach 
+   ```
 
 ## Production environment: using docker compose
 
@@ -140,138 +133,127 @@ This setup is meant for accessing the application from the internet. It features
 - A librebooking service accessible with a URL-path
 (ex: <https://your-domain.com/book>)
 
-Create a `docker-compose.yml` file from the following sample and adapt the value of the environment variables to your needs:
+1. Create a `docker-compose.yml` file from the following sample and adapt the value of the environment variables to your needs:
 
-```sh
-version: "3.7"
+   ```yaml
+   name: librebooking
 
-services:
-  proxy:
-    image: nginxproxy/nginx-proxy
-    restart: always
-    networks:
-      - mynet
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - proxy_certs:/etc/nginx/certs
-      - proxy_html:/usr/share/nginx/html
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-  acme:
-    image: nginxproxy/acme-companion
-    restart: always
-    depends_on:
-      - proxy
-    networks:
-      - mynet
-    volumes_from:
-      - proxy
-    volumes:
-      - acme_acme:/etc/acme.sh
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    environment:
-      - DEFAULT_EMAIL=colisee@hotmail.com
-  db:
-    image: linuxserver/mariadb:10.6.13
-    restart: always
-    networks:
-      - mynet
-    volumes:
-      - db_conf:/config
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Zurich
-      - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/db_root_pwd
-    secrets:
-      - db_root_pwd
-      - db_user_pwd
-  lb1:
-    image: librebooking/librebooking:2.8.6.2
-    restart: always
-    depends_on:
-      - db
-    networks:
-      - mynet
-    volumes:
-      - lb1_conf:/config
-    environment:
-      - LB_DB_NAME=lb1
-      - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
-      - LB_DB_USER=lb1
-      - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-      - LB_DB_HOST=db
-      - LB_ENV=production
-      - LB_LOG_FOLDER=/var/log/librebooking
-      - LB_LOG_LEVEL=error
-      - LB_LOG_SQL=false
-      - LB_PATH=lb1
-      - TZ=Europe/Zurich
-      - VIRTUAL_HOST=your_host_com
-      - VIRTUAL_PATH=/your_path
-      - LETSENCRYPT_HOST=your_host_com
-    secrets:
-      - lb_install_pwd
-      - lb_user_pwd
-  lb2:
-    image: librebooking/librebooking:2.8.6.2
-    restart: always
-    depends_on:
-      - db
-    networks:
-      - mynet
-    volumes:
-      - lb2_conf:/config
-    environment:
-      - LB_DB_NAME=lb2
-      - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
-      - LB_DB_USER=lb2
-      - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-      - LB_DB_HOST=db
-      - LB_ENV=production
-      - LB_LOG_FOLDER=/var/log/librebooking
-      - LB_LOG_LEVEL=error
-      - LB_LOG_SQL=false
-      - TZ=Europe/Zurich
-      - VIRTUAL_HOST=your_host_com
-      - LETSENCRYPT_HOST=your_host_com
-    secrets:
-      - lb_install_pwd
-      - lb_user_pwd
+   services:
+     proxy:
+     image: nginxproxy/nginx-proxy
+     restart: always
+     networks:
+       - mynet
+     ports:
+       - 80:80
+       - 443:443
+     volumes:
+       - proxy_certs:/etc/nginx/certs
+       - proxy_html:/usr/share/nginx/html
+       - /var/run/docker.sock:/tmp/docker.sock:ro
+     acme:
+       image: nginxproxy/acme-companion
+       restart: always
+       depends_on:
+         - proxy
+       volumes_from:
+         - proxy
+       volumes:
+         - acme_acme:/etc/acme.sh
+         - /var/run/docker.sock:/var/run/docker.sock:ro
+       environment:
+         - DEFAULT_EMAIL=your_email
+     db:
+       image: linuxserver/mariadb:10.6.13
+       restart: always
+       volumes:
+         - db_conf:/config
+       environment:
+         - PUID=1000
+         - PGID=1000
+         - TZ=Europe/Zurich
+         - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/db_root_pwd
+       secrets:
+         - db_root_pwd
+         - db_user_pwd
+     lb1:
+       image: librebooking/librebooking:2.8.6.2
+       restart: always
+       depends_on:
+         - db
+       volumes:
+         - lb1_conf:/config
+       environment:
+         - LB_DB_NAME=lb1
+         - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
+         - LB_DB_USER=lb1
+         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
+         - LB_DB_HOST=db
+         - LB_ENV=production
+         - LB_LOG_FOLDER=/var/log/librebooking
+         - LB_LOG_LEVEL=error
+         - LB_LOG_SQL=false
+         - LB_PATH=lb1
+         - TZ=Europe/Zurich
+         - VIRTUAL_HOST=your_host_com
+         - VIRTUAL_PATH=/your_path
+         - LETSENCRYPT_HOST=your_host_com
+       secrets:
+         - lb_install_pwd
+         - lb_user_pwd
+     lb2:
+       image: librebooking/librebooking:2.8.6.2
+       restart: always
+       depends_on:
+         - db
+       volumes:
+         - lb2_conf:/config
+       environment:
+         - LB_DB_NAME=lb2
+         - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
+         - LB_DB_USER=lb2
+         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
+         - LB_DB_HOST=db
+         - LB_ENV=production
+         - LB_LOG_FOLDER=/var/log/librebooking
+         - LB_LOG_LEVEL=error
+         - LB_LOG_SQL=false
+         - TZ=Europe/Zurich
+         - VIRTUAL_HOST=your_host_com
+         - LETSENCRYPT_HOST=your_host_com
+       secrets:
+         - lb_install_pwd
+         - lb_user_pwd
 
-volumes:
-  proxy_certs:
-  proxy_html:
-  acme_acme:
-  db_conf:
-  lb1_conf:
-  lb2_conf:
+   volumes:
+     proxy_certs:
+     proxy_html:
+     acme_acme:
+     db_conf:
+     lb1_conf:
+     lb2_conf:
 
-networks:
-  mynet:
+   secrets:
+     db_root_pwd:
+       file: ./pwd_db_root.txt
+     db_user_pwd:
+       file: ./pwd_db_user.txt
+     lb_user_pwd:
+       file: ./pwd_db_user.txt
+     lb_install_pwd:
+       file: ./pwd_lb_inst.txt
+   ```
 
-secrets:
-  db_root_pwd:
-    file: ./pwd_db_root.txt
-  db_user_pwd:
-    file: ./pwd_db_user.txt
-  lb_user_pwd:
-    file: ./pwd_db_user.txt
-  lb_install_pwd:
-    file: ./pwd_lb_inst.txt
-```
+1. Set the secrets with the following commands:
 
-Set the secrets with the following commands:
+   ```sh
+   echo -n 'your_Mariadb_root_password'              > pwd_db_root.txt;
+   echo -n 'your_Mariadb_user_password'              > pwd_db_user.txt;
+   echo -n 'your_Librebooking_installation_password' > pwd_lb_inst.txt;
+   ```
 
-```sh
-echo -n 'your_Mariadb_root_password'              > pwd_db_root.txt;
-echo -n 'your_Mariadb_user_password'              > pwd_db_user.txt;
-echo -n 'your_Librebooking_installation_password' > pwd_lb_inst.txt;
-```
+1. Start the application with the following command:
 
-Start the application with the following command:
-
-```sh
-docker-compose up --detach 
-```
+   ```sh
+   docker-compose up --detach 
+   ```
