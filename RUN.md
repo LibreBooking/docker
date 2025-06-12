@@ -5,9 +5,6 @@ It needs to be linked to a MariaDB database container.
 
 ## Environment variables
 
-Environment variables are used on first invocation of the container
-(when the file config/config.php does not yet exist)
-
 | Env | Default | Example | Required | config.php settings |
 | - | - | - | - | - |
 | `LB_DB_HOST` | - | lb-db | **Yes** | `['settings']['database']['hostspec']` |
@@ -22,7 +19,18 @@ Environment variables are used on first invocation of the container
 | `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
 | `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
 
-## Development environment: using the command line interface
+## Optional mounts
+
+If you need to persist some librebooking directories beyond the container lifecycle, you need to bind-mount the required directories. For instance:
+
+* Upload directory: `/var/www/html/Web/uploads/images`
+* Reservation attachments: `/var/www/html/Web/uploads/reservation`
+
+If you need to customize some files, you can bind-mount them as well. For instance:
+
+* favicon: `/var/www/html/Web/favicon.ico`
+
+## Run a development instance: using the command line interface
 
 This simple setup is meant for testing the application within your private network.
 
@@ -69,7 +77,7 @@ This simple setup is meant for testing the application within your private netwo
     librebooking/librebooking:develop
    ```
 
-## Development environment: using docker compose
+## Run a development instance: using compose
 
 This simple setup is meant for testing the application within your private network.
 
@@ -122,7 +130,7 @@ value of the environment variables to your needs:
    docker-compose up --detach 
    ```
 
-## Production environment: using docker compose
+## Run a production instance: using compose
 
 This setup is meant for accessing the application from the internet. It features:
 
