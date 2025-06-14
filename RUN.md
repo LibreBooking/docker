@@ -30,8 +30,8 @@ The following environment variables are **always** used:
 
 If you need to persist some librebooking directories beyond the container lifecycle, you need to bind-mount the required directories. For instance:
 
-* Upload directory: `/var/www/html/Web/uploads/images`
-* Reservation attachments: `/var/www/html/Web/uploads/reservation`
+* Images directory: `/var/www/html/Web/uploads/images`
+* Reservation attachments directory: `/var/www/html/Web/uploads/reservation`
 
 If you need to customize some files, you can bind-mount them as well. For instance:
 
@@ -59,7 +59,7 @@ This simple setup is meant for testing the application within your private netwo
      --env PGID=1000 \
      --env TZ=Europe/Zurich \
      --env MYSQL_ROOT_PASSWORD=your_Mariadb_root_password \
-      linuxserver/mariadb:10.6.13
+     linuxserver/mariadb:10.6.13
    ```
 
 1. Run librebooking
@@ -80,7 +80,7 @@ This simple setup is meant for testing the application within your private netwo
      --env LB_LOG_FOLDER=/var/log/librebooking \
      --env LB_LOG_LEVEL=debug \
      --env LB_LOG_SQL=false \
-    --env TZ=Europe/Zurich \
+     --env TZ=Europe/Zurich \
     librebooking/librebooking:develop
    ```
 
@@ -143,10 +143,10 @@ This setup is meant for accessing the application from the internet. It features
 
 * A reverse proxy based on nginx that automatically handle certificates
 * The usage of secrets to pass passwords to the docker container
-* A librebooking service accessible without a URL-path
-(ex: <https://librebooking.your-domain.com>)
-* A librebooking service accessible with a URL-path
-(ex: <https://your-domain.com/book>)
+* A librebooking service `lb1` accessible with a URL-path (ex: <https://your-host.com/book>)
+* A librebooking service `lb2` accessible without a URL-path
+(ex: <https://your-host.com>)
+* 2 bind-mounts to persist images and reservation attachments for service `lb2`
 
 1. Create a `docker-compose.yml` file from the following sample and adapt the value of the environment variables to your needs:
 
@@ -223,6 +223,8 @@ This setup is meant for accessing the application from the internet. It features
          - db
        volumes:
          - lb2_conf:/config
+         - ./uploads/images:/var/www/html/Web/uploads/images
+         - ./uploads/reservation:/var/www/html/Web/uploads/reservation
        environment:
          - LB_DB_NAME=lb2
          - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
