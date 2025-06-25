@@ -148,5 +148,8 @@ if ! test -z "${LB_PATH}"; then
     -e "s:\(RewriteRule .*\) /Web/:\1 /${LB_PATH}/Web/:"
 fi
 
+# Start cron in background
+service cron start
+
 # Run the apache server
 exec "$@"

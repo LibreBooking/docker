@@ -25,6 +25,7 @@ RUN set -ex; \
     apt-get update; \
     apt-get upgrade --yes; \
     apt-get install --yes --no-install-recommends \
+      cron \
       git \
       libjpeg-dev \
       libldap-dev \
@@ -50,6 +51,11 @@ RUN set -ex; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb;
+
+# Create cron jobs
+COPY lb-jobs-cron /etc/cron.d/lb-jobs-cron
+RUN chmod 0644 /etc/cron.d/lb-jobs-cron && \
+    crontab /etc/cron.d/lb-jobs-cron
 
 # Get and customize librebooking
 USER www-data
