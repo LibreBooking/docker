@@ -44,6 +44,7 @@ LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
 LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
 LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
 LB_PATH=${LB_PATH:-${DFT_LB_PATH}}
+LB_CRON_ENABLED=${LB_CRON_ENABLED:-"false"}
 
 # If volume was used with images older than v2, then archive useless files
 pushd /config
@@ -149,7 +150,12 @@ if ! test -z "${LB_PATH}"; then
 fi
 
 # Start cron in background
-service cron start
+if [ "${LB_CRON_ENABLED}" = "true" ]; then
+  echo "Starting cron service"
+  service cron start
+else
+  echo "Cron service is disabled"
+fi
 
 # Run the apache server
 exec "$@"
