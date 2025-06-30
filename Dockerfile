@@ -16,6 +16,11 @@ LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
 COPY entrypoint.sh /usr/local/bin/
 RUN  chmod +x /usr/local/bin/entrypoint.sh
 
+# Create cron jobs
+COPY lb-jobs-cron /etc/cron.d/lb-jobs-cron
+RUN chmod 0644 /etc/cron.d/lb-jobs-cron && \
+    crontab /etc/cron.d/lb-jobs-cron
+
 # Install composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
 
@@ -51,11 +56,6 @@ RUN set -ex; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb;
-
-# Create cron jobs
-COPY lb-jobs-cron /etc/cron.d/lb-jobs-cron
-RUN chmod 0644 /etc/cron.d/lb-jobs-cron && \
-    crontab /etc/cron.d/lb-jobs-cron
 
 # Get and customize librebooking
 USER www-data
