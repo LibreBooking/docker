@@ -1,0 +1,6 @@
+* * * * * /usr/bin/env php -f /var/www/html//librebooking/Jobs/autorelease.php
+* * * * * /usr/bin/env php -f /var/www/html//librebooking/Jobs/sendmissedcheckin.php
+* * * * * /usr/bin/env php -f /var/www/html//librebooking/Jobs/sendreminders.php
+0 0 * * * /usr/bin/env php -f /var/www/html//librebooking/Jobs/sendseriesend.php
+* * * * * /usr/bin/env php -f /var/www/html//librebooking/Jobs/sendwaitlist.php
+0 0 * * * /usr/bin/env php -f /var/www/html//librebooking/Jobs/sessioncleanup.php

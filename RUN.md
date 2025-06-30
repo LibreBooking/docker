@@ -25,6 +25,7 @@ The following environment variables are **always** used:
 | `LB_LOG_LEVEL` | none | debug | **No** | `['settings']['logging']['level']` |
 | `LB_LOG_SQL` | false | true | **No** | `['settings']['logging']['sql']` |
 | `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
+| 'LB_CRON_ENABLED' | false | true | **No** | Enables cron in container to handle background jobs |
 
 ## Optional mounts
 
@@ -274,3 +275,21 @@ This setup is meant for accessing the application from the internet. It features
    ```sh
    docker-compose up --detach 
    ```
+
+## Cron jobs
+
+Several services in librebooking such as reminder emails require a cron. For a full list of background jobs checkout the [wiki](https://github.com/LibreBooking/app/wiki/Background-jobs)
+
+This can either be handled by
+
+the container itself by setting the environment variable
+
+```sh
+LB_CRON_ENABLED=true
+```
+
+or by externally by calling each script e. g.
+
+```sh
+docker exec --detach <container_name> php -f /var/www/html/Jobs/sendreminders.php`
+```
