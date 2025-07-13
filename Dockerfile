@@ -23,6 +23,7 @@ RUN set -ex; \
       libjpeg-dev \
       libldap-dev \
       libpng-dev \
+      libfreetype6-dev \
       unzip; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
@@ -52,7 +53,7 @@ RUN set -ex; \
     a2enmod rewrite; \
     a2enmod headers; \
     a2enmod remoteip; \
-    docker-php-ext-configure gd --with-jpeg; \
+    docker-php-ext-configure gd --with-jpeg --with-freetype; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb;
