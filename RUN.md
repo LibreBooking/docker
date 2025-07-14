@@ -280,16 +280,16 @@ This setup is meant for accessing the application from the internet. It features
 
 Several services in librebooking such as reminder emails require a cron. For a full list of background jobs checkout the [wiki](https://github.com/LibreBooking/app/wiki/Background-jobs)
 
-This can either be handled by
+This can either be handled by the:
 
-the container itself by setting the environment variable
+* Container itself, by setting the environment variable
 
-```sh
-LB_CRON_ENABLED=true
-```
+    ```sh
+    LB_CRON_ENABLED=true
+    ```
 
-or by externally by calling each script e. g.
+* Host running the container, by calling the desired script, as in
 
-```sh
-docker exec --detach <container_name> php -f /var/www/html/Jobs/sendreminders.php`
-```
+  ```sh
+  docker exec --detach <container_name> php -f /var/www/html/Jobs/sendreminders.php`
+  ```
