@@ -12,18 +12,6 @@ LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
 LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
 
-# Set entrypoint
-COPY entrypoint.sh /usr/local/bin/
-RUN  chmod +x /usr/local/bin/entrypoint.sh
-
-# Create cron jobs
-COPY lb-jobs-cron /etc/cron.d/lb-jobs-cron
-RUN chmod 0644 /etc/cron.d/lb-jobs-cron && \
-    crontab /etc/cron.d/lb-jobs-cron
-
-# Install composer
-COPY --from=comp /usr/bin/composer /usr/bin/composer
-
 # Update and install required debian packages
 ENV DEBIAN_FRONTEND=noninteractive
 RUN set -ex; \
@@ -35,9 +23,22 @@ RUN set -ex; \
       libjpeg-dev \
       libldap-dev \
       libpng-dev \
+      libfreetype6-dev \
       unzip; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
+
+# Set entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN  chmod +x /usr/local/bin/entrypoint.sh
+
+# Create cron jobs
+COPY lb-jobs-cron /etc/cron.d/lb-jobs-cron
+RUN chmod 0644 /etc/cron.d/lb-jobs-cron && \
+    crontab /etc/cron.d/lb-jobs-cron
+
+# Install composer
+COPY --from=comp /usr/bin/composer /usr/bin/composer
 
 # Customize apache and php settings
 RUN set -ex; \
@@ -52,7 +53,7 @@ RUN set -ex; \
     a2enmod rewrite; \
     a2enmod headers; \
     a2enmod remoteip; \
-    docker-php-ext-configure gd --with-jpeg; \
+    docker-php-ext-configure gd --with-jpeg --with-freetype; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
     docker-php-ext-enable timezonedb;
