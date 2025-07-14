@@ -25,7 +25,7 @@ The following environment variables are **always** used:
 | `LB_LOG_LEVEL` | none | debug | **No** | `['settings']['logging']['level']` |
 | `LB_LOG_SQL` | false | true | **No** | `['settings']['logging']['sql']` |
 | `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
-| 'LB_CRON_ENABLED' | false | true | **No** | Enables cron in container to handle background jobs |
+| `LB_CRON_ENABLED` | false | true | **No** | N/A - Enable cron background jobs |
 
 ## Optional mounts
 
@@ -125,6 +125,7 @@ value of the environment variables to your needs:
          - LB_LOG_FOLDER=/var/log/librebooking
          - LB_LOG_LEVEL=debug
          - LB_LOG_SQL=false
+         - LB_CRON_ENABLED=false
          - TZ=Europe/Zurich
 
    volumes:
@@ -210,6 +211,7 @@ This setup is meant for accessing the application from the internet. It features
          - LB_LOG_LEVEL=error
          - LB_LOG_SQL=false
          - LB_PATH=lb1
+         - LB_CRON_ENABLED=true
          - TZ=Europe/Zurich
          - VIRTUAL_HOST=your_host_com
          - VIRTUAL_PATH=/your_path
@@ -236,6 +238,7 @@ This setup is meant for accessing the application from the internet. It features
          - LB_LOG_FOLDER=/var/log/librebooking
          - LB_LOG_LEVEL=error
          - LB_LOG_SQL=false
+         - LB_CRON_ENABLED=true
          - TZ=Europe/Zurich
          - VIRTUAL_HOST=your_host_com
          - LETSENCRYPT_HOST=your_host_com
