@@ -10,7 +10,14 @@ LABEL org.opencontainers.image.description="LibreBooking as a container"
 LABEL org.opencontainers.image.url="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
-LABEL org.opencontainers.image.authors="robin.alexander@netplus.ch"
+LABEL org.opencontainers.image.authors="colisee@hotmail.com"
+
+# Set entrypoint
+COPY entrypoint.sh /usr/local/bin/
+RUN  chmod +x /usr/local/bin/entrypoint.sh
+
+# Install composer
+COPY --from=comp /usr/bin/composer /usr/bin/composer
 
 # Update and install required debian packages
 ENV DEBIAN_FRONTEND=noninteractive
@@ -28,17 +35,10 @@ RUN set -ex; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-# Set entrypoint
-COPY entrypoint.sh /usr/local/bin/
-RUN  chmod +x /usr/local/bin/entrypoint.sh
-
 # Create cron jobs
 COPY lb-jobs-cron /etc/cron.d/lb-jobs-cron
 RUN chmod 0644 /etc/cron.d/lb-jobs-cron && \
     crontab /etc/cron.d/lb-jobs-cron
-
-# Install composer
-COPY --from=comp /usr/bin/composer /usr/bin/composer
 
 # Customize apache and php settings
 RUN set -ex; \
