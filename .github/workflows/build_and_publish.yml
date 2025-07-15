@@ -42,9 +42,8 @@ jobs:
         name: Get the docker image metadata
         id: get_meta
         run: |
-          appVersion=$(basename ${{ inputs.appGitRefs }})
-          imgTag=$(echo $appVersion | sed -e "s/^[vV]//")
-          echo "appVersion=$imgTag" >> $GITHUB_OUTPUT
+          appTag=$(basename ${{ inputs.appGitRefs }} | sed -e "s/^[vV]//")
+          echo "appTag=$appTag" >> $GITHUB_OUTPUT
       -
         name: Set the docker image metadata
         id: set_meta
@@ -52,8 +51,8 @@ jobs:
         with:
           images: ${{ inputs.regLogin }}/librebooking
           tags: |
-            type=raw,value=${{ steps.get_meta.outputs.appVersion }},suffix=-${{ inputs.imgBuild }}
-            type=raw,value=${{ steps.get_meta.outputs.appVersion }}
+            type=raw,value=${{ steps.get_meta.outputs.appTag }},suffix=-${{ inputs.imgBuild }}
+            type=raw,value=${{ steps.get_meta.outputs.appTag }}
       -
         name: Log into registry
         uses: docker/login-action@v3
