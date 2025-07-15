@@ -42,7 +42,7 @@ jobs:
         name: Get the docker image metadata
         id: get_meta
         run: |
-          appVersion=$(basename ${{ inputs.appGitRefs }})
+          appVersion=$(basename ${{ inputs.appGitRefs }} | sed -e "s/^[vV]//")
           echo "appVersion=$appVersion" >> $GITHUB_OUTPUT
       -
         name: Set the docker image metadata
