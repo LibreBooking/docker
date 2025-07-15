@@ -11,7 +11,7 @@ This is the easiest and fastest way.
 
 ```sh
 # Stable release
-docker image pull librebooking/librebooking:v3.0.1
+docker image pull librebooking/librebooking:v3.0.3
 
 # Development branch
 docker image pull librebooking/librebooking:develop
