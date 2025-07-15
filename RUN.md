@@ -157,17 +157,17 @@ This setup is meant for accessing the application from the internet. It features
 
    services:
      proxy:
-     image: nginxproxy/nginx-proxy
-     restart: always
-     networks:
-       - mynet
-     ports:
-       - 80:80
-       - 443:443
-     volumes:
-       - proxy_certs:/etc/nginx/certs
-       - proxy_html:/usr/share/nginx/html
-       - /var/run/docker.sock:/tmp/docker.sock:ro
+        image: nginxproxy/nginx-proxy
+        restart: always
+        networks:
+          - mynet
+        ports:
+          - 80:80
+          - 443:443
+        volumes:
+          - proxy_certs:/etc/nginx/certs
+          - proxy_html:/usr/share/nginx/html
+          - /var/run/docker.sock:/tmp/docker.sock:ro
      acme:
        image: nginxproxy/acme-companion
        restart: always
