@@ -5,25 +5,21 @@ It needs to be linked to a MariaDB database container.
 
 ## Environment variables
 
-The following environment variables are used when the file `/config/config.php` **does not exist**:
+LibreBooking supports overriding configuration settings using environment variables. This is especially useful for Docker deployments or when you want to keep sensitive information separate from configuration files. Environment variables follow the pattern LB_ + the config key with dots and dashes converted to underscores and converted to uppercase.
+
+For more details see [Librebooking documentation](https://github.com/LibreBooking/app/blob/develop/docs/source/BASIC-CONFIGURATION.rst)
 
 | Env | Default | Example | Required | config.php settings |
 | - | - | - | - | - |
-| `LB_DB_NAME` | - | librebooking | **Yes** | `['settings']['database']['name']` |
-| `LB_DB_USER` | - | lb_user | **Yes** | `['settings']['database']['user']` |
-| `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | `['settings']['database']['password']` |
-| `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
-
-The following environment variables are **always** used:
-
-| Env | Default | Example | Required | config.php settings |
-| - | - | - | - | - |
-| `LB_DB_HOST` | - | lb-db | **Yes** | `['settings']['database']['hostspec']` |
-| `LB_INSTALL_PWD` | - | installPWD | **Yes** | `['settings']['install.password']` |
+| `LB_DATABASE_HOSTSPEC` | - | lb-db | **Yes** | `['settings']['database']['hostspec']` |
+| `LB_DATABASE_NAME` | - | librebooking | **Yes** | `['settings']['database']['name']` |
+| `LB_DATABASE_USER` | - | lb_user | **Yes** | `['settings']['database']['user']` |
+| `LB_DATABASE_PASSWORD` | - | myPassw0rd | **Yes** | `['settings']['database']['password']` |
+| `LB_INSTALL_PASSWORD | - | installPWD | **Yes** | `['settings']['install.password']` |
 | `TZ` | - | Europe/Zurich | **Yes** | `['settings']['default.timezone']` |
-| `LB_LOG_FOLDER` | /var/log/librebooking | | **No** | `['settings']['logging']['folder']` |
-| `LB_LOG_LEVEL` | none | debug | **No** | `['settings']['logging']['level']` |
-| `LB_LOG_SQL` | false | true | **No** | `['settings']['logging']['sql']` |
+| `LB_LOGGING_FOLDER` | /var/log/librebooking | | **No** | `['settings']['logging']['folder']` |
+| `LB_LOGGING_LEVEL` | none | debug | **No** | `['settings']['logging']['level']` |
+| `LB_LOGGING_SQL` | false | true | **No** | `['settings']['logging']['sql']` |
 | `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
 | `LB_CRON_ENABLED` | false | true | **No** | N/A - Enable cron background jobs |
 
@@ -72,15 +68,15 @@ This simple setup is meant for testing the application within your private netwo
      --network mynet \
      --publish 80:80 \
      --volume librebooking-conf:/config \
-     --env LB_DB_NAME=librebooking \
-     --env LB_DB_USER=lb_user \
-     --env LB_DB_USER_PWD=your_Mariadb_user_password \
-     --env LB_DB_HOST=librebooking-db \
+     --env LB_DATABASE_NAME=librebooking \
+     --env LB_DATABASE_USER=lb_user \
+     --env LB_DATABASE_PASSWORD=your_Mariadb_user_password \
+     --env LB_DATABASE_HOSTSPEC=librebooking-db \
      --env LB_INSTALL_PWD=your_Librebooking_installation_password \
      --env LB_ENV=dev \
-     --env LB_LOG_FOLDER=/var/log/librebooking \
-     --env LB_LOG_LEVEL=debug \
-     --env LB_LOG_SQL=false \
+     --env LB_LOGGING_FOLDER=/var/log/librebooking \
+     --env LB_LOGGING_LEVEL=debug \
+     --env LB_LOGGING_SQL=false \
      --env TZ=Europe/Zurich \
     librebooking/librebooking:develop
    ```
@@ -116,15 +112,15 @@ value of the environment variables to your needs:
        volumes:
          - app_conf:/config
        environment: 
-         - LB_DB_NAME=librebooking
-         - LB_DB_USER=lb_user
-         - LB_DB_USER_PWD=your_Mariadb_user_password
-         - LB_DB_HOST=db
+         - LB_DATABASE_NAME=librebooking
+         - LB_DATABASE_USER=lb_user
+         - LB_DATABASE_PASSWORD=your_Mariadb_user_password
+         - LB_DATABASE_HOSTSPEC=db
          - LB_INSTALL_PWD=your_Librebooking_installation_password
          - LB_ENV=dev
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=debug
-         - LB_LOG_SQL=false
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=debug
+         - LB_LOGGING_SQL=false
          - LB_CRON_ENABLED=false
          - TZ=Europe/Zurich
 
@@ -201,15 +197,15 @@ This setup is meant for accessing the application from the internet. It features
        volumes:
          - lb1_conf:/config
        environment:
-         - LB_DB_NAME=lb1
+         - LB_DATABASE_NAME=lb1
          - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
-         - LB_DB_USER=lb1
-         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-         - LB_DB_HOST=db
+         - LB_DATABASE_USER=lb1
+         - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
          - LB_ENV=production
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=error
-         - LB_LOG_SQL=false
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=error
+         - LB_LOGGING_SQL=false
          - LB_PATH=lb1
          - LB_CRON_ENABLED=true
          - TZ=Europe/Zurich
@@ -229,15 +225,15 @@ This setup is meant for accessing the application from the internet. It features
          - ./uploads/images:/var/www/html/Web/uploads/images
          - ./uploads/reservation:/var/www/html/Web/uploads/reservation
        environment:
-         - LB_DB_NAME=lb2
+         - LB_DATABASE_NAME=lb2
          - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
-         - LB_DB_USER=lb2
-         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-         - LB_DB_HOST=db
+         - LB_DATABASE_USER=lb2
+         - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
          - LB_ENV=production
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=error
-         - LB_LOG_SQL=false
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=error
+         - LB_LOGGING_SQL=false
          - LB_CRON_ENABLED=true
          - TZ=Europe/Zurich
          - VIRTUAL_HOST=your_host_com
