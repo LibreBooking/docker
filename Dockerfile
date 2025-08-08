@@ -68,6 +68,9 @@ RUN set -ex; \
       --location https://api.github.com/repos/librebooking/app/tarball/${APP_GH_REF} \
     | tar --extract --gzip --directory=/var/www/html --strip-components=1; \
     if [ -f /var/www/html/composer.json ]; then \
+      sed \
+        -i /var/www/html/composer.json \
+        -e "s:\(.*\)nickdnk/graph-sdk\(.*\)7.0\(.*\):\1joelbutcher/facebook-graph-sdk\26.1\3:" ;\
       composer install; \
     fi; \
     sed \
