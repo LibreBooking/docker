@@ -153,6 +153,7 @@ fi
 if [ "${LB_CRON_ENABLED}" = "true" ]; then
   echo "Starting cron service"
   service cron start
+  crontab -u www-data /config/lb-jobs-cron
 else
   echo "Cron service is disabled"
 fi
