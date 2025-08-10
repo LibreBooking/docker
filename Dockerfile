@@ -12,11 +12,13 @@ LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
 LABEL org.opencontainers.image.authors="colisee@hotmail.com"
 
-# Set entrypoint
-COPY entrypoint.sh /usr/local/bin/
-RUN  chmod +x /usr/local/bin/entrypoint.sh
+# Copy entrypoint
+COPY --chmod=755 entrypoint.sh /usr/local/bin/
 
-# Install composer
+# Create cron jobs
+COPY --chown=www-data:www-data lb-jobs-cron /config/
+
+# Copy composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
 
 # Update and install required debian packages
@@ -35,12 +37,7 @@ RUN set -ex; \
     apt-get clean; \
     rm -rf /var/lib/apt/lists/*
 
-# Create cron jobs
-COPY lb-jobs-cron /etc/cron.d/lb-jobs-cron
-RUN chmod 0644 /etc/cron.d/lb-jobs-cron && \
-    crontab /etc/cron.d/lb-jobs-cron
-
-# Customize apache and php settings
+# Customize
 RUN set -ex; \
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     { \
@@ -56,7 +53,8 @@ RUN set -ex; \
     docker-php-ext-configure gd --with-jpeg --with-freetype; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
-    docker-php-ext-enable timezonedb;
+    docker-php-ext-enable timezonedb; \
+    rm /etc/cron.d/e2scrub_all
 
 # Get and customize librebooking
 USER www-data
@@ -82,14 +80,8 @@ RUN set -ex; \
       mkdir /var/www/html/tpl_c; \
     fi
 
-# Final customization
-USER root
-RUN set -ex; \
-    touch /app.log; \
-    chown www-data:www-data /app.log; \
-    mkdir /config
-
 # Environment
+USER       root
 WORKDIR    /
 VOLUME     /config
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]

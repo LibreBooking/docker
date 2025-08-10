@@ -281,9 +281,11 @@ This setup is meant for accessing the application from the internet. It features
 
 ## Cron jobs
 
-Several services in librebooking such as reminder emails require a cron. For a full list of background jobs checkout the [wiki](https://github.com/LibreBooking/app/wiki/Background-jobs)
+Several services in librebooking such as reminder emails require a job
+scheduler. For a full list of background jobs, checkout the
+[wiki](https://github.com/LibreBooking/app/wiki/Background-jobs)
 
-This can either be handled by the:
+The background jobs can either be handled by the:
 
 * Container itself, by setting the environment variable
 
@@ -296,3 +298,7 @@ This can either be handled by the:
   ```sh
   docker exec --detach <container_name> php -f /var/www/html/Jobs/sendreminders.php`
   ```
+
+Based on the value of the environment variable `LB_LOG_LEVEL`, the
+background jobs will output to the `app.log` file inside the log
+folder defined by the environment variable `LB_LOG_FOLDER`.
