@@ -36,15 +36,29 @@ if [ "$(mount | grep /var/www/html)" = "/var/www/html" ]; then
 fi
 
 # Initialize variables
-file_env LB_INSTALL_PWD
-file_env LB_DB_USER_PWD
+file_env LB_INSTALL_PASSWORD
+file_env LB_INSTALL_PWD  # Backwards compatibility
+file_env LB_DATABASE_PASSWORD
+file_env LB_DB_USER_PWD  # Backwards compatibility
 
-LB_LOG_FOLDER=${LB_LOG_FOLDER:-${DFT_LOG_FLR}}
-LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
-LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
-LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
+# Initialize variables with defaults
 LB_PATH=${LB_PATH:-${DFT_LB_PATH}}
 LB_CRON_ENABLED=${LB_CRON_ENABLED:-"false"}
+LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
+LB_LOGGING_FOLDER=${LB_LOGGING_FOLDER:-${DFT_LOG_FLR}}
+LB_LOGGING_LEVEL=${LB_LOGGING_LEVEL:-${DFT_LOG_LEVEL}}
+LB_LOGGING_SQL=${LB_LOGGING_SQL:-${DFT_LOG_SQL}}
+
+# Backwards compatibility for variable names
+# Map old variable names to new standardized ones
+LB_INSTALL_PASSWORD=${LB_INSTALL_PASSWORD:-${LB_INSTALL_PWD}}
+LB_DATABASE_HOSTSPEC=${LB_DATABASE_HOSTSPEC:-${LB_DB_HOST}}
+LB_DATABASE_NAME=${LB_DATABASE_NAME:-${LB_DB_NAME}}
+LB_DATABASE_USER=${LB_DATABASE_USER:-${LB_DB_USER}}
+LB_DATABASE_PASSWORD=${LB_DATABASE_PASSWORD:-${LB_DB_USER_PWD}}
+LB_LOGGING_FOLDER=${LB_LOGGING_FOLDER:-${LB_LOG_FOLDER}}
+LB_LOGGING_LEVEL=${LB_LOGGING_LEVEL:-${LB_LOG_LEVEL}}
+LB_LOGGING_SQL=${LB_LOGGING_SQL:-${LB_LOG_SQL}}
 
 # If volume was used with images older than v2, then archive useless files
 pushd /config
@@ -71,9 +85,9 @@ if ! [ -f /config/config.php ]; then
   sed \
     -i /config/config.php \
     -e "s:\(\['registration.captcha.enabled'\]\) = 'true':\1 = 'false':" \
-    -e "s:\(\['database'\]\['user'\]\) = '.*':\1 = '${LB_DB_USER}':" \
-    -e "s:\(\['database'\]\['password'\]\) = '.*':\1 = '${LB_DB_USER_PWD}':" \
-    -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DB_NAME}':"
+    -e "s:\(\['database'\]\['user'\]\) = '.*':\1 = '${LB_DATABASE_USER}':" \
+    -e "s:\(\['database'\]\['password'\]\) = '.*':\1 = '${LB_DATABASE_PASSWORD}':" \
+    -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DATABASE_NAME}':"
 fi
 
 # Link the configuration file
@@ -84,12 +98,12 @@ fi
 # Set secondary configuration settings
 sed \
   -i /config/config.php \
-  -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PWD}':" \
+  -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PASSWORD}':" \
   -e "s:\(\['default.timezone'\]\) = '.*':\1 = '${TZ}':" \
-  -e "s:\(\['database'\]\['hostspec'\]\) = '.*':\1 = '${LB_DB_HOST}':" \
-  -e "s:\(\['logging'\]\['folder'\]\) = '.*':\1 = '${LB_LOG_FOLDER}':" \
-  -e "s:\(\['logging'\]\['level'\]\) = '.*':\1 = '${LB_LOG_LEVEL}':" \
-  -e "s:\(\['logging'\]\['sql'\]\) = '.*':\1 = '${LB_LOG_SQL}':"
+  -e "s:\(\['database'\]\['hostspec'\]\) = '.*':\1 = '${LB_DATABASE_HOSTSPEC}':" \
+  -e "s:\(\['logging'\]\['folder'\]\) = '.*':\1 = '${LB_LOGGING_FOLDER}':" \
+  -e "s:\(\['logging'\]\['level'\]\) = '.*':\1 = '${LB_LOGGING_LEVEL}':" \
+  -e "s:\(\['logging'\]\['sql'\]\) = '.*':\1 = '${LB_LOGGING_SQL}':"
 
 # Create the plugins configuration file inside the volume
 for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
