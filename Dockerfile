@@ -53,8 +53,7 @@ RUN set -ex; \
     docker-php-ext-configure gd --with-jpeg --with-freetype; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
-    docker-php-ext-enable timezonedb; \
-    rm /etc/cron.d/e2scrub_all
+    docker-php-ext-enable timezonedb
 
 # Get and customize librebooking
 USER www-data
