@@ -62,12 +62,13 @@ popd
 # No configuration file inside directory /config
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"
-  if [ "${LB_ENV}" = "dev" ]; then
-    cp /var/www/html/config/config.devel.php /config/config.php
-  else
-    cp /var/www/html/config/config.dist.php /config/config.php
-  fi
+  cp /var/www/html/config/config.dist.php /config/config.php
   chown www-data:www-data /config/config.php
+  if [ "${LB_ENV}" != "production" ]; then
+     sed \
+       -i /config/config.php \
+       -e "s:\(\['logging'\]\['level'\]\) = '.*':\1 = 'debug':"
+  fi
   sed \
     -i /config/config.php \
     -e "s:\(\['registration.captcha.enabled'\]\) = 'true':\1 = 'false':" \
