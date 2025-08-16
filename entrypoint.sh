@@ -62,18 +62,24 @@ popd
 # No configuration file inside directory /config
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"
-  if [ "${LB_ENV}" = "dev" ]; then
-    cp /var/www/html/config/config.devel.php /config/config.php
-  else
-    cp /var/www/html/config/config.dist.php /config/config.php
-  fi
+  cp /var/www/html/config/config.dist.php /config/config.php
   chown www-data:www-data /config/config.php
+  if [ "${LB_ENV}" != "production" ]; then
+     sed \
+       -i /config/config.php \
+       -e "s:\(\['logging'\]\['level'\].*\) '.*':\1 'debug':" \
+       -e "s:\('level'.*\) '.*':\1 'debug':"
+  fi
   sed \
     -i /config/config.php \
-    -e "s:\(\['registration.captcha.enabled'\]\) = 'true':\1 = 'false':" \
-    -e "s:\(\['database'\]\['user'\]\) = '.*':\1 = '${LB_DB_USER}':" \
-    -e "s:\(\['database'\]\['password'\]\) = '.*':\1 = '${LB_DB_USER_PWD}':" \
-    -e "s:\(\['database'\]\['name'\]\) = '.*':\1 = '${LB_DB_NAME}':"
+    -e "s:\(\['registration.captcha.enabled'\].*\) 'true':\1 'false':" \
+    -e "s:\(\['database'\]\['user'\].*\) '.*':\1 '${LB_DB_USER}':" \
+    -e "s:\(\['database'\]\['password'\].*\) '.*':\1 '${LB_DB_USER_PWD}':" \
+    -e "s:\(\['database'\]\['name'\].*\) '.*':\1 '${LB_DB_NAME}':" \
+    -e "s:\('captcha.enabled'.*\) true:\1 false:" \
+    -e "s:\('user'.*\) '.*':\1 '${LB_DB_USER}':" \
+    -e "s:\('password'.*\) '.*':\1 '${LB_DB_USER_PWD}':" \
+    -e "s:\('name'.*\) '.*':\1 '${LB_DB_NAME}':"
 fi
 
 # Link the configuration file
@@ -84,12 +90,18 @@ fi
 # Set secondary configuration settings
 sed \
   -i /config/config.php \
-  -e "s:\(\['install.password'\]\) = '.*':\1 = '${LB_INSTALL_PWD}':" \
-  -e "s:\(\['default.timezone'\]\) = '.*':\1 = '${TZ}':" \
-  -e "s:\(\['database'\]\['hostspec'\]\) = '.*':\1 = '${LB_DB_HOST}':" \
-  -e "s:\(\['logging'\]\['folder'\]\) = '.*':\1 = '${LB_LOG_FOLDER}':" \
-  -e "s:\(\['logging'\]\['level'\]\) = '.*':\1 = '${LB_LOG_LEVEL}':" \
-  -e "s:\(\['logging'\]\['sql'\]\) = '.*':\1 = '${LB_LOG_SQL}':"
+  -e "s:\(\['install.password'\].*\) '.*':\1 '${LB_INSTALL_PWD}':" \
+  -e "s:\(\['default.timezone'\].*\) '.*':\1 '${TZ}':" \
+  -e "s:\(\['database'\]\['hostspec'\].*\) '.*':\1 '${LB_DB_HOST}':" \
+  -e "s:\(\['logging'\]\['folder'\].*\) '.*':\1 '${LB_LOG_FOLDER}':" \
+  -e "s:\(\['logging'\]\['level'\].*\) '.*':\1 '${LB_LOG_LEVEL}':" \
+  -e "s:\(\['logging'\]\['sql'\].*\) '.*':\1 '${LB_LOG_SQL}':" \
+  -e "s:\('install.password'.*\) '.*':\1 '${LB_INSTALL_PWD}':" \
+  -e "s:\('default.timezone'.*\) '.*':\1 '${TZ}':" \
+  -e "s:\('hostspec'.*\) '.*':\1 '${LB_DB_HOST}':" \
+  -e "s:\('folder'.*\) '.*':\1 '${LB_LOG_FOLDER}':" \
+  -e "s:\('level'.*\) '.*':\1 '${LB_LOG_LEVEL}':" \
+  -e "s:\('sql'.*\) '.*':\1 '${LB_LOG_SQL}':"
 
 # Create the plugins configuration file inside the volume
 for source in $(find /var/www/html/plugins -type f -name "*dist*"); do

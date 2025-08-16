@@ -12,7 +12,7 @@ The following environment variables are used when the file `/config/config.php` 
 | `LB_DB_NAME` | - | librebooking | **Yes** | `['settings']['database']['name']` |
 | `LB_DB_USER` | - | lb_user | **Yes** | `['settings']['database']['user']` |
 | `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | `['settings']['database']['password']` |
-| `LB_ENV` | production | dev | **No** | N/A - Used to initialize file config.php |
+| `LB_ENV` | production | devel | **No** | `['settings']['log']['level']` |
 
 The following environment variables are **always** used:
 
