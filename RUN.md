@@ -194,7 +194,7 @@ This setup is meant for accessing the application from the internet. It features
          - db_root_pwd
          - db_user_pwd
      lb1:
-       image: librebooking/librebooking:2.8.6.2
+       image: librebooking/librebooking:4.0.0
        restart: always
        depends_on:
          - db
@@ -220,7 +220,7 @@ This setup is meant for accessing the application from the internet. It features
          - lb_install_pwd
          - lb_user_pwd
      lb2:
-       image: librebooking/librebooking:2.8.6.2
+       image: librebooking/librebooking:4.0.0
        restart: always
        depends_on:
          - db
