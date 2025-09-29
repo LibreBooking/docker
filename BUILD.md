@@ -43,7 +43,7 @@ This is the easiest and fastest way.
    # Build the docker image
    docker buildx build \
      --build-arg APP_GH_REF=${APP_GH_REF} \
-     --tag librebooking/librebooking:${LB_RELEASE} \
+     --tag librebooking/librebooking:$(echo ${LB_RELEASE} | sed -e "s/^v//") \
      --output type=docker \
      .
    ```
