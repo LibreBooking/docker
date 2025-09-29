@@ -9,13 +9,17 @@ You have 2 ways to get the docker image on your host:
 
 This is the easiest and fastest way.
 
-```sh
-# Stable release
-docker image pull librebooking/librebooking:v3.0.3
+- Stable branch:
 
-# Development branch
-docker image pull librebooking/librebooking:develop
-```
+  ```sh
+  docker image pull librebooking/librebooking:v4.0.0
+  ```
+
+- Development branch:
+
+  ```sh
+  docker image pull librebooking/librebooking:develop
+  ```
 
 ## Build the docker image
 
@@ -28,7 +32,7 @@ docker image pull librebooking/librebooking:develop
 1. Run the following commands on your host:
 
    ```sh
-   # Set the application release (ex: develop or v3.0.1)
+   # Set the application release (ex: develop or v4.0.0)
    LB_RELEASE=develop
    if [ "${LB_RELEASE}" == "develop" ]; then
      APP_GH_REF="refs/heads/${LB_RELEASE}"
