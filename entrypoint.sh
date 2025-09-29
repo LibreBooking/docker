@@ -59,6 +59,11 @@ if [ -d Web ]; then
 fi
 popd
 
+# Restore the cron job file
+if ! [ -f /config/lb-jobs-cron ]; then
+  cp --archive /root/lb-jobs-cron /config/
+fi
+
 # No configuration file inside directory /config
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"

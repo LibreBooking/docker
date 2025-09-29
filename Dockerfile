@@ -16,7 +16,7 @@ LABEL org.opencontainers.image.authors="colisee@hotmail.com"
 COPY --chmod=755 entrypoint.sh /usr/local/bin/
 
 # Create cron jobs
-COPY --chown=www-data:www-data lb-jobs-cron /config/
+COPY --chown=www-data:www-data lb-jobs-cron /root/
 
 # Copy composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
