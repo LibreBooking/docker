@@ -121,7 +121,7 @@ for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
 done
 
 # Set timezone
-if test -f /usr/share/zoneinfo/${TZ}; then
+if [ -f /usr/share/zoneinfo/${TZ} ]; then
   ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
 
   INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
@@ -137,19 +137,19 @@ log_flr=$(grep \
 log_flr=${log_flr:-${DFT_LOG_FLR}}
 
 # Missing log directory
-if ! test -d "${log_flr}"; then
+if ! [ -d "${log_flr}" ]; then
   mkdir -p "${log_flr}"
   chown -R www-data:www-data "${log_flr}"
 fi
 
 # Missing log file
-if ! test -f "${log_flr}/app.log"; then
+if ! [ -f "${log_flr}/app.log" ]; then
   touch "${log_flr}/app.log"
   chown www-data:www-data "${log_flr}/app.log"
 fi
 
 # A URL path prefix was set
-if ! test -z "${LB_PATH}"; then
+if ! [ -z "${LB_PATH}" ]; then
   ## Set server document root 1 directory up
   sed \
     -i /etc/apache2/sites-enabled/000-default.conf \
