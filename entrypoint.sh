@@ -155,9 +155,11 @@ if ! [ -z "${LB_PATH}" ]; then
     -i /etc/apache2/sites-enabled/000-default.conf \
     -e "s:/var/www/html:/var/www:"
 
-  ## Rename the html directory as the URL prefix
-  ln -s /var/www/html "/var/www/${LB_PATH}"
-  chown www-data:www-data "/var/www/${LB_PATH}"
+  ## Create a link to the htnl directory
+  pushd /var/www
+  ln -s html "${LB_PATH}"
+  chown www-data:www-data "${LB_PATH}"
+  popd
 
   ## Adapt the .htaccess file
   sed \
