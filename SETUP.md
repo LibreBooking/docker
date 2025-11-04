@@ -8,7 +8,7 @@
 (if you are using a custom URL-path)
    - Enter the installation password (docker variable `LB_INSTALL_PWD`)
    - Enter the database root user: `root`
-   - Enter the database root password (docker variable `LB_DB_USER_PWD`)
+   - Enter the database root password (docker variable `MYSQL_ROOT_PASSWORD`)
    - Select `Create the database`
    - Select `Create the database user`
    - Click on the register link, at the bottom of the web page
