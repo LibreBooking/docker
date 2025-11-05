@@ -1,6 +1,6 @@
-* * * * * /usr/local/bin/php -f /var/www/html/Jobs/autorelease.php
-* * * * * /usr/local/bin/php -f /var/www/html/Jobs/sendmissedcheckin.php
-* * * * * /usr/local/bin/php -f /var/www/html/Jobs/sendreminders.php
-0 0 * * * /usr/local/bin/php -f /var/www/html/Jobs/sendseriesend.php
-* * * * * /usr/local/bin/php -f /var/www/html/Jobs/sendwaitlist.php
-0 0 * * * /usr/local/bin/php -f /var/www/html/Jobs/sessioncleanup.php
+* * * * * /usr/local/bin/php -f /var/www/html/Jobs/autorelease.php > /dev/stdout 2>&1
+* * * * * /usr/local/bin/php -f /var/www/html/Jobs/sendmissedcheckin.php > /dev/stdout 2>&1
+* * * * * /usr/local/bin/php -f /var/www/html/Jobs/sendreminders.php > /dev/stdout 2>&1
+0 0 * * * /usr/local/bin/php -f /var/www/html/Jobs/sendseriesend.php > /dev/stdout 2>&1
+* * * * * /usr/local/bin/php -f /var/www/html/Jobs/sendwaitlist.php > /dev/stdout 2>&1
+0 0 * * * /usr/local/bin/php -f /var/www/html/Jobs/sessioncleanup.php > /dev/stdout 2>&1
