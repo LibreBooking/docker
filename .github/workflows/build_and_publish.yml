@@ -26,7 +26,7 @@ jobs:
     steps:
       -
         name: Checkout github repository
-        uses: actions/checkout@v5
+        uses: actions/checkout@v6
         with:
           repository: ${{ vars.DOCKER_REPOSITORY }}
           ref: ${{ inputs.imgBuild }}
