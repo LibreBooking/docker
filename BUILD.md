@@ -12,7 +12,7 @@ This is the easiest and fastest way.
 - Stable branch:
 
   ```sh
-  docker image pull librebooking/librebooking:v4.0.0
+  docker image pull librebooking/librebooking:4.0.0
   ```
 
 - Development branch:
