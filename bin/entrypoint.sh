@@ -44,37 +44,24 @@ LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
 LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
 LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
 LB_PATH=${LB_PATH:-${DFT_LB_PATH}}
-LB_CRON_ENABLED=${LB_CRON_ENABLED:-"false"}
 
 # If volume was used with images older than v2, then archive useless files
 pushd /config
 if [ -d Web ]; then
   mkdir archive
-  chown www-data:www-data archive
   mv $(ls --ignore=archive) archive
   if [ -f archive/config/config.php ]; then
     cp archive/config/config.php config.php
-    chown www-data:www-data config.php
   fi
 fi
 popd
-
-# Restore the cron job file
-if ! [ -f /config/lb-jobs-cron ]; then
-  cp --archive /root/lb-jobs-cron /config/
-fi
 
 # No configuration file inside directory /config
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"
   cp /var/www/html/config/config.dist.php /config/config.php
-  chown www-data:www-data /config/config.php
-  if [ "${LB_ENV}" != "production" ]; then
-     sed \
-       -i /config/config.php \
-       -e "s:\(\['logging'\]\['level'\].*\) '.*':\1 'debug':" \
-       -e "s:\('level'.*\) '.*':\1 'debug':"
-  fi
+
+  ## Set primary configuration settings
   sed \
     -i /config/config.php \
     -e "s:\(\['registration.captcha.enabled'\].*\) 'true':\1 'false':" \
@@ -113,39 +100,22 @@ for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
   target=$(echo "${source}" | sed -e "s/.dist//")
   if ! [ -f "/config/$(basename ${target})" ]; then
     cp --no-clobber "${source}" "/config/$(basename ${target})"
-    chown www-data:www-data "/config/$(basename ${target})"
   fi
   if ! [ -f ${target} ]; then
     ln -s "/config/$(basename ${target})" "${target}"
   fi
 done
 
-# Set timezone
+# Set the php timezone file
 if [ -f /usr/share/zoneinfo/${TZ} ]; then
-  ln -sf /usr/share/zoneinfo/${TZ} /etc/localtime
-
   INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
-  echo "[date]" > ${INI_FILE}
+  echo "[Date]" >> ${INI_FILE}
   echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
 fi
 
-# Get log directory
-log_flr=$(grep \
-  -e "\['logging'\]\['folder'\]" \
-  /var/www/html/config/config.php \
-  | cut -d " " -f3 | cut -d "'" -f2)
-log_flr=${log_flr:-${DFT_LOG_FLR}}
-
 # Missing log directory
-if ! [ -d "${log_flr}" ]; then
-  mkdir -p "${log_flr}"
-  chown -R www-data:www-data "${log_flr}"
-fi
-
-# Missing log file
-if ! [ -f "${log_flr}/app.log" ]; then
-  touch "${log_flr}/app.log"
-  chown www-data:www-data "${log_flr}/app.log"
+if ! [ -d "${LB_LOG_FOLDER}" ]; then
+  mkdir -p "${LB_LOG_FOLDER}"
 fi
 
 # A URL path prefix was set
@@ -155,10 +125,9 @@ if ! [ -z "${LB_PATH}" ]; then
     -i /etc/apache2/sites-enabled/000-default.conf \
     -e "s:/var/www/html:/var/www:"
 
-  ## Create a link to the htnl directory
+  ## Create a link to the html directory
   pushd /var/www
   ln -s html "${LB_PATH}"
-  chown www-data:www-data "${LB_PATH}"
   popd
 
   ## Adapt the .htaccess file
@@ -168,14 +137,5 @@ if ! [ -z "${LB_PATH}" ]; then
     -e "s:\(RewriteRule .*\) /Web/:\1 /${LB_PATH}/Web/:"
 fi
 
-# Start cron in background
-if [ "${LB_CRON_ENABLED}" = "true" ]; then
-  echo "Starting cron service"
-  service cron start
-  crontab -u www-data /config/lb-jobs-cron
-else
-  echo "Cron service is disabled"
-fi
-
-# Run the apache server
+# Switch to the apache server
 exec "$@"

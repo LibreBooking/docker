@@ -12,11 +12,11 @@ LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
 LABEL org.opencontainers.image.authors="colisee@hotmail.com"
 
-# Copy entrypoint
-COPY --chmod=755 entrypoint.sh /usr/local/bin/
+# Copy entrypoint scripts
+COPY --chmod=755 bin /usr/local/bin/
 
 # Create cron jobs
-COPY --chown=www-data:www-data lb-jobs-cron /root/
+COPY --chown=www-data:www-data lb-jobs-cron /config/
 
 # Copy composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
@@ -39,6 +39,7 @@ RUN set -ex; \
 
 # Customize
 RUN set -ex; \
+    chown www-data:www-data /config;\
     cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"; \
     { \
      echo 'RemoteIPHeader X-Real-IP'; \
@@ -53,7 +54,11 @@ RUN set -ex; \
     docker-php-ext-configure gd --with-jpeg --with-freetype; \
     docker-php-ext-install mysqli gd ldap; \
     pecl install timezonedb; \
-    docker-php-ext-enable timezonedb
+    docker-php-ext-enable timezonedb; \
+    mkdir --parent /var/log/librebooking; \
+    chown www-data:www-data /var/log/librebooking; \
+    touch /usr/local/etc/php/conf.d/librebooking.ini; \
+    chown www-data:www-data /usr/local/etc/php/conf.d/librebooking.ini
 
 # Get and customize librebooking
 USER www-data
@@ -80,7 +85,6 @@ RUN set -ex; \
     fi
 
 # Environment
-USER       root
 WORKDIR    /
 VOLUME     /config
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
