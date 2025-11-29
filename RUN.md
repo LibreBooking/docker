@@ -96,7 +96,6 @@ This example is meant for testing the application within your private network.
      --network mynet \
      --publish 80:80 \
      --volume librebooking-conf:/config \
-     --env APP_ENV=dev \
      --env LB_DATABASE_NAME=librebooking \
      --env LB_DATABASE_USER=lb_user \
      --env LB_DATABASE_PASSWORD=db_user_pwd \
@@ -117,7 +116,6 @@ This example is meant for testing the application within your private network.
      --detach \
      --network mynet \
      --volume librebooking-conf:/config \
-     --env APP_ENV=dev \
      --env LB_DATABASE_NAME=librebooking \
      --env LB_DATABASE_USER=lb_user \
      --env LB_DATABASE_PASSWORD=db_user_pwd \
@@ -160,7 +158,6 @@ value of the environment variables to your needs:
        volumes:
          - app_conf:/config
        environment:
-         - APP_ENV=dev
          - LB_DATABASE_NAME=librebooking
          - LB_DATABASE_USER=lb_user
          - LB_DATABASE_PASSWORD=db_user_pwd
@@ -180,7 +177,6 @@ value of the environment variables to your needs:
        volumes:
          - app_conf:/config
        environment:
-         - APP_ENV=dev
          - LB_DATABASE_NAME=librebooking
          - LB_DATABASE_USER=lb_user
          - LB_DATABASE_PASSWORD=db_user_pwd
@@ -265,7 +261,6 @@ the value of the environment variables to your needs:
        volumes:
          - lb1_conf:/config
        environment:
-         - APP_ENV=production
          - APP_PATH=book
          - LB_DATABASE_NAME=lb1
          - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
@@ -292,7 +287,6 @@ the value of the environment variables to your needs:
        volumes:
          - lb1_conf:/config
        environment:
-         - APP_ENV=production
          - LB_DATABASE_NAME=lb1
          - LB_DATABASE_USER=lb1
          - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
@@ -313,7 +307,6 @@ the value of the environment variables to your needs:
          - ./uploads/images:/var/www/html/Web/uploads/images
          - ./uploads/reservation:/var/www/html/Web/uploads/reservation
        environment:
-         - APP_ENV=production
          - LB_DATABASE_NAME=lb2
          - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
          - LB_DATABASE_USER=lb2
@@ -338,7 +331,6 @@ the value of the environment variables to your needs:
        volumes:
          - lb2_conf:/config
        environment:
-         - APP_ENV=production
          - LB_DATABASE_NAME=lb2
          - LB_DATABASE_USER=lb2
          - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd

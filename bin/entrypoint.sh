@@ -6,7 +6,6 @@ set -ex
 readonly DFT_LOGGING_FLR="/var/log/librebooking"
 readonly DFT_LOGGING_LEVEL="none"
 readonly DFT_LOGGING_SQL=false
-readonly DFT_APP_ENV="production"
 readonly DFT_APP_PATH=""
 
 file_env() {
@@ -42,7 +41,6 @@ file_env LB_DATABASE_PASSWORD
 LB_LOGGING_FOLDER=${LB_LOGGING_FOLDER:-${DFT_LOGGING_FLR}}
 LB_LOGGING_LEVEL=${LB_LOGGING_LEVEL:-${DFT_LOGGING_LEVEL}}
 LB_LOGGING_SQL=${LB_LOGGING_SQL:-${DFT_LOGGING_SQL}}
-APP_ENV=${APP_ENV:-${DFT_APP_ENV}}
 APP_PATH=${APP_PATH:-${DFT_APP_PATH}}
 
 # If volume was used with images older than v2, then archive useless files
