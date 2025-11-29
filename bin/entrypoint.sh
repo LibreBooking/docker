@@ -3,11 +3,11 @@
 set -ex
 
 # Constants
-readonly DFT_LOG_FLR="/var/log/librebooking"
-readonly DFT_LOG_LEVEL="none"
-readonly DFT_LOG_SQL=false
-readonly DFT_LB_ENV="production"
-readonly DFT_LB_PATH=""
+readonly DFT_LOGGING_FLR="/var/log/librebooking"
+readonly DFT_LOGGING_LEVEL="none"
+readonly DFT_LOGGING_SQL=false
+readonly DFT_APP_ENV="production"
+readonly DFT_APP_PATH=""
 
 file_env() {
   local var="$1"
@@ -37,13 +37,13 @@ fi
 
 # Initialize variables
 file_env LB_INSTALL_PWD
-file_env LB_DB_USER_PWD
+file_env LB_DATABASE_PASSWORD
 
-LB_LOG_FOLDER=${LB_LOG_FOLDER:-${DFT_LOG_FLR}}
-LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
-LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
-LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
-LB_PATH=${LB_PATH:-${DFT_LB_PATH}}
+LB_LOGGING_FOLDER=${LB_LOGGING_FOLDER:-${DFT_LOGGING_FLR}}
+LB_LOGGING_LEVEL=${LB_LOGGING_LEVEL:-${DFT_LOGGING_LEVEL}}
+LB_LOGGING_SQL=${LB_LOGGING_SQL:-${DFT_LOGGING_SQL}}
+APP_ENV=${APP_ENV:-${DFT_APP_ENV}}
+APP_PATH=${APP_PATH:-${DFT_APP_PATH}}
 
 # If volume was used with images older than v2, then archive useless files
 pushd /config
@@ -65,13 +65,13 @@ if ! [ -f /config/config.php ]; then
   sed \
     -i /config/config.php \
     -e "s:\(\['registration.captcha.enabled'\].*\) 'true':\1 'false':" \
-    -e "s:\(\['database'\]\['user'\].*\) '.*':\1 '${LB_DB_USER}':" \
-    -e "s:\(\['database'\]\['password'\].*\) '.*':\1 '${LB_DB_USER_PWD}':" \
-    -e "s:\(\['database'\]\['name'\].*\) '.*':\1 '${LB_DB_NAME}':" \
+    -e "s:\(\['database'\]\['user'\].*\) '.*':\1 '${LB_DATABASE_USER}':" \
+    -e "s:\(\['database'\]\['password'\].*\) '.*':\1 '${LB_DATABASE_PASSWORD}':" \
+    -e "s:\(\['database'\]\['name'\].*\) '.*':\1 '${LB_DATABASE_NAME}':" \
     -e "s:\('captcha.enabled'.*\) true:\1 false:" \
-    -e "s:\('user'.*\) '.*':\1 '${LB_DB_USER}':" \
-    -e "s:\('password'.*\) '.*':\1 '${LB_DB_USER_PWD}':" \
-    -e "s:\('name'.*\) '.*':\1 '${LB_DB_NAME}':"
+    -e "s:\('user'.*\) '.*':\1 '${LB_DATABASE_USER}':" \
+    -e "s:\('password'.*\) '.*':\1 '${LB_DATABASE_PASSWORD}':" \
+    -e "s:\('name'.*\) '.*':\1 '${LB_DATABASE_NAME}':"
 fi
 
 # Link the configuration file
@@ -82,18 +82,18 @@ fi
 # Set secondary configuration settings
 sed \
   -i /config/config.php \
-  -e "s:\(\['install.password'\].*\) '.*':\1 '${LB_INSTALL_PWD}':" \
-  -e "s:\(\['default.timezone'\].*\) '.*':\1 '${TZ}':" \
-  -e "s:\(\['database'\]\['hostspec'\].*\) '.*':\1 '${LB_DB_HOST}':" \
-  -e "s:\(\['logging'\]\['folder'\].*\) '.*':\1 '${LB_LOG_FOLDER}':" \
-  -e "s:\(\['logging'\]\['level'\].*\) '.*':\1 '${LB_LOG_LEVEL}':" \
-  -e "s:\(\['logging'\]\['sql'\].*\) '.*':\1 '${LB_LOG_SQL}':" \
-  -e "s:\('install.password'.*\) '.*':\1 '${LB_INSTALL_PWD}':" \
-  -e "s:\('default.timezone'.*\) '.*':\1 '${TZ}':" \
-  -e "s:\('hostspec'.*\) '.*':\1 '${LB_DB_HOST}':" \
-  -e "s:\('folder'.*\) '.*':\1 '${LB_LOG_FOLDER}':" \
-  -e "s:\('level'.*\) '.*':\1 '${LB_LOG_LEVEL}':" \
-  -e "s:\('sql'.*\) '.*':\1 '${LB_LOG_SQL}':"
+  -e "s:\(\['install.password'\].*\) '.*':\1 '${LB_INSTALL_PASSWORD}':" \
+  -e "s:\(\['default.timezone'\].*\) '.*':\1 '${LB_DEFAULT_TIMEZONE}':" \
+  -e "s:\(\['database'\]\['hostspec'\].*\) '.*':\1 '${LB_DATABASE_HOSTSPEC}':" \
+  -e "s:\(\['logging'\]\['folder'\].*\) '.*':\1 '${LB_LOGGING_FOLDER}':" \
+  -e "s:\(\['logging'\]\['level'\].*\) '.*':\1 '${LB_LOGGING_LEVEL}':" \
+  -e "s:\(\['logging'\]\['sql'\].*\) '.*':\1 '${LB_LOGGING_SQL}':" \
+  -e "s:\('install.password'.*\) '.*':\1 '${LB_INSTALL_PASSWORD}':" \
+  -e "s:\('default.timezone'.*\) '.*':\1 '${LB_DEFAULT_TIMEZONE}':" \
+  -e "s:\('hostspec'.*\) '.*':\1 '${LB_DATABASE_HOSTSPEC}':" \
+  -e "s:\('folder'.*\) '.*':\1 '${LB_LOGGING_FOLDER}':" \
+  -e "s:\('level'.*\) '.*':\1 '${LB_LOGGING_LEVEL}':" \
+  -e "s:\('sql'.*\) '.*':\1 '${LB_LOGGING_SQL}':"
 
 # Create the plugins configuration file inside the volume
 for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
@@ -107,19 +107,19 @@ for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
 done
 
 # Set the php timezone file
-if [ -f /usr/share/zoneinfo/${TZ} ]; then
+if [ -f /usr/share/zoneinfo/${LB_DEFAULT_TIMEZONE} ]; then
   INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
   echo "[Date]" >> ${INI_FILE}
-  echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
+  echo "date.timezone=\"${LB_DEFAULT_TIMEZONE}\"" >> ${INI_FILE}
 fi
 
 # Missing log directory
-if ! [ -d "${LB_LOG_FOLDER}" ]; then
-  mkdir -p "${LB_LOG_FOLDER}"
+if ! [ -d "${LB_LOGGING_FOLDER}" ]; then
+  mkdir -p "${LB_LOGGING_FOLDER}"
 fi
 
 # A URL path prefix was set
-if ! [ -z "${LB_PATH}" ]; then
+if ! [ -z "${APP_PATH}" ]; then
   ## Set server document root 1 directory up
   sed \
     -i /etc/apache2/sites-enabled/000-default.conf \
@@ -127,14 +127,14 @@ if ! [ -z "${LB_PATH}" ]; then
 
   ## Create a link to the html directory
   pushd /var/www
-  ln -s html "${LB_PATH}"
+  ln -s html "${APP_PATH}"
   popd
 
   ## Adapt the .htaccess file
   sed \
-    -i /var/www/${LB_PATH}/.htaccess \
+    -i /var/www/${APP_PATH}/.htaccess \
     -e "s:\(RewriteCond .*\)/Web/:\1\.\*/Web/:" \
-    -e "s:\(RewriteRule .*\) /Web/:\1 /${LB_PATH}/Web/:"
+    -e "s:\(RewriteRule .*\) /Web/:\1 /${APP_PATH}/Web/:"
 fi
 
 # Switch to the apache server

@@ -5,27 +5,20 @@ It needs to be linked to a MariaDB database container.
 
 ## Environment variables
 
-The following environment variables are used when the file `/config/config.php`
-**does not exist**:
+From version-3, the librebooking docker image makes full usage of the
+configuration settings override through environment variables.
 
-| Env | Default | Example | Required | config.php settings |
-| - | - | - | - | - |
-| `LB_DB_NAME` | - | librebooking | **Yes** | `['settings']['database']['name']` |
-| `LB_DB_USER` | - | lb_user | **Yes** | `['settings']['database']['user']` |
-| `LB_DB_USER_PWD` | - | myPassw0rd | **Yes** | `['settings']['database']['password']` |
-| `LB_ENV` | production | devel | **No** | `['settings']['log']['level']` |
+### Pattern
 
-The following environment variables are **always** used:
+Environment variables follow the pattern LB_ + the config key with dots and
+dashes converted to underscores and converted to uppercase.
 
-| Env | Default | Example | Required | config.php settings |
-| - | - | - | - | - |
-| `LB_DB_HOST` | - | lb-db | **Yes** | `['settings']['database']['hostspec']` |
-| `LB_INSTALL_PWD` | - | installPWD | **Yes** | `['settings']['install.password']` |
-| `TZ` | - | Europe/Zurich | **Yes** | `['settings']['default.timezone']` |
-| `LB_LOG_FOLDER` | /var/log/librebooking | | **No** | `['settings']['logging']['folder']` |
-| `LB_LOG_LEVEL` | none | debug | **No** | `['settings']['logging']['level']` |
-| `LB_LOG_SQL` | false | true | **No** | `['settings']['logging']['sql']` |
-| `LB_PATH` | - | book | **No** | N/A - URL path prefix (usually none) |
+### Examples
+
+- app.title → LB_APP_TITLE
+- database.hostspec → LB_DATABASE_HOSTSPEC
+- admin.email → LB_ADMIN_EMAIL
+- default.timezone → LB_DEFAULT_TIMEZONE
 
 ## Optional mounts
 
@@ -63,9 +56,9 @@ where the:
     php -f /var/www/html/Jobs/sendreminders.php`
   ```
 
-Based on the value of the environment variable `LB_LOG_LEVEL`, the
+Based on the value of the environment variable `LB_LOGGING_LEVEL`, the
 background jobs will output to the `app.log` file inside the log
-folder defined by the environment variable `LB_LOG_FOLDER`.
+folder defined by the environment variable `LB_LOGGING_FOLDER`.
 
 ## Examples of running librebooking
 
@@ -103,16 +96,16 @@ This example is meant for testing the application within your private network.
      --network mynet \
      --publish 80:80 \
      --volume librebooking-conf:/config \
-     --env LB_DB_NAME=librebooking \
-     --env LB_DB_USER=lb_user \
-     --env LB_DB_USER_PWD=db_user_pwd \
-     --env LB_DB_HOST=librebooking-db \
-     --env LB_INSTALL_PWD=app_install_pwd \
-     --env LB_ENV=dev \
-     --env LB_LOG_FOLDER=/var/log/librebooking \
-     --env LB_LOG_LEVEL=DEBUG \
-     --env LB_LOG_SQL=false \
-     --env TZ=Europe/Zurich \
+     --env APP_ENV=dev \
+     --env LB_DATABASE_NAME=librebooking \
+     --env LB_DATABASE_USER=lb_user \
+     --env LB_DATABASE_PASSWORD=db_user_pwd \
+     --env LB_DATABASE_HOSTSPEC=librebooking-db \
+     --env LB_INSTALL_PASSWORD=app_install_pwd \
+     --env LB_LOGGING_FOLDER=/var/log/librebooking \
+     --env LB_LOGGING_LEVEL=DEBUG \
+     --env LB_LOGGING_SQL=false \
+     --env LB_DEFAULT_TIMEZONE=Europe/Zurich \
     librebooking/librebooking:develop
    ```
 
@@ -124,15 +117,15 @@ This example is meant for testing the application within your private network.
      --detach \
      --network mynet \
      --volume librebooking-conf:/config \
-     --env LB_DB_NAME=librebooking \
-     --env LB_DB_USER=lb_user \
-     --env LB_DB_USER_PWD=db_user_pwd \
-     --env LB_DB_HOST=librebooking-db \
-     --env LB_ENV=dev \
-     --env LB_LOG_FOLDER=/var/log/librebooking \
-     --env LB_LOG_LEVEL=DEBUG \
-     --env LB_LOG_SQL=false \
-     --env TZ=Europe/Zurich \
+     --env APP_ENV=dev \
+     --env LB_DATABASE_NAME=librebooking \
+     --env LB_DATABASE_USER=lb_user \
+     --env LB_DATABASE_PASSWORD=db_user_pwd \
+     --env LB_DATABASE_HOSTSPEC=librebooking-db \
+     --env LB_LOGGING_FOLDER=/var/log/librebooking \
+     --env LB_LOGGING_LEVEL=DEBUG \
+     --env LB_LOGGING_SQL=false \
+     --env LB_DEFAULT_TIMEZONE=Europe/Zurich \
     librebooking/librebooking:develop
    ```
 
@@ -167,16 +160,16 @@ value of the environment variables to your needs:
        volumes:
          - app_conf:/config
        environment:
-         - LB_DB_NAME=librebooking
-         - LB_DB_USER=lb_user
-         - LB_DB_USER_PWD=db_user_pwd
-         - LB_DB_HOST=db
-         - LB_INSTALL_PWD=app_install_pwd
-         - LB_ENV=dev
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=DEBUG
-         - LB_LOG_SQL=false
-         - TZ=Europe/Zurich
+         - APP_ENV=dev
+         - LB_DATABASE_NAME=librebooking
+         - LB_DATABASE_USER=lb_user
+         - LB_DATABASE_PASSWORD=db_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
+         - LB_INSTALL_PASSWORD=app_install_pwd
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=DEBUG
+         - LB_LOGGING_SQL=false
+         - LB_DEFAULT_TIMEZONE=Europe/Zurich
      jobs:
        image: librebooking/librebooking:develop
        restart: always
@@ -187,15 +180,15 @@ value of the environment variables to your needs:
        volumes:
          - app_conf:/config
        environment:
-         - LB_DB_NAME=librebooking
-         - LB_DB_USER=lb_user
-         - LB_DB_USER_PWD=db_user_pwd
-         - LB_DB_HOST=db
-         - LB_ENV=dev
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=DEBUG
-         - LB_LOG_SQL=false
-         - TZ=Europe/Zurich
+         - APP_ENV=dev
+         - LB_DATABASE_NAME=librebooking
+         - LB_DATABASE_USER=lb_user
+         - LB_DATABASE_PASSWORD=db_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=DEBUG
+         - LB_LOGGING_SQL=false
+         - LB_DEFAULT_TIMEZONE=Europe/Zurich
 
    volumes:
      db_conf:
@@ -272,17 +265,17 @@ the value of the environment variables to your needs:
        volumes:
          - lb1_conf:/config
        environment:
-         - LB_DB_NAME=lb1
-         - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
-         - LB_DB_USER=lb1
-         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-         - LB_DB_HOST=db
-         - LB_ENV=production
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=ERROR
-         - LB_LOG_SQL=false
-         - LB_PATH=book
-         - TZ=Europe/Zurich
+         - APP_ENV=production
+         - APP_PATH=book
+         - LB_DATABASE_NAME=lb1
+         - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
+         - LB_DATABASE_USER=lb1
+         - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=ERROR
+         - LB_LOGGING_SQL=false
+         - LB_DEFAULT_TIMEZONE=Europe/Zurich
          - VIRTUAL_HOST=acme.org
          - VIRTUAL_PATH=/book
          - LETSENCRYPT_HOST=acme.org
@@ -299,14 +292,15 @@ the value of the environment variables to your needs:
        volumes:
          - lb1_conf:/config
        environment:
-         - LB_DB_NAME=lb1
-         - LB_DB_USER=lb1
-         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-         - LB_DB_HOST=db
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=ERROR
-         - LB_LOG_SQL=false
-         - TZ=Europe/Zurich
+         - APP_ENV=production
+         - LB_DATABASE_NAME=lb1
+         - LB_DATABASE_USER=lb1
+         - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=ERROR
+         - LB_LOGGING_SQL=false
+         - LB_DEFAULT_TIMEZONE=Europe/Zurich
        secrets:
          - lb_user_pwd
      lb2:
@@ -319,16 +313,16 @@ the value of the environment variables to your needs:
          - ./uploads/images:/var/www/html/Web/uploads/images
          - ./uploads/reservation:/var/www/html/Web/uploads/reservation
        environment:
-         - LB_DB_NAME=lb2
-         - LB_INSTALL_PWD_FILE=/run/secrets/lb_install_pwd
-         - LB_DB_USER=lb2
-         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-         - LB_DB_HOST=db
-         - LB_ENV=production
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=ERROR
-         - LB_LOG_SQL=false
-         - TZ=Europe/Zurich
+         - APP_ENV=production
+         - LB_DATABASE_NAME=lb2
+         - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
+         - LB_DATABASE_USER=lb2
+         - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=ERROR
+         - LB_LOGGING_SQL=false
+         - LB_DEFAULT_TIMEZONE=Europe/Zurich
          - VIRTUAL_HOST=acme.org
          - LETSENCRYPT_HOST=acme.org
        secrets:
@@ -344,14 +338,15 @@ the value of the environment variables to your needs:
        volumes:
          - lb2_conf:/config
        environment:
-         - LB_DB_NAME=lb2
-         - LB_DB_USER=lb2
-         - LB_DB_USER_PWD_FILE=/run/secrets/lb_user_pwd
-         - LB_DB_HOST=db
-         - LB_LOG_FOLDER=/var/log/librebooking
-         - LB_LOG_LEVEL=ERROR
-         - LB_LOG_SQL=false
-         - TZ=Europe/Zurich
+         - APP_ENV=production
+         - LB_DATABASE_NAME=lb2
+         - LB_DATABASE_USER=lb2
+         - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+         - LB_DATABASE_HOSTSPEC=db
+         - LB_LOGGING_FOLDER=/var/log/librebooking
+         - LB_LOGGING_LEVEL=ERROR
+         - LB_LOGGING_SQL=false
+         - LB_DEFAULT_TIMEZONE=Europe/Zurich
        secrets:
          - lb_user_pwd
 
