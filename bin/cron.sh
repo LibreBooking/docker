@@ -2,11 +2,10 @@
 set -eu
 
 # Constants
-readonly DFT_LOG_FLR="/var/log/librebooking"
-readonly DFT_LOG_LEVEL="none"
-readonly DFT_LOG_SQL=false
-readonly DFT_LB_ENV="production"
-readonly DFT_LB_PATH=""
+readonly DFT_LOGGING_FLR="/var/log/librebooking"
+readonly DFT_LOGGING_LEVEL="none"
+readonly DFT_LOGGING_SQL=false
+readonly DFT_APP_PATH=""
 
 file_env() {
   local var="$1"
@@ -31,17 +30,16 @@ file_env() {
 # Initialize variables
 file_env LB_DB_USER_PWD
 
-LB_LOG_FOLDER=${LB_LOG_FOLDER:-${DFT_LOG_FLR}}
-LB_LOG_LEVEL=${LB_LOG_LEVEL:-${DFT_LOG_LEVEL}}
-LB_LOG_SQL=${LB_LOG_SQL:-${DFT_LOG_SQL}}
-LB_ENV=${LB_ENV:-${DFT_LB_ENV}}
-LB_PATH=${LB_PATH:-${DFT_LB_PATH}}
+LB_LOGGING_FOLDER=${LB_LOGGING_FOLDER:-${DFT_LOGGING_FLR}}
+LB_LOGGING_LEVEL=${LB_LOGGING_LEVEL:-${DFT_LOGGING_LEVEL}}
+LB_LOGGING_SQL=${LB_LOGGING_SQL:-${DFT_LOGGING_SQL}}
+APP_PATH=${APP_PATH:-${DFT_APP_PATH}}
 
 # Set the php timezone file
-if [ -f /usr/share/zoneinfo/${TZ} ]; then
+if [ -f /usr/share/zoneinfo/${LB_DEFAULT_TIMEZONE} ]; then
   INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
   echo "[Date]" >> ${INI_FILE}
-  echo "date.timezone=\"${TZ}\"" >> ${INI_FILE}
+  echo "date.timezone=\"${LB_DEFAULT_TIMEZONE}\"" >> ${INI_FILE}
 fi
 
 # Link the configuration file
