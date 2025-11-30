@@ -58,18 +58,6 @@ popd
 if ! [ -f /config/config.php ]; then
   echo "Initialize file config.php"
   cp /var/www/html/config/config.dist.php /config/config.php
-
-  ## Set primary configuration settings
-  sed \
-    -i /config/config.php \
-    -e "s:\(\['registration.captcha.enabled'\].*\) 'true':\1 'false':" \
-    -e "s:\(\['database'\]\['user'\].*\) '.*':\1 '${LB_DATABASE_USER}':" \
-    -e "s:\(\['database'\]\['password'\].*\) '.*':\1 '${LB_DATABASE_PASSWORD}':" \
-    -e "s:\(\['database'\]\['name'\].*\) '.*':\1 '${LB_DATABASE_NAME}':" \
-    -e "s:\('captcha.enabled'.*\) true:\1 false:" \
-    -e "s:\('user'.*\) '.*':\1 '${LB_DATABASE_USER}':" \
-    -e "s:\('password'.*\) '.*':\1 '${LB_DATABASE_PASSWORD}':" \
-    -e "s:\('name'.*\) '.*':\1 '${LB_DATABASE_NAME}':"
 fi
 
 # Link the configuration file
@@ -77,21 +65,18 @@ if ! [ -f /var/www/html/config/config.php ]; then
   ln -s /config/config.php /var/www/html/config/config.php
 fi
 
-# Set secondary configuration settings
+# Set configuration settings for Librebooking < v4.0.0
 sed \
   -i /config/config.php \
+  -e "s:\(\['database'\]\['user'\].*\) '.*':\1 '${LB_DATABASE_USER}':" \
+  -e "s:\(\['database'\]\['password'\].*\) '.*':\1 '${LB_DATABASE_PASSWORD}':" \
+  -e "s:\(\['database'\]\['name'\].*\) '.*':\1 '${LB_DATABASE_NAME}':" \
   -e "s:\(\['install.password'\].*\) '.*':\1 '${LB_INSTALL_PASSWORD}':" \
   -e "s:\(\['default.timezone'\].*\) '.*':\1 '${LB_DEFAULT_TIMEZONE}':" \
   -e "s:\(\['database'\]\['hostspec'\].*\) '.*':\1 '${LB_DATABASE_HOSTSPEC}':" \
   -e "s:\(\['logging'\]\['folder'\].*\) '.*':\1 '${LB_LOGGING_FOLDER}':" \
   -e "s:\(\['logging'\]\['level'\].*\) '.*':\1 '${LB_LOGGING_LEVEL}':" \
-  -e "s:\(\['logging'\]\['sql'\].*\) '.*':\1 '${LB_LOGGING_SQL}':" \
-  -e "s:\('install.password'.*\) '.*':\1 '${LB_INSTALL_PASSWORD}':" \
-  -e "s:\('default.timezone'.*\) '.*':\1 '${LB_DEFAULT_TIMEZONE}':" \
-  -e "s:\('hostspec'.*\) '.*':\1 '${LB_DATABASE_HOSTSPEC}':" \
-  -e "s:\('folder'.*\) '.*':\1 '${LB_LOGGING_FOLDER}':" \
-  -e "s:\('level'.*\) '.*':\1 '${LB_LOGGING_LEVEL}':" \
-  -e "s:\('sql'.*\) '.*':\1 '${LB_LOGGING_SQL}':"
+  -e "s:\(\['logging'\]\['sql'\].*\) '.*':\1 '${LB_LOGGING_SQL}':"
 
 # Create the plugins configuration file inside the volume
 for source in $(find /var/www/html/plugins -type f -name "*dist*"); do

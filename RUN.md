@@ -1,24 +1,32 @@
 # Run the docker container
 
 The image contains the apache web server and the librebooking application files.
-It needs to be linked to a MariaDB database container.
+It needs to be linked to a running MariaDB database container.
 
 ## Environment variables
 
-From version-3, the librebooking docker image makes full usage of the
-configuration settings override through environment variables.
+From version-3, this docker image makes full usage of the
+[environment variables override](https://github.com/LibreBooking/app/blob/develop/docs/source/BASIC-CONFIGURATION.rst).
 
-### Pattern
+### Required variables
 
-Environment variables follow the pattern LB_ + the config key with dots and
-dashes converted to underscores and converted to uppercase.
+| Variable | Defaults | Description |
+| -------- | -------- | ----------- |
+| LB_DATABASE_NAME | | Database name |
+| LB_DATABASE_USER | | Database user |
+| LB_DATABASE_PASSWORD | | Database password |
+| LB_DATABASE_HOSTSPEC | | Database network address |
+| LB_INSTALL_PASSWORD | | Librebooking installation password |
+| LB_DEFAULT_TIMEZONE | | Timezone |
+| LB_LOGGING_FOLDER | `/var/log/librebooking` | Logs folder |
+| LB_LOGGING_LEVEL | `none` | Logging level |
+| LB_LOGGING_SQL | `false` | SQL logging |
 
-### Examples
+### Optional variables
 
-- app.title → LB_APP_TITLE
-- database.hostspec → LB_DATABASE_HOSTSPEC
-- admin.email → LB_ADMIN_EMAIL
-- default.timezone → LB_DEFAULT_TIMEZONE
+| Variable | Description |
+| -------- | ----------- |
+| APP_PATH | URL path    |
 
 ## Optional mounts
 

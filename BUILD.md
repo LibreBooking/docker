@@ -33,17 +33,17 @@ This is the easiest and fastest way.
 
    ```sh
    # Set the application release (ex: develop or v4.0.0)
-   LB_RELEASE=develop
-   if [ "${LB_RELEASE}" == "develop" ]; then
-     APP_GH_REF="refs/heads/${LB_RELEASE}"
+   APP_RELEASE=develop
+   if [ "${APP_RELEASE}" == "develop" ]; then
+     APP_GH_REF="refs/heads/${APP_RELEASE}"
    else
-     APP_GH_REF="refs/tags/${LB_RELEASE}"
+     APP_GH_REF="refs/tags/${APP_RELEASE}"
    fi
 
    # Build the docker image
    docker buildx build \
      --build-arg APP_GH_REF=${APP_GH_REF} \
-     --tag librebooking/librebooking:$(echo ${LB_RELEASE} | sed -e "s/^v//") \
+     --tag librebooking/librebooking:$(echo ${APP_RELEASE} | sed -e "s/^v//") \
      --output type=docker \
      .
    ```
