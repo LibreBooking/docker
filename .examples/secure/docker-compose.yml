@@ -1,0 +1,146 @@
+name: librebooking
+
+services:
+  proxy:
+     image: nginxproxy/nginx-proxy
+     restart: always
+     networks:
+       - mynet
+     ports:
+       - 80:80
+       - 443:443
+     volumes:
+       - proxy_certs:/etc/nginx/certs
+       - proxy_html:/usr/share/nginx/html
+       - /var/run/docker.sock:/tmp/docker.sock:ro
+  acme:
+    image: nginxproxy/acme-companion
+    restart: always
+    depends_on:
+      - proxy
+    volumes_from:
+      - proxy
+    volumes:
+      - acme_acme:/etc/acme.sh
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      - DEFAULT_EMAIL=john.doe@acme.org
+  db:
+    image: linuxserver/mariadb:10.6.13
+    restart: always
+    volumes:
+      - db_conf:/config
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Europe/Zurich
+      - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/db_root_pwd
+    secrets:
+      - db_root_pwd
+      - db_user_pwd
+  lb1:
+    image: librebooking/librebooking:4.0.0
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - lb1_conf:/config
+    environment:
+      - APP_PATH=book
+      - LB_DATABASE_NAME=lb1
+      - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
+      - LB_DATABASE_USER=lb1
+      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+      - LB_DATABASE_HOSTSPEC=db
+      - LB_LOGGING_FOLDER=/var/log/librebooking
+      - LB_LOGGING_LEVEL=ERROR
+      - LB_LOGGING_SQL=false
+      - LB_DEFAULT_TIMEZONE=Europe/Zurich
+      - VIRTUAL_HOST=acme.org
+      - VIRTUAL_PATH=/book
+      - LETSENCRYPT_HOST=acme.org
+    secrets:
+      - lb_install_pwd
+      - lb_user_pwd
+  job1:
+    image: librebooking/librebooking:4.0.0
+    restart: always
+    depends_on:
+      - lb1
+    user: root
+    entrypoint: /usr/local/bin/cron.sh
+    volumes:
+      - lb1_conf:/config
+    environment:
+      - LB_DATABASE_NAME=lb1
+      - LB_DATABASE_USER=lb1
+      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+      - LB_DATABASE_HOSTSPEC=db
+      - LB_LOGGING_FOLDER=/var/log/librebooking
+      - LB_LOGGING_LEVEL=ERROR
+      - LB_LOGGING_SQL=false
+      - LB_DEFAULT_TIMEZONE=Europe/Zurich
+    secrets:
+      - lb_user_pwd
+  lb2:
+    image: librebooking/librebooking:4.0.0
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - lb2_conf:/config
+      - ./uploads/images:/var/www/html/Web/uploads/images
+      - ./uploads/reservation:/var/www/html/Web/uploads/reservation
+    environment:
+      - LB_DATABASE_NAME=lb2
+      - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
+      - LB_DATABASE_USER=lb2
+      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+      - LB_DATABASE_HOSTSPEC=db
+      - LB_LOGGING_FOLDER=/var/log/librebooking
+      - LB_LOGGING_LEVEL=ERROR
+      - LB_LOGGING_SQL=false
+      - LB_DEFAULT_TIMEZONE=Europe/Zurich
+      - VIRTUAL_HOST=acme.org
+      - LETSENCRYPT_HOST=acme.org
+    secrets:
+      - lb_install_pwd
+      - lb_user_pwd
+  job2:
+    image: librebooking/librebooking:4.0.0
+    restart: always
+    depends_on:
+      - lb2
+    user: root
+    entrypoint: /usr/local/bin/cron.sh
+    volumes:
+      - lb2_conf:/config
+    environment:
+      - LB_DATABASE_NAME=lb2
+      - LB_DATABASE_USER=lb2
+      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
+      - LB_DATABASE_HOSTSPEC=db
+      - LB_LOGGING_FOLDER=/var/log/librebooking
+      - LB_LOGGING_LEVEL=ERROR
+      - LB_LOGGING_SQL=false
+      - LB_DEFAULT_TIMEZONE=Europe/Zurich
+    secrets:
+      - lb_user_pwd
+
+volumes:
+  proxy_certs:
+  proxy_html:
+  acme_acme:
+  db_conf:
+  lb1_conf:
+  lb2_conf:
+
+secrets:
+  db_root_pwd:
+    file: ./pwd_db_root.txt
+  db_user_pwd:
+    file: ./pwd_db_user.txt
+  lb_user_pwd:
+    file: ./pwd_db_user.txt
+  lb_install_pwd:
+    file: ./pwd_lb_inst.txt

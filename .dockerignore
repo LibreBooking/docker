@@ -5,12 +5,12 @@
 # Ignore GitHub actions
 .github
 
-# Ignore all the markdown files
+# Ignore documentation and examples
 *.md
+.examples
 
 # Ignore secrets files
-db_root_pwd.txt
-db_user_pwd.txt
+pwd*.txt
 
 # Ignore LICENSE file
 LICENSE 

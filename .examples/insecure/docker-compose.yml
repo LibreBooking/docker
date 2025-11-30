@@ -1,0 +1,36 @@
+name: librebooking
+
+services:
+  db:
+    image: linuxserver/mariadb:10.6.13
+    restart: always
+    volumes:
+      - db_conf:/config
+    env_file:
+      - db.env
+  app:
+    image: librebooking/librebooking:develop
+    restart: always
+    depends_on:
+      - db
+    ports:
+      - "80:80"
+    volumes:
+      - app_conf:/config
+    env_file:
+      - lb.env
+  cron:
+    image: librebooking/librebooking:develop
+    restart: always
+    user: root
+    entrypoint: /usr/local/bin/cron.sh
+    depends_on:
+      - app
+    volumes:
+      - app_conf:/config
+    env_file:
+      - lb.env
+
+volumes:
+  db_conf:
+  app_conf:
