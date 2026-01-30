@@ -22,7 +22,7 @@ docker run \
   --detach \
   --name librebooking-app \
   --network mynet \
-  --publish 80:80 \
+  --publish 8080:8080 \
   --volume librebooking-conf:/config \
   --env LB_DATABASE_NAME=librebooking \
   --env LB_DATABASE_USER=lb_user \
