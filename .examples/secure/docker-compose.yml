@@ -56,6 +56,8 @@ services:
       - LB_LOGGING_LEVEL=ERROR
       - LB_LOGGING_SQL=false
       - LB_DEFAULT_TIMEZONE=Europe/Zurich
+      - LB_UPLOADS_IMAGE_UPLOAD_URL=Web/uploads/images
+      - LB_UPLOADS_RESERVATION_ATTACHMENT_PATH=Web/uploads/reservation
       - VIRTUAL_HOST=acme.org
       - VIRTUAL_PORT=8080
       - VIRTUAL_PATH=/book
