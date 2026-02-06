@@ -16,7 +16,7 @@ LABEL org.opencontainers.image.authors="colisee@hotmail.com"
 COPY --chmod=755 bin /usr/local/bin/
 
 # Create cron jobs
-COPY --chown=www-data:root --chmod=0775 lb-jobs-cron /config/
+COPY --chown=www-data:www-data --chmod=0755 lb-jobs-cron /config/
 
 # Copy composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
@@ -89,8 +89,15 @@ RUN set -ex; \
     if ! [ -d /var/www/html/tpl_c ]; then \
       mkdir /var/www/html/tpl_c; \
     fi; \
-    chown --recursive www-data:root /var/www/html; \
-    chmod --recursive g+rwx /var/www/html
+    mkdir /var/www/html/Web/uploads/reservation
+
+RUN set -ex; \
+    chown www-data:root /var/www/html/tpl_c; \
+    chmod g+rwx /var/www/html/tpl_c; \
+    chgrp root /var/www/html/config /var/www/html/Web/uploads/images \
+          /var/www/html/Web/uploads/reservation; \
+    chmod g+rwx /var/www/html/config /var/www/html/Web/uploads/images \
+          /var/www/html/Web/uploads/reservation
 
 # Environment
 USER       www-data
