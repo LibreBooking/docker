@@ -5,6 +5,11 @@ and it's smaller version microshift. OpenShift is kubernetes distribution, so
 the very same setup applies to any kubernetes except the ingress route might
 differ depending on your ingress.
 
+This setup is only for the LB container. Note that it assumes you already have
+database running somewhere. As there is so many ways to setup database in kube,
+different containers, operators, external db etc, I left it out from here for
+now.
+
 ## Create kube objects for the following
 
 Use `kubectl create -f`  for the following yaml files. You can either edit all
