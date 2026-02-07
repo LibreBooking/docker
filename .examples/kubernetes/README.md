@@ -13,6 +13,11 @@ separately.
 
 ### Configuration
 
+This part is optional and useful only if you start from scratch and want to
+have all the proper config in place at the first boot. If you don't do this,
+remove the corresponding config lines from deployment file. `config.dist.php`
+file gets copied to config.php at the first boot.
+
 Take the config-dist.php and copy it into below file. Follow LB instructions
 for setting the options.
 
@@ -130,7 +135,7 @@ If using generic ingress, it would be something like this:
 
 ```yaml
 ---
-piVersion: networking.k8s.io/v1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: librebooking
@@ -195,6 +200,7 @@ spec:
           name: images
         - mountPath: /var/www/html/Web/uploads/reservation
           name: reservation
+        # remove the following if not using config.dist.php configMap
         - mountPath: /var/www/html/config/config.dist.php
           name: librebooking
           subPath: config
@@ -209,6 +215,7 @@ spec:
       - name: reservation
         persistentVolumeClaim:
           claimName: reservation
+      # remove the following if not using config.dist.php configMap
       - configMap:
           defaultMode: 420
           name: librebooking
