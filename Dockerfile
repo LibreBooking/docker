@@ -92,12 +92,21 @@ RUN set -ex; \
     mkdir /var/www/html/Web/uploads/reservation
 
 RUN set -ex; \
-    chown www-data:root /var/www/html/tpl_c; \
-    chmod g+rwx /var/www/html/tpl_c; \
-    chgrp root /var/www/html/config /var/www/html/Web/uploads/images \
-          /var/www/html/Web/uploads/reservation; \
-    chmod g+rwx /var/www/html/config /var/www/html/Web/uploads/images \
-          /var/www/html/Web/uploads/reservation
+    chown www-data:root \
+      /var/www/html/config \
+      /var/www/html/tpl_c \
+      /var/www/html/Web/uploads/images \
+      /var/www/html/Web/uploads/reservation; \
+    chmod g+rwx \
+      /var/www/html/config \
+      /var/www/html/tpl_c \
+      /var/www/html/Web/uploads/images \
+      /var/www/html/Web/uploads/reservation; \
+    chown --recursive www-data:root \
+      /var/www/html/plugins; \
+    chmod --recursive g+rwx \
+      /var/www/html/plugins
+
 
 # Environment
 USER       www-data
