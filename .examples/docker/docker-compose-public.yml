@@ -29,33 +29,23 @@ services:
     volumes:
       - db_conf:/config
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=Europe/Zurich
       - FILE__MYSQL_ROOT_PASSWORD=/run/secrets/db_root_pwd
+    env_file:
+      - db.env
     secrets:
       - db_root_pwd
       - db_user_pwd
   lb1:
-    image: librebooking/librebooking:4.0.0
+    image: librebooking/librebooking:4.1.0
     restart: always
     depends_on:
       - db
     volumes:
       - lb1_conf:/config
+    env_file:
+      - lb1.env
     environment:
       - APP_PATH=book
-      - LB_DATABASE_NAME=lb1
-      - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
-      - LB_DATABASE_USER=lb1
-      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
-      - LB_DATABASE_HOSTSPEC=db
-      - LB_LOGGING_FOLDER=/var/log/librebooking
-      - LB_LOGGING_LEVEL=ERROR
-      - LB_LOGGING_SQL=false
-      - LB_DEFAULT_TIMEZONE=Europe/Zurich
-      - LB_UPLOADS_IMAGE_UPLOAD_URL=Web/uploads/images
-      - LB_UPLOADS_RESERVATION_ATTACHMENT_PATH=Web/uploads/reservation
       - VIRTUAL_HOST=acme.org
       - VIRTUAL_PORT=8080
       - VIRTUAL_PATH=/book
@@ -64,7 +54,7 @@ services:
       - lb_install_pwd
       - lb_user_pwd
   job1:
-    image: librebooking/librebooking:4.0.0
+    image: librebooking/librebooking:4.1.0
     restart: always
     depends_on:
       - lb1
@@ -72,19 +62,12 @@ services:
     entrypoint: /usr/local/bin/cron.sh
     volumes:
       - lb1_conf:/config
-    environment:
-      - LB_DATABASE_NAME=lb1
-      - LB_DATABASE_USER=lb1
-      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
-      - LB_DATABASE_HOSTSPEC=db
-      - LB_LOGGING_FOLDER=/var/log/librebooking
-      - LB_LOGGING_LEVEL=ERROR
-      - LB_LOGGING_SQL=false
-      - LB_DEFAULT_TIMEZONE=Europe/Zurich
+    env_file:
+      - lb1.env
     secrets:
       - lb_user_pwd
   lb2:
-    image: librebooking/librebooking:4.0.0
+    image: librebooking/librebooking:4.1.0
     restart: always
     depends_on:
       - db
@@ -92,16 +75,9 @@ services:
       - lb2_conf:/config
       - ./uploads/images:/var/www/html/Web/uploads/images
       - ./uploads/reservation:/var/www/html/Web/uploads/reservation
+    env_file:
+      - lb2.env
     environment:
-      - LB_DATABASE_NAME=lb2
-      - LB_INSTALL_PASSWORD_FILE=/run/secrets/lb_install_pwd
-      - LB_DATABASE_USER=lb2
-      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
-      - LB_DATABASE_HOSTSPEC=db
-      - LB_LOGGING_FOLDER=/var/log/librebooking
-      - LB_LOGGING_LEVEL=ERROR
-      - LB_LOGGING_SQL=false
-      - LB_DEFAULT_TIMEZONE=Europe/Zurich
       - VIRTUAL_HOST=acme.org
       - VIRTUAL_PORT=8080
       - LETSENCRYPT_HOST=acme.org
@@ -109,7 +85,7 @@ services:
       - lb_install_pwd
       - lb_user_pwd
   job2:
-    image: librebooking/librebooking:4.0.0
+    image: librebooking/librebooking:4.1.0
     restart: always
     depends_on:
       - lb2
@@ -117,15 +93,8 @@ services:
     entrypoint: /usr/local/bin/cron.sh
     volumes:
       - lb2_conf:/config
-    environment:
-      - LB_DATABASE_NAME=lb2
-      - LB_DATABASE_USER=lb2
-      - LB_DATABASE_PASSWORD_FILE=/run/secrets/lb_user_pwd
-      - LB_DATABASE_HOSTSPEC=db
-      - LB_LOGGING_FOLDER=/var/log/librebooking
-      - LB_LOGGING_LEVEL=ERROR
-      - LB_LOGGING_SQL=false
-      - LB_DEFAULT_TIMEZONE=Europe/Zurich
+    env_file:
+      - lb2.env
     secrets:
       - lb_user_pwd
 

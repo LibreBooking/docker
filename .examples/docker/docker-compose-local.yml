@@ -9,7 +9,7 @@ services:
     env_file:
       - db.env
   app:
-    image: librebooking/librebooking:develop
+    image: librebooking/librebooking:4.1.0
     restart: always
     depends_on:
       - db
@@ -20,7 +20,7 @@ services:
     env_file:
       - lb.env
   cron:
-    image: librebooking/librebooking:develop
+    image: librebooking/librebooking:4.1.0
     restart: always
     user: root
     entrypoint: /usr/local/bin/cron.sh

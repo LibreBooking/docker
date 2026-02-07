@@ -1,7 +1,5 @@
 # Run librebooking with docker
 
-Adapt files `db.env`and `lb.env` to your needs.
-
 ## Using the command line: local access
 
 This setup is meant for accessing the application from your local network.
@@ -9,6 +7,8 @@ It features:
 
 * A librebooking container reachable at <http://localhost>
 * A docker volume storing the configuration files
+
+Adapt files `db.env`and `lb.env` to your needs
 
 Create a docker network
 
@@ -25,7 +25,6 @@ docker run \
   --network librebooking \
   --volume librebooking-db:/config \
   --env-file db.env \
-  --env MYSQL_ROOT_PASSWORD=db_root_pwd \
   linuxserver/mariadb:10.6.13
 
 docker run \
@@ -35,8 +34,6 @@ docker run \
   --publish 8080:8080 \
   --volume librebooking-conf:/config \
   --env-file lb.env \
-  --env LB_DATABASE_PASSWORD=db_user_pwd \
-  --env LB_INSTALL_PASSWORD=app_install_pwd \
  librebooking/librebooking:4.1.0
 ```
 
@@ -48,6 +45,8 @@ It features:
 * A librebooking container reachable at <http://localhost>
 * A docker volume storing the configuration files
 * A librebooking container used to run cron jobs
+
+Adapt files `db.env`and `lb.env` to your needs
 
 Start the application
 
@@ -65,6 +64,8 @@ It features:
 * A librebooking service `lb2` reachable at <https://your.host.com>
 * 2 librebooking services `job1` and `job2` to handle cron jobs
 * The usage of secrets to forward passwords to both containers
+
+Adapt files `db.env`, `lb1.env` and `lb2.env` to your needs
 
 Set the secret files
 
