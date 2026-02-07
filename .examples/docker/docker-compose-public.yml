@@ -4,8 +4,6 @@ services:
   proxy:
      image: nginxproxy/nginx-proxy
      restart: always
-     networks:
-       - mynet
      ports:
        - 80:80
        - 443:443
@@ -148,6 +146,3 @@ secrets:
     file: ./pwd_db_user.txt
   lb_install_pwd:
     file: ./pwd_lb_inst.txt
-
-networks:
-  mynet:
