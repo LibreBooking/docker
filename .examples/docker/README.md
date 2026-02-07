@@ -5,7 +5,7 @@
 This setup is meant for accessing the application from your local network.
 It features:
 
-* A librebooking container reachable at <http://localhost>
+* A librebooking container reachable at <http://localhost:8080>
 * A docker volume storing the configuration files
 
 Adapt files `db.env`and `lb.env` to your needs
@@ -42,7 +42,7 @@ docker run \
 This setup is meant for accessing the application from your local network.
 It features:
 
-* A librebooking container reachable at <http://localhost>
+* A librebooking container reachable at <http://localhost:8080>
 * A docker volume storing the configuration files
 * A librebooking container used to run cron jobs
 
