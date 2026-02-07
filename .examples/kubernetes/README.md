@@ -16,15 +16,20 @@ Use `kubectl create -f`  for the following yaml files. You can either edit all
 the below examples into one file, or have them separate and apply each
 separately.
 
-### Configuration
+### Configuration (optional)
 
-This part is optional and useful only if you start from scratch and want to
-have all the proper config in place at the first boot. If you don't do this,
-remove the corresponding config lines from deployment file. `config.dist.php`
-file gets copied to config.php at the first boot.
+You can
+[set configuration options](https://librebooking.readthedocs.io/en/stable/BASIC-CONFIGURATION.html)
+in `LB_*` environment variables. If you want you can separate config in a configMap.
+See
+[.env.example](https://github.com/LibreBooking/app/blob/develop/.env.example)
+file for configuration examples.
 
-Take the config-dist.php and copy it into below file. Follow LB instructions
-for setting the options.
+You can also just add the environment variables into deployment under `env`
+section directly. Or by third method by mounting them into `/var/www/html/.env`
+file in container.
+
+Pick your favourite, this example shows the envFrom configMap option.
 
 ```yaml
 ---
@@ -36,17 +41,12 @@ metadata:
   name: librebooking
   namespace: librebooking
 data:
-  config: |
-    <?php
-    return [
-        'settings' => [
-
-            ##########################
-            # Application configuration
-            ##########################
-
-            # The public name of the application
-            # ... copy this from config-dist.php and indent it like here.
+  LB_APP_TITLE='LibreBooking'
+  LB_APP_DEBUG=false
+  LB_ADMIN_EMAIL='admin@example.com'
+  LB_ADMIN_EMAIL_NAME='LB Administrator'
+  LB_COMPANY_NAME=
+  LB_COMPANY_URL=
 ```
 
 ### Storage
@@ -188,11 +188,16 @@ spec:
     spec:
       containers:
       - name: librebooking-app
-        env:
-        - name: LB_SCRIPT_URL
-          value: https://librebooking.example.com/Web
-        - name: VIRTUAL_HOST
-          value: librebooking.example.com
+        # remove the following if not using configMap for env
+        envFrom:
+          - configMapRef:
+            name: librebooking
+        # config can be here too
+        # env:
+        # - name: LB_SCRIPT_URL
+        #   value: https://librebooking.example.com/Web
+        # - name: VIRTUAL_HOST
+        #   value: librebooking.example.com
         image: docker.io/librebooking/librebooking:develop
         imagePullPolicy: IfNotPresent
         ports:
@@ -205,10 +210,6 @@ spec:
           name: images
         - mountPath: /var/www/html/Web/uploads/reservation
           name: reservation
-        # remove the following if not using config.dist.php configMap
-        - mountPath: /var/www/html/config/config.dist.php
-          name: librebooking
-          subPath: config
       restartPolicy: Always
       volumes:
       - name: config
@@ -220,9 +221,4 @@ spec:
       - name: reservation
         persistentVolumeClaim:
           claimName: reservation
-      # remove the following if not using config.dist.php configMap
-      - configMap:
-          defaultMode: 420
-          name: librebooking
-        name: librebooking
 ```
