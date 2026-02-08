@@ -27,13 +27,7 @@ podman run --name mariadb-lb \
   --detach \
   --replace \
   --network librebooking \
-  -e MYSQL_ROOT_PASSWORD=db_root_pwd \
-  -e TZ=Europe/Helsinki \
-  -e PUID=1000 \
-  -e PGID=1000 \
-  -e MYSQL_DATABASE=db \
-  -e MYSQL_USER=lb \
-  -e MYSQL_PASSWORD=lb-test \
+  --env-file db.env \
   -v db-conf:/config:U \
   -p 3306:3306 \
   docker.io/linuxserver/mariadb:10.6.13
@@ -43,15 +37,7 @@ podman run --name lb \
   --replace \
   --hostname librebooking \
   --network librebooking \
-  -e LB_DATABASE_NAME=db \
-  -e LB_DATABASE_USER=lb \
-  -e LB_DATABASE_PASSWORD=lb-test \
-  -e LB_DATABASE_HOSTSPEC=mariadb-lb \
-  -e LB_INSTALL_PASSWORD=installme \
-  -e LB_LOGGING_FOLDER=/var/log/librebooking \
-  -e LB_LOGGING_LEVEL=DEBUG \
-  -e LB_LOGGING_SQL=false \
-  -e LB_DEFAULT_TIMEZONE=Europe/Helsinki \
+  --env-file lb.env \
   -p 8080:8080 \
   --volume lb-images.volume:/var/www/html/Web/uploads/images \
   --volume lb-reservation.volume:/var/www/html/Web/uploads/reservation \
