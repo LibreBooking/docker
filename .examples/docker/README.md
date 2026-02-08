@@ -23,6 +23,7 @@ docker run \
   --detach \
   --name librebooking-db \
   --network librebooking \
+  --hostname db
   --volume librebooking-db:/config \
   --env-file db.env \
   linuxserver/mariadb:10.6.13
