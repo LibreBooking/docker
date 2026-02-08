@@ -24,6 +24,7 @@ podman run --name mariadb-lb \
   --detach \
   --replace \
   --network librebooking \
+  --hostname db \
   --env-file db.env \
   -v db-conf:/config:U \
   -p 3306:3306 \
