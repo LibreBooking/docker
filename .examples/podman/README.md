@@ -19,9 +19,6 @@ four commands.
 
 ```sh
 podman network create librebooking
-podman volume create db-conf
-podman volume create lb-images
-podman volume create lb-reservations
 
 podman run --name mariadb-lb \
   --detach \
