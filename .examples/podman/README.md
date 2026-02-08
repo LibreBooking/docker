@@ -1,49 +1,46 @@
 # Run LibreBooking with Podman
 
-This is an example how to run LibreBooking under podman container management.
-Below examples show both the quick way for running it directly with [podman
-run](https://docs.podman.io/en/latest/markdown/podman-run.1.html) command and
-the more permanent way
-[using systemd](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html)
-which persists across reboots and is good for production.
+## Using the command line: local access (testing)
 
-Both of the setups create private network for libreboot, and persistent storage
-for the congigs.
+This setup is meant for accessing the application from your local network.
+It features:
 
-# Podman Run for dev and testing
+* A librebooking container reachable at <http://localhost:8080>
+* A persistent storage for the database and librebooking configuration files
 
-Change the variables to your liking, and run the podman commands. If you want
-to do it just quicker, network is not necessary and volumes can be just given
-as local directories using `-v ~/dir:/path/in/container:z` instead of the first
-four commands.
+Adapt files `db.env`and `lb.env` to your needs
+
+Create a container network
 
 ```sh
 podman network create librebooking
+```
 
-podman run --name mariadb-lb \
+Start the containers
+
+```sh
+podman container run \
+  --name librebooking-db \
   --detach \
   --replace \
   --network librebooking \
   --hostname db \
+  --volume librebooking-db_conf:/config:U \
   --env-file db.env \
-  -v db-conf:/config:U \
-  -p 3306:3306 \
   docker.io/linuxserver/mariadb:10.6.13
 
-podman run --name lb \
+podman run \
+  --name librebooking-app \
   --detach \
   --replace \
-  --hostname librebooking \
   --network librebooking \
+  --publish 8080:8080 \
+  --volume librebooking-app_conf:/config:U \
   --env-file lb.env \
-  -p 8080:8080 \
-  --volume lb-images.volume:/var/www/html/Web/uploads/images \
-  --volume lb-reservation.volume:/var/www/html/Web/uploads/reservation \
-  --volume ~/librebooking-conf:/config:U \
   docker.io/librebooking/librebooking:develop
 ```
 
-# Production way with systemd
+## Using systemd: local access (production)
 
 This method persists over reboots.
 [Automatic updates](https://docs.podman.io/en/latest/markdown/podman-auto-update.1.html)

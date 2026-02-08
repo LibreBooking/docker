@@ -1,16 +1,16 @@
 # Run librebooking with docker
 
-## Using the command line: local access
+## Using the command line: local access (testing)
 
 This setup is meant for accessing the application from your local network.
 It features:
 
 * A librebooking container reachable at <http://localhost:8080>
-* A docker volume storing the configuration files
+* A persistent storage for the database and librebooking configuration files
 
 Adapt files `db.env`and `lb.env` to your needs
 
-Create a docker network
+Create a container network
 
 ```sh
 docker network create librebooking
@@ -19,32 +19,32 @@ docker network create librebooking
 Start the containers
 
 ```sh
-docker run \
-  --detach \
+docker container run \
   --name librebooking-db \
+  --detach \
   --network librebooking \
   --hostname db
-  --volume librebooking-db:/config \
+  --volume librebooking-db_conf:/config \
   --env-file db.env \
-  linuxserver/mariadb:10.6.13
+  docker.io/linuxserver/mariadb:10.6.13
 
 docker run \
-  --detach \
   --name librebooking-app \
+  --detach \
   --network librebooking \
   --publish 8080:8080 \
-  --volume librebooking-conf:/config \
+  --volume librebooking-app_conf:/config \
   --env-file lb.env \
- librebooking/librebooking:4.1.0
+ docker.io/librebooking/librebooking:4.1.0
 ```
 
-## Using docker compose: local access
+## Using docker compose: local access (testing)
 
 This setup is meant for accessing the application from your local network.
 It features:
 
 * A librebooking container reachable at <http://localhost:8080>
-* A docker volume storing the configuration files
+* A persistent storage for the database and librebooking configuration files
 * A librebooking container used to run cron jobs
 
 Adapt files `db.env`and `lb.env` to your needs
@@ -55,7 +55,7 @@ Start the application
 docker compose --file docker-compose-local.yml up --detach
 ```
 
-## Using docker compose: public access
+## Using docker compose: public access (production)
 
 This setup is meant for accessing the application from the internet.
 It features:
