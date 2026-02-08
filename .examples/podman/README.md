@@ -26,7 +26,7 @@ podman volume create lb-reservations
 podman run --name mariadb-lb \
   --detach \
   --replace \
-  --network systemd-librebooking \
+  --network librebooking \
   -e MYSQL_ROOT_PASSWORD=db_root_pwd \
   -e TZ=Europe/Helsinki \
   -e PUID=1000 \
