@@ -18,7 +18,7 @@ as local directories using `-v ~/dir:/path/in/container:z` instead of the first
 four commands.
 
 ```sh
-podman network create librebooking --subnet 192.168.30.0/24 --gateway=192.168.30.1
+podman network create librebooking
 podman volume create db-conf
 podman volume create lb-images
 podman volume create lb-reservations
