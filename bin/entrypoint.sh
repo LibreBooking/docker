@@ -120,5 +120,11 @@ if ! [ -z "${APP_PATH}" ]; then
     -e "s:\(RewriteRule .*\) /Web/:\1 /${APP_PATH}/Web/:"
 fi
 
+# Send log files to /dev/stdout as background jobs
+touch "${LB_LOGGING_FOLDER}/app.log"
+tail --follow "${LB_LOGGING_FOLDER}/app.log" >> /dev/stdout &
+touch "${LB_LOGGING_FOLDER}/sql.log"
+tail --follow "${LB_LOGGING_FOLDER}/sql.log" >> /dev/stdout &
+
 # Switch to the apache server
 exec "$@"
