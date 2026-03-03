@@ -1,0 +1,37 @@
+name: Check the Docker image builds for a PR
+
+on:
+  pull_request:
+
+jobs:
+  check_build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout github repository
+        uses: actions/checkout@v6
+      -
+        name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v3
+      -
+        name: Set pull request build arguments
+        id: pr_meta
+        run: |
+          appGitRef=develop
+          appAddSha=true
+
+          echo "appGitRef=$appGitRef" >> "$GITHUB_OUTPUT"
+          echo "appAddSha=$appAddSha" >> "$GITHUB_OUTPUT"
+      -
+        name: Build Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          build-args: |
+            VERSION_PHP=8.4
+            VERSION_COMPOSER=lts
+            APP_GH_REF=${{ steps.pr_meta.outputs.appGitRef }}
+            APP_GH_ADD_SHA=${{ steps.pr_meta.outputs.appAddSha }}
+          load: false
+          push: false
