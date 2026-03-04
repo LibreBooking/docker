@@ -58,7 +58,6 @@ RUN set -ex; \
     chown --recursive www-data:root /var/log/librebooking; \
     chmod --recursive g+rwx /var/log/librebooking; \
     touch /usr/local/etc/php/conf.d/librebooking.ini; \
-    chown www-data:root /usr/local/etc/php/conf.d/librebooking.ini; \
     sed \
       -i /etc/apache2/ports.conf \
       -e 's/Listen 80/Listen 8080/' \
@@ -96,12 +95,14 @@ RUN set -ex; \
       /var/www/html/config \
       /var/www/html/tpl_c \
       /var/www/html/Web/uploads/images \
-      /var/www/html/Web/uploads/reservation; \
+      /var/www/html/Web/uploads/reservation \
+      /usr/local/etc/php/conf.d/librebooking.ini; \
     chmod g+rwx \
       /var/www/html/config \
       /var/www/html/tpl_c \
       /var/www/html/Web/uploads/images \
-      /var/www/html/Web/uploads/reservation; \
+      /var/www/html/Web/uploads/reservation \
+      /usr/local/etc/php/conf.d/librebooking.ini; \
     chown --recursive www-data:root \
       /var/www/html/plugins; \
     chmod --recursive g+rwx \
