@@ -10,6 +10,7 @@ jobs:
     uses: ./.github/workflows/build_and_publish.yml
     with:
       appGitRefs: develop
+      appAddSha: true
       imgBuild: ${{ vars.IMAGE_BUILD }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}

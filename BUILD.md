@@ -36,14 +36,20 @@ This is the easiest and fastest way.
    APP_RELEASE=develop
    if [ "${APP_RELEASE}" == "develop" ]; then
      APP_GH_REF="refs/heads/${APP_RELEASE}"
+     APP_GH_ADD_SHA=true
    else
      APP_GH_REF="refs/tags/${APP_RELEASE}"
+     APP_GH_ADD_SHA=false
    fi
 
    # Build the docker image
    docker buildx build \
      --build-arg APP_GH_REF=${APP_GH_REF} \
+     --build-arg APP_GH_ADD_SHA=${APP_GH_ADD_SHA} \
      --tag librebooking/librebooking:$(echo ${APP_RELEASE} | sed -e "s/^v//") \
      --output type=docker \
      .
    ```
+
+When `APP_GH_ADD_SHA=true`, the web UI footer appends the LibreBooking app
+short SHA to the displayed version string.

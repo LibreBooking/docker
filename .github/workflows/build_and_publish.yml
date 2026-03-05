@@ -6,6 +6,10 @@ on:
       appGitRefs:
         required: true
         type: string
+      appAddSha:
+        required: false
+        type: boolean
+        default: false
       imgBuild:
         required: true
         type: string
@@ -71,5 +75,6 @@ jobs:
             VERSION_PHP=${{ vars.VERSION_PHP }}
             VERSION_COMPOSER=${{ vars.VERSION_COMPOSER }}
             APP_GH_REF=${{ inputs.appGitRefs }}
+            APP_GH_ADD_SHA=${{ inputs.appAddSha }}
           tags: ${{ steps.set_meta.outputs.tags }}
           push: true
