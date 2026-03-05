@@ -10,34 +10,42 @@ It features:
 
 Adapt files `db.env`and `lb.env` to your needs
 
-Create a container network
+Create a pod
 
 ```sh
-podman network create librebooking
+podman pod create --publish 8080:8080 librebooking
 ```
 
-Start the containers
+Add the containers to the pod
 
 ```sh
-podman container run \
-  --name librebooking-db \
-  --detach \
+podman container create \
+  --name db \
   --replace \
-  --network librebooking \
-  --hostname db \
+  --pod librebooking \
   --volume librebooking-db_conf:/config:U \
   --env-file db.env \
   docker.io/linuxserver/mariadb:10.6.13
 
-podman run \
-  --name librebooking-app \
-  --detach \
+podman container create \
+  --name app \
   --replace \
-  --network librebooking \
-  --publish 8080:8080 \
+  --pod librebooking \
   --volume librebooking-app_conf:/config:U \
   --env-file lb.env \
   docker.io/librebooking/librebooking:develop
+```
+
+Start the pod
+
+```sh
+podman pod start librebooking
+```
+
+Stop the pod
+
+```sh
+podman pod stop librebooking
 ```
 
 ## Using systemd: local access (production)
