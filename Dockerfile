@@ -23,6 +23,8 @@ COPY --from=comp /usr/bin/composer /usr/bin/composer
 
 # Update and install required debian packages
 ENV DEBIAN_FRONTEND=noninteractive
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+# hadolint ignore=DL3008 # 'Pin versions in apt get install'
 RUN <<EORUN
 set -xeu
 apt-get update
