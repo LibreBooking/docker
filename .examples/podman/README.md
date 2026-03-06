@@ -48,6 +48,28 @@ Stop the pod
 podman pod stop librebooking
 ```
 
+## Using a Kubernetes yaml file (testing)
+
+This setup is meant for accessing the application from your local network.
+It features:
+
+* A librebooking container reachable at <http://localhost:8080>
+* A persistent storage for the database and librebooking configuration files
+
+Adapt file `librebooking.yml` to your needs
+
+Start the application
+
+```sh
+podman kube play librebooking.yml
+```
+
+Stop the application
+
+```sh
+podman kube down librebooking.yml
+```
+
 ## Using systemd: local access (production)
 
 This method persists over reboots.
