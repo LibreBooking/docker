@@ -44,6 +44,7 @@ EORUN
 # Customize the http & php environment
 RUN <<EORUN
 set -xeu
+false
 cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 cat > /etc/apache2/conf-available/remoteip.conf <<EOF
 RemoteIPHeader X-Real-IP
