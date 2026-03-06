@@ -24,7 +24,7 @@ COPY --from=comp /usr/bin/composer /usr/bin/composer
 # Update and install required debian packages
 ENV DEBIAN_FRONTEND=noninteractive
 RUN <<EORUN
-set -xeuo pipefail
+set -xeu
 apt-get update
 apt-get upgrade --yes
 apt-get install --yes --no-install-recommends \
@@ -41,7 +41,7 @@ EORUN
 
 # Customize the http & php environment
 RUN <<EORUN
-set -xeuo pipefail
+set -xeu
 cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 cat > /etc/apache2/conf-available/remoteip.conf <<EOF
 RemoteIPHeader X-Real-IP
@@ -74,7 +74,7 @@ EORUN
 ARG APP_GH_REF
 ARG APP_GH_ADD_SHA=false
 RUN <<EORUN
-set -xeuo pipefail
+set -xeu
 LB_TARBALL_URL="https://api.github.com/repos/LibreBooking/librebooking/tarball/${APP_GH_REF}"
 curl \
   --fail \
@@ -121,7 +121,7 @@ mkdir /var/www/html/Web/uploads/reservation
 EORUN
 
 RUN <<EORUN
-set -xeuo pipefail
+set -xeu
 chown www-data:root \
   /var/www/html/config \
   /var/www/html/tpl_c \
