@@ -4,6 +4,19 @@ on:
   pull_request:
 
 jobs:
+  lint_dockerfile:
+    name: Lint Dockerfile
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout github repository
+        uses: actions/checkout@v6
+      -
+        name: Lint Dockerfile with hadolint
+        uses: hadolint/hadolint-action@v3.3.0
+        with:
+          dockerfile: Dockerfile
+
   check_build:
     runs-on: ubuntu-latest
     steps:
