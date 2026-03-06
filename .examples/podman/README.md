@@ -36,13 +36,13 @@ podman container create \
   docker.io/librebooking/librebooking:develop
 ```
 
-Start the pod
+Start the application
 
 ```sh
 podman pod start librebooking
 ```
 
-Stop the pod
+Stop the application
 
 ```sh
 podman pod stop librebooking
