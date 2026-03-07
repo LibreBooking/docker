@@ -1,8 +1,8 @@
 # Run LibreBooking with Podman
 
-## Using the command line: local access (testing)
+## Using the command line (test)
 
-This setup is meant for accessing the application from your local network.
+This setup is meant for accessing the application for test purposes.
 It features:
 
 * A librebooking container reachable at <http://localhost:8080>
@@ -10,39 +10,69 @@ It features:
 
 Adapt files `db.env`and `lb.env` to your needs
 
-Create a container network
+Create a pod
 
 ```sh
-podman network create librebooking
+podman pod create --publish 8080:8080 librebooking
 ```
 
-Start the containers
+Add the containers to the pod
 
 ```sh
-podman container run \
-  --name librebooking-db \
-  --detach \
+podman container create \
+  --name db \
   --replace \
-  --network librebooking \
-  --hostname db \
+  --pod librebooking \
   --volume librebooking-db_conf:/config:U \
   --env-file db.env \
   docker.io/linuxserver/mariadb:10.6.13
 
-podman run \
-  --name librebooking-app \
-  --detach \
+podman container create \
+  --name app \
   --replace \
-  --network librebooking \
-  --publish 8080:8080 \
+  --pod librebooking \
   --volume librebooking-app_conf:/config:U \
   --env-file lb.env \
   docker.io/librebooking/librebooking:develop
 ```
 
-## Using systemd: local access (production)
+Start the application
 
-This method persists over reboots.
+```sh
+podman pod start librebooking
+```
+
+Stop the application
+
+```sh
+podman pod stop librebooking
+```
+
+## Using a Kubernetes yaml file (test)
+
+This setup is meant for accessing the application for test purposes.
+It features:
+
+* A librebooking container reachable at <http://localhost:8080>
+* A persistent storage for the database and librebooking configuration files
+
+Adapt file `librebooking.yml` to your needs
+
+Start the application
+
+```sh
+podman kube play librebooking.yml
+```
+
+Stop the application
+
+```sh
+podman kube down librebooking.yml
+```
+
+## Using systemd (production)
+
+This setup is meant for accessing the application for production purposes.
 [Automatic updates](https://docs.podman.io/en/latest/markdown/podman-auto-update.1.html)
 for container images are not enabled in this example. Try it also, it's handy.
 

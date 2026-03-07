@@ -1,0 +1,63 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: librebooking
+  name: librebooking
+spec:
+  containers:
+  - name: db
+    image: docker.io/linuxserver/mariadb:10.6.13
+    volumeMounts:
+    - mountPath: /config
+      name: librebooking-db-conf-pvc
+    env:
+    - name: TZ
+      value: Europe/Helsinki
+    - name: PGID
+      value: "1000"
+    - name: MYSQL_ROOT_PASSWORD
+      value: db_root_pwd
+    - name: PUID
+      value: "1000"
+  - name: app
+    image: docker.io/librebooking/librebooking:develop
+    args:
+    - apache2-foreground
+    ports:
+    - containerPort: 8080
+      hostPort: 8080
+    securityContext: {}
+    volumeMounts:
+    - mountPath: /config
+      name: librebooking-app-conf-pvc
+    env:
+    - name: LB_LOGGING_FOLDER
+      value: /var/log/librebooking
+    - name: LB_DATABASE_PASSWORD
+      value: db_user_pwd
+    - name: LB_UPLOADS_IMAGE_UPLOAD_URL
+      value: Web/uploads/images
+    - name: LB_DATABASE_USER
+      value: lb_user
+    - name: LB_LOGGING_SQL
+      value: "false"
+    - name: LB_DATABASE_NAME
+      value: librebooking
+    - name: LB_UPLOADS_RESERVATION_ATTACHMENT_PATH
+      value: Web/uploads/reservation
+    - name: LB_DATABASE_HOSTSPEC
+      value: db
+    - name: LB_DEFAULT_TIMEZONE
+      value: Europe/Helsinki
+    - name: LB_LOGGING_LEVEL
+      value: DEBUG
+    - name: LB_INSTALL_PASSWORD
+      value: app_install_pwd
+  volumes:
+  - name: librebooking-db-conf-pvc
+    persistentVolumeClaim:
+      claimName: librebooking-db-conf
+  - name: librebooking-app-conf-pvc
+    persistentVolumeClaim:
+      claimName: librebooking-app-conf
