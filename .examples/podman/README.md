@@ -1,8 +1,8 @@
 # Run LibreBooking with Podman
 
-## Using the command line: local access (testing)
+## Using the command line (test)
 
-This setup is meant for accessing the application from your local network.
+This setup is meant for accessing the application for test purposes.
 It features:
 
 * A librebooking container reachable at <http://localhost:8080>
@@ -48,9 +48,9 @@ Stop the application
 podman pod stop librebooking
 ```
 
-## Using a Kubernetes yaml file (testing)
+## Using a Kubernetes yaml file (test)
 
-This setup is meant for accessing the application from your local network.
+This setup is meant for accessing the application for test purposes.
 It features:
 
 * A librebooking container reachable at <http://localhost:8080>
@@ -70,9 +70,9 @@ Stop the application
 podman kube down librebooking.yml
 ```
 
-## Using systemd: local access (production)
+## Using systemd (production)
 
-This method persists over reboots.
+This setup is meant for accessing the application for production purposes.
 [Automatic updates](https://docs.podman.io/en/latest/markdown/podman-auto-update.1.html)
 for container images are not enabled in this example. Try it also, it's handy.
 

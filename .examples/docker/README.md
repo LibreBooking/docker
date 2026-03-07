@@ -1,8 +1,8 @@
 # Run librebooking with docker
 
-## Using the command line: local access (testing)
+## Using the command line (test)
 
-This setup is meant for accessing the application from your local network.
+This setup is meant for accessing the application for testing purposes.
 It features:
 
 * A librebooking container reachable at <http://localhost:8080>
@@ -38,9 +38,9 @@ docker run \
  docker.io/librebooking/librebooking:4.1.0
 ```
 
-## Using docker compose: local access (testing)
+## Using docker compose (test)
 
-This setup is meant for accessing the application from your local network.
+This setup is meant for accessing the application for testing purposes.
 It features:
 
 * A librebooking container reachable at <http://localhost:8080>
@@ -55,9 +55,9 @@ Start the application
 docker compose --file docker-compose-local.yml up --detach
 ```
 
-## Using docker compose: public access (production)
+## Using docker compose (production)
 
-This setup is meant for accessing the application from the internet.
+This setup is meant for accessing the application for production purposes.
 It features:
 
 * A reverse proxy based on nginx that automatically handle certificates
