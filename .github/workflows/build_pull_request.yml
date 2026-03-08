@@ -18,6 +18,31 @@ jobs:
         with:
           dockerfile: Dockerfile
 
+  lint_shell_scripts:
+    name: Lint shell scripts
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout github repository
+        uses: actions/checkout@v6
+      -
+        name: Install shell lint tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck shfmt
+      -
+        name: Run shellcheck
+        run: |
+          set -euo pipefail
+          mapfile -t scripts < <(git ls-files '*.sh')
+          shellcheck --severity style "${scripts[@]}"
+      -
+        name: Run shfmt
+        run: |
+          set -euo pipefail
+          mapfile -t scripts < <(git ls-files '*.sh')
+          shfmt -d -i 4 -ci "${scripts[@]}"
+
   check_build:
     runs-on: ubuntu-latest
     env:
