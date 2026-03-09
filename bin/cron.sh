@@ -1,4 +1,5 @@
-#!/bin/sh
+#!/bin/bash
+# vim: set expandtab ts=2 sw=2 ai :
 set -eu
 
 # Constants
@@ -11,18 +12,20 @@ file_env() {
   local var="$1"
   local fileVar="${var}_FILE"
   local def="${2:-}"
-  local varValue=$(env | grep -E "^${var}=" | sed -E -e "s/^${var}=//")
-  local fileVarValue=$(env | grep -E "^${fileVar}=" | sed -E -e "s/^${fileVar}=//")
+  local varValue
+  varValue=$(env | grep -E "^${var}=" | sed -E -e "s/^${var}=//")
+  local fileVarValue
+  fileVarValue=$(env | grep -E "^${fileVar}=" | sed -E -e "s/^${fileVar}=//")
   if [ -n "${varValue}" ] && [ -n "${fileVarValue}" ]; then
-      echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
-      exit 1
+    echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
+    exit 1
   fi
   if [ -n "${varValue}" ]; then
-      export "$var"="${varValue}"
+    export "$var"="${varValue}"
   elif [ -n "${fileVarValue}" ]; then
-      export "$var"="$(cat "${fileVarValue}")"
+    export "$var"="$(cat "${fileVarValue}")"
   elif [ -n "${def}" ]; then
-      export "$var"="$def"
+    export "$var"="$def"
   fi
   unset "$fileVar"
 }
@@ -36,10 +39,10 @@ LB_LOGGING_SQL=${LB_LOGGING_SQL:-${DFT_LOGGING_SQL}}
 APP_PATH=${APP_PATH:-${DFT_APP_PATH}}
 
 # Set the php timezone file
-if [ -f /usr/share/zoneinfo/${LB_DEFAULT_TIMEZONE} ]; then
+if [ -f /usr/share/zoneinfo/"${LB_DEFAULT_TIMEZONE}" ]; then
   INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
-  echo "[Date]" >> ${INI_FILE}
-  echo "date.timezone=\"${LB_DEFAULT_TIMEZONE}\"" >> ${INI_FILE}
+  echo "[Date]" >>${INI_FILE}
+  echo "date.timezone=\"${LB_DEFAULT_TIMEZONE}\"" >>${INI_FILE}
 fi
 
 # Link the configuration file

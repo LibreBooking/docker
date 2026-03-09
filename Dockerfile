@@ -29,10 +29,11 @@ ARG APP_GH_ADD_SHA=false
 COPY setup.sh /usr/local/bin/setup.sh
 RUN <<EORUN
 set -xeu
-export APP_GH_REF=${APP_GH_REF}
-export APP_GH_ADD_SHA=${APP_GH_ADD_SHA}
+export APP_GH_REF="${APP_GH_REF}"
+export APP_GH_ADD_SHA="${APP_GH_ADD_SHA}"
 chmod +x /usr/local/bin/setup.sh
 /usr/local/bin/setup.sh
+rm /usr/local/bin/setup.sh
 EORUN
 
 # Environment

@@ -1,4 +1,5 @@
 #!/bin/bash
+# vim: set expandtab ts=2 sw=2 ai :
 
 set -ex
 
@@ -12,25 +13,27 @@ file_env() {
   local var="$1"
   local fileVar="${var}_FILE"
   local def="${2:-}"
-  local varValue=$(env | grep -E "^${var}=" | sed -E -e "s/^${var}=//")
-  local fileVarValue=$(env | grep -E "^${fileVar}=" | sed -E -e "s/^${fileVar}=//")
+  local varValue
+  varValue=$(env | grep -E "^${var}=" | sed -E -e "s/^${var}=//")
+  local fileVarValue
+  fileVarValue=$(env | grep -E "^${fileVar}=" | sed -E -e "s/^${fileVar}=//")
   if [ -n "${varValue}" ] && [ -n "${fileVarValue}" ]; then
-      echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
-      exit 1
+    echo >&2 "error: both $var and $fileVar are set (but are exclusive)"
+    exit 1
   fi
   if [ -n "${varValue}" ]; then
-      export "$var"="${varValue}"
+    export "$var"="${varValue}"
   elif [ -n "${fileVarValue}" ]; then
-      export "$var"="$(cat "${fileVarValue}")"
+    export "$var"="$(cat "${fileVarValue}")"
   elif [ -n "${def}" ]; then
-      export "$var"="$def"
+    export "$var"="$def"
   fi
   unset "$fileVar"
 }
 
 # Exit if incompatible mount (images prior to V2)
 if [ "$(mount | grep /var/www/html)" = "/var/www/html" ]; then
-  echo "The volume must be mapped to container directory /config" >2
+  echo "The volume must be mapped to container directory /config" >&2
   exit 1
 fi
 
@@ -46,8 +49,8 @@ APP_PATH=${APP_PATH:-${DFT_APP_PATH}}
 # If volume was used with images older than v2, then archive useless files
 pushd /config
 if [ -d Web ]; then
-  mkdir archive
-  mv $(ls --ignore=archive) archive
+  mkdir -p archive
+  find . -mindepth 1 -maxdepth 1 ! -name archive -exec mv -t archive -- {} +
   if [ -f archive/config/config.php ]; then
     cp archive/config/config.php config.php
   fi
@@ -79,21 +82,21 @@ sed \
   -e "s:\(\['logging'\]\['sql'\].*\) '.*':\1 '${LB_LOGGING_SQL}':"
 
 # Create the plugins configuration file inside the volume
-for source in $(find /var/www/html/plugins -type f -name "*dist*"); do
-  target=$(echo "${source}" | sed -e "s/.dist//")
-  if ! [ -f "/config/$(basename ${target})" ]; then
-    cp --no-clobber "${source}" "/config/$(basename ${target})"
+while IFS= read -r -d '' source; do
+  target=${source//.dist/}
+  if ! [ -f "/config/$(basename "${target}")" ]; then
+    cp --no-clobber "${source}" "/config/$(basename "${target}")"
   fi
-  if ! [ -f ${target} ]; then
-    ln -s "/config/$(basename ${target})" "${target}"
+  if ! [ -f "${target}" ]; then
+    ln -s "/config/$(basename "${target}")" "${target}"
   fi
-done
+done < <(find /var/www/html/plugins -type f -name "*dist*" -print0)
 
 # Set the php timezone file
-if [ -f /usr/share/zoneinfo/${LB_DEFAULT_TIMEZONE} ]; then
+if [ -f /usr/share/zoneinfo/"${LB_DEFAULT_TIMEZONE}" ]; then
   INI_FILE="/usr/local/etc/php/conf.d/librebooking.ini"
-  echo "[Date]" >> ${INI_FILE}
-  echo "date.timezone=\"${LB_DEFAULT_TIMEZONE}\"" >> ${INI_FILE}
+  echo "[Date]" >>${INI_FILE}
+  echo "date.timezone=\"${LB_DEFAULT_TIMEZONE}\"" >>${INI_FILE}
 fi
 
 # Missing log directory
@@ -102,7 +105,7 @@ if ! [ -d "${LB_LOGGING_FOLDER}" ]; then
 fi
 
 # A URL path prefix was set
-if ! [ -z "${APP_PATH}" ]; then
+if [ -n "${APP_PATH}" ]; then
   ## Set server document root 1 directory up
   sed \
     -i /etc/apache2/sites-enabled/000-default.conf \
@@ -115,16 +118,16 @@ if ! [ -z "${APP_PATH}" ]; then
 
   ## Adapt the .htaccess file
   sed \
-    -i /var/www/${APP_PATH}/.htaccess \
+    -i /var/www/"${APP_PATH}"/.htaccess \
     -e "s:\(RewriteCond .*\)/Web/:\1\.\*/Web/:" \
     -e "s:\(RewriteRule .*\) /Web/:\1 /${APP_PATH}/Web/:"
 fi
 
 # Send log files to /dev/stdout as background jobs
 touch "${LB_LOGGING_FOLDER}/app.log"
-tail --follow "${LB_LOGGING_FOLDER}/app.log" >> /dev/stdout &
+tail --follow "${LB_LOGGING_FOLDER}/app.log" >>/dev/stdout &
 touch "${LB_LOGGING_FOLDER}/sql.log"
-tail --follow "${LB_LOGGING_FOLDER}/sql.log" >> /dev/stdout &
+tail --follow "${LB_LOGGING_FOLDER}/sql.log" >>/dev/stdout &
 
 # Switch to the apache server
 exec "$@"
