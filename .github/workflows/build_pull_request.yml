@@ -41,7 +41,7 @@ jobs:
         run: |
           set -euo pipefail
           mapfile -t scripts < <(git ls-files '*.sh')
-          shfmt -d -i 4 -ci "${scripts[@]}"
+          shfmt -d -i 2 -ci "${scripts[@]}"
 
   check_build:
     runs-on: ubuntu-latest
