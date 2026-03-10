@@ -25,7 +25,7 @@ jobs:
         uses: actions/checkout@v6
       -
         name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: Set pull request build arguments
         id: pr_meta

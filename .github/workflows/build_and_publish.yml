@@ -41,7 +41,7 @@ jobs:
           platforms: 'amd64,arm64,arm'
       -
         name: Setup Docker buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
       -
         name: Get the docker image metadata
         id: get_meta
