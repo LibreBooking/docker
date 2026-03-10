@@ -51,7 +51,7 @@ jobs:
       -
         name: Set the docker image metadata
         id: set_meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images: ${{ inputs.regLogin }}/librebooking
           tags: |
