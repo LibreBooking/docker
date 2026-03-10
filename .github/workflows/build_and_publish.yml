@@ -59,7 +59,7 @@ jobs:
             type=raw,value=${{ steps.get_meta.outputs.appTag }}
       -
         name: Log into registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ${{ inputs.regName }}
           username: ${{ inputs.regLogin }}
