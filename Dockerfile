@@ -25,15 +25,10 @@ COPY --from=comp /usr/bin/composer /usr/bin/composer
 ENV DEBIAN_FRONTEND=noninteractive
 ARG APP_GH_REF
 ARG APP_GH_ADD_SHA=false
-# hadolint ignore=DL3008 # 'Pin versions in apt get install'
-COPY setup.sh /usr/local/bin/setup.sh
-RUN <<EORUN
-set -xeu
+RUN --mount=type=bind,source=setup.sh,target=/tmp/setup.sh <<EORUN
 export APP_GH_REF="${APP_GH_REF}"
 export APP_GH_ADD_SHA="${APP_GH_ADD_SHA}"
-chmod +x /usr/local/bin/setup.sh
-/usr/local/bin/setup.sh
-rm /usr/local/bin/setup.sh
+bash /tmp/setup.sh
 EORUN
 
 # Environment
