@@ -8,15 +8,16 @@ FROM alpine/git AS upstream
 ARG APP_GH_ADD_SHA=false
 ARG APP_GH_REF=refs/heads/develop
 ARG GIT_TREE=${APP_GH_REF##*/}
-ARG UPSTREAM_URL="https://github.com/librebooking/librebooking.git#${GIT_TREE}"
-ADD --keep-git-dir=true \
-    ${UPSTREAM_URL} /upstream/
+ARG UPSTREAM_URL="https://github.com/librebooking/librebooking"
 RUN <<EORUN
+mkdir /upstream
+git clone ${UPSTREAM_URL} /upstream
+cd /upstream
+git checkout ${GIT_TREE}
 if [ "${APP_GH_ADD_SHA}" = "true" ]; then
-    cd /upstream
-    git describe --tags --long \
-    | sed -E 's/.*-.(.*)$/\1/' >/upstream/config/version-suffix.txt
+  git describe --tags --long > config/custom-version.txt
 fi
+rm -rf .git
 EORUN
 
 FROM php:${VERSION_PHP}-apache
