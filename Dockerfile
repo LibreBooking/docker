@@ -15,7 +15,7 @@ RUN <<EORUN
 if [ "${APP_GH_ADD_SHA}" = "true" ]; then
     cd /upstream
     git describe --tags --long \
-    | sed -E 's/.*-(.*$)/\1/' >/upstream/config/version-suffix.txt
+    | sed -E 's/.*(.{7})$/\1/' >/upstream/config/version-suffix.txt
 fi
 EORUN
 
