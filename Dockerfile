@@ -1,18 +1,18 @@
 ARG VERSION_PHP=8.3
 ARG VERSION_COMPOSER=lts
+ARG VERSION_GIT=2.52.0
 
 FROM composer:${VERSION_COMPOSER} AS comp
 
 # Get upstream
-FROM alpine/git AS upstream
+FROM alpine/git:${VERSION_GIT} AS upstream
 ARG APP_GH_ADD_SHA=false
 ARG APP_GH_REF=refs/heads/develop
 ARG GIT_TREE=${APP_GH_REF##*/}
 ARG UPSTREAM_URL="https://github.com/librebooking/librebooking"
+WORKDIR /upstream
 RUN <<EORUN
-mkdir /upstream
 git clone ${UPSTREAM_URL} /upstream
-cd /upstream
 git checkout ${GIT_TREE}
 if [ "${APP_GH_ADD_SHA}" = "true" ]; then
   git describe --tags --long > config/custom-version.txt
