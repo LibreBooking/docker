@@ -12,6 +12,7 @@ ARG GIT_TREE=${APP_GH_REF##*/}
 ARG UPSTREAM_URL="https://github.com/librebooking/librebooking"
 WORKDIR /upstream
 RUN <<EORUN
+set -eux
 git clone ${UPSTREAM_URL} /upstream
 git checkout ${GIT_TREE}
 if [ "${APP_GH_ADD_SHA}" = "true" ]; then
