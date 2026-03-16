@@ -24,9 +24,9 @@ EORUN
 # Build supercronic
 FROM golang:trixie AS supercronic
 ADD https://github.com/aptible/supercronic.git src
+WORKDIR /go/src
 RUN <<EORUN
 set -eux
-cd src
 go mod vendor
 go install
 EORUN
