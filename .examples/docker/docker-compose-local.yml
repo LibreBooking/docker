@@ -22,8 +22,7 @@ services:
   cron:
     image: librebooking/librebooking:4.1.0
     restart: always
-    user: root
-    entrypoint: /usr/local/bin/cron.sh
+    command: supercronic /config/lb-jobs-cron
     depends_on:
       - app
     volumes:
