@@ -1,9 +1,27 @@
 ARG VERSION_PHP=8.3
 ARG VERSION_COMPOSER=lts
+ARG VERSION_GIT=2.52.0
 
 FROM composer:${VERSION_COMPOSER} AS comp
-FROM php:${VERSION_PHP}-apache
 
+# Get upstream
+FROM alpine/git:${VERSION_GIT} AS upstream
+ARG APP_GH_ADD_SHA=false
+ARG APP_GH_REF=refs/heads/develop
+ARG GIT_TREE=${APP_GH_REF##*/}
+ARG UPSTREAM_URL="https://github.com/librebooking/librebooking"
+WORKDIR /upstream
+RUN <<EORUN
+set -eux
+git clone ${UPSTREAM_URL} /upstream
+git checkout ${GIT_TREE}
+if [ "${APP_GH_ADD_SHA}" = "true" ]; then
+  git describe --tags --long > config/custom-version.txt
+fi
+rm -rf .git
+EORUN
+
+FROM php:${VERSION_PHP}-apache
 # Labels
 LABEL org.opencontainers.image.title="LibreBooking"
 LABEL org.opencontainers.image.description="LibreBooking as a container"
@@ -13,27 +31,24 @@ LABEL org.opencontainers.image.licenses="GPL-3.0"
 LABEL org.opencontainers.image.authors="colisee@hotmail.com"
 
 # Copy entrypoint scripts
-COPY --chmod=755 bin /usr/local/bin/
+COPY --chmod=0755 bin /usr/local/bin/
 
 # Create cron jobs
-COPY --chown=www-data:www-data --chmod=0755 lb-jobs-cron /config/
+COPY --chown=www-data:www-data --chmod=0755 \
+     lb-jobs-cron /config/
 
 # Copy composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
 
+# Copy Librebooking
+COPY --from=upstream \
+     --chown=www-data:root --chmod=0775 \
+     /upstream/ /var/www/html/
+
 # Update and install required debian packages
 ENV DEBIAN_FRONTEND=noninteractive
-ARG APP_GH_REF
-ARG APP_GH_ADD_SHA=false
-# hadolint ignore=DL3008 # 'Pin versions in apt get install'
-COPY setup.sh /usr/local/bin/setup.sh
-RUN <<EORUN
-set -xeu
-export APP_GH_REF="${APP_GH_REF}"
-export APP_GH_ADD_SHA="${APP_GH_ADD_SHA}"
-chmod +x /usr/local/bin/setup.sh
-/usr/local/bin/setup.sh
-rm /usr/local/bin/setup.sh
+RUN --mount=type=bind,source=setup.sh,target=/tmp/setup.sh <<EORUN
+bash /tmp/setup.sh
 EORUN
 
 # Environment

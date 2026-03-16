@@ -13,7 +13,6 @@ apt-get update
 apt-get upgrade --yes
 apt-get install --yes --no-install-recommends \
   cron \
-  git \
   libjpeg-dev \
   libldap-dev \
   libpng-dev \
@@ -50,36 +49,6 @@ sed \
   -i /etc/apache2/sites-available/000-default.conf \
   -e 's/<VirtualHost *:80>/<VirtualHost *:8080>/'
 
-set -xeuo pipefail
-LB_TARBALL_URL="https://api.github.com/repos/LibreBooking/librebooking/tarball/${APP_GH_REF}"
-curl \
-  --fail \
-  --silent \
-  --location "${LB_TARBALL_URL}" |
-  tar --extract --gzip --directory=/var/www/html --strip-components=1
-if [ "${APP_GH_ADD_SHA}" = "true" ]; then
-  LB_SHORT_SHA=""
-  # TARBALL_FILENAME will be like the result of a `git describe` For
-  # example: 'LibreBooking-librebooking-v4.1.0-126-g6cc8a4c.tar.gz' where
-  # 'g6cc8a4c' is the short SHA prefixed with 'g'. So the short SHA is
-  # '6cc8a4c'
-  TARBALL_FILENAME=$(
-    curl \
-      --head \
-      --fail \
-      --silent \
-      --show-error \
-      --location "${LB_TARBALL_URL}" |
-      sed -nE 's/.*filename="?([^";]+)"?.*/\1/p'
-  )
-  LB_SHORT_SHA=$(echo "${TARBALL_FILENAME}" | sed -E 's/.*-g([0-9a-f]+)\.tar\.gz/\1/')
-  if [ -n "${LB_SHORT_SHA}" ]; then
-    printf '%s\n' "${LB_SHORT_SHA}" >/var/www/html/config/version-suffix.txt
-  else
-    echo "ERROR determining the LB_SHORT_SHA value from TARBALL_FILENAME ${TARBALL_FILENAME}" >&2
-    exit 1
-  fi
-fi
 if [ -f /var/www/html/composer.json ]; then
   sed \
     -i /var/www/html/composer.json \
@@ -96,19 +65,17 @@ if ! [ -d /var/www/html/tpl_c ]; then
 fi
 mkdir /var/www/html/Web/uploads/reservation
 
-chown www-data:root \
-  /var/www/html/config \
-  /var/www/html/tpl_c \
-  /var/www/html/Web/uploads/images \
-  /var/www/html/Web/uploads/reservation \
-  /usr/local/etc/php/conf.d/librebooking.ini
-chmod g+rwx \
-  /var/www/html/config \
-  /var/www/html/tpl_c \
-  /var/www/html/Web/uploads/images \
-  /var/www/html/Web/uploads/reservation \
-  /usr/local/etc/php/conf.d/librebooking.ini
 chown --recursive www-data:root \
-  /var/www/html/plugins
+  /var/www/html/config \
+  /var/www/html/plugins \
+  /var/www/html/tpl_c \
+  /var/www/html/Web/uploads/images \
+  /var/www/html/Web/uploads/reservation \
+  /usr/local/etc/php/conf.d/librebooking.ini
 chmod --recursive g+rwx \
-  /var/www/html/plugins
+  /var/www/html/config \
+  /var/www/html/plugins \
+  /var/www/html/tpl_c \
+  /var/www/html/Web/uploads/images \
+  /var/www/html/Web/uploads/reservation \
+  /usr/local/etc/php/conf.d/librebooking.ini
