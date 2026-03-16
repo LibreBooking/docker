@@ -12,7 +12,6 @@ set -x
 apt-get update
 apt-get upgrade --yes
 apt-get install --yes --no-install-recommends \
-  cron \
   libjpeg-dev \
   libldap-dev \
   libpng-dev \
