@@ -23,7 +23,7 @@ EORUN
 
 # Build supercronic
 FROM golang:trixie AS supercronic
-ADD https://github.com/aptible/supercronic.git src
+ADD https://github.com/aptible/supercronic.git#v0.2.44 src
 WORKDIR /go/src
 RUN <<EORUN
 set -eux

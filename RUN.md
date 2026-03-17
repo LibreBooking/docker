@@ -50,10 +50,7 @@ scheduler. For a full list of background jobs, checkout the
 The background jobs can either be handled by the:
 
 * Container itself, by running a separate `librebooking/librebooking` container
-where the:
-
-  * user is set to `root`
-  * entrypoint is set to `cron.sh`
+where the command is set to `supercronic /config/lb-jobs-cron`
 
 * Host running the container, by calling the desired script, as in
 
