@@ -112,9 +112,11 @@ if [ -n "${APP_PATH}" ]; then
     -e "s:/var/www/html:/var/www:"
 
   ## Create a link to the html directory
-  pushd /var/www
-  ln -s html "${APP_PATH}"
-  popd
+  if ! [ -e "/var/www/${APP_PATH}" ]; then
+    pushd /var/www
+    ln -s html "${APP_PATH}"
+    popd
+  fi
 
   ## Adapt the .htaccess file
   sed \
