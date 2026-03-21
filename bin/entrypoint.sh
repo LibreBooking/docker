@@ -108,7 +108,7 @@ fi
 if [ -n "${APP_PATH}" ]; then
   ## Set server document root 1 directory up
   sed \
-    -i /etc/apache2/sites-enabled/000-default.conf \
+    -i /etc/apache2/sites-available/000-default.conf \
     -e "s:/var/www/html:/var/www:"
 
   ## Create a link to the html directory
