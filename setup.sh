@@ -47,7 +47,7 @@ sed \
   -e 's/Listen 443/Listen 8443/'
 sed \
   -i /etc/apache2/sites-available/000-default.conf \
-  -e 's/<VirtualHost *:80>/<VirtualHost *:8080>/'
+  -e 's/<VirtualHost \*:80>/<VirtualHost \*:8080>/'
 
 if [ -f /var/www/html/composer.json ]; then
   sed \
