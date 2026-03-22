@@ -54,6 +54,7 @@ if [ -f /var/www/html/composer.json ]; then
     -i /var/www/html/composer.json \
     -e "s:\(.*\)nickdnk/graph-sdk\(.*\)7.0\(.*\):\1joelbutcher/facebook-graph-sdk\26.1\3:"
   composer install
+  composer require pear/net_ldap2
 fi
 sed \
   -i /var/www/html/database_schema/create-user.sql \
