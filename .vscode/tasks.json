@@ -1,0 +1,113 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    // Logging 
+    {
+      "label": "Logs: librebooking (docker)",
+      "command": "docker compose --file docker-compose-local.yml logs app -f",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/.examples/docker",
+        "env": {
+          "DOCKER_HOST": "unix:///run/docker.sock" // Sometimes the tasks shell doesnt inherit .bashrc DOCKER_HOST, neither the docker context
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Logs: db (docker)",
+      "command": "docker compose --file docker-compose-local.yml logs db -f",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/.examples/docker",
+        "env": {
+          "DOCKER_HOST": "unix:///run/docker.sock"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Logs: cron (docker)",
+      "command": "docker compose --file docker-compose-local.yml logs cron -f",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/.examples/docker",
+        "env": {
+          "DOCKER_HOST": "unix:///run/docker.sock"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "Logs: all (docker)",
+      "dependsOn": [
+        "Logs: librebooking (docker)",
+        "Logs: db (docker)",
+        "Logs: cron (docker)"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Status: all (docker)",
+      "command": "docker compose --file docker-compose-local.yml ps app db cron",
+      "type": "shell",
+      "options": {
+        "cwd": "${workspaceFolder}/.examples/docker",
+        "env": {
+          "DOCKER_HOST": "unix:///run/docker.sock"
+        }
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    // Booting
+    {
+      "label": "Hard Restart: all (docker)",
+      "command": "docker compose --file docker-compose-local.yml down --remove-orphans && docker compose --file docker-compose-local.yml up -d ",
+      "options": {
+        "cwd": "${workspaceFolder}/.examples/docker",
+        "env": {
+          "DOCKER_HOST": "unix:///run/docker.sock"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "Start: all (docker)",
+      "command": "docker compose --file docker-compose-local.yml up -d",
+      "options": {
+        "cwd": "${workspaceFolder}/.examples/docker",
+        "env": {
+          "DOCKER_HOST": "unix:///run/docker.sock"
+        }
+      },
+      "type": "shell"
+    },
+    {
+      "label": "Stop: all (docker)",
+      "command": "docker compose --file docker-compose-local.yml down --remove-orphans",
+      "options": {
+        "cwd": "${workspaceFolder}/.examples/docker",
+        "env": {
+          "DOCKER_HOST": "unix:///run/docker.sock"
+        }
+      },
+      "type": "shell"
+    }
+  ]
+}
