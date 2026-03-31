@@ -47,7 +47,7 @@ sed \
   -e 's/Listen 443/Listen 8443/'
 sed \
   -i /etc/apache2/sites-available/000-default.conf \
-  -e 's/<VirtualHost *:80>/<VirtualHost *:8080>/'
+  -e 's/<VirtualHost \*:80>/<VirtualHost \*:8080>/'
 
 if [ -f /var/www/html/composer.json ]; then
   sed \
@@ -65,17 +65,15 @@ if ! [ -d /var/www/html/tpl_c ]; then
 fi
 mkdir /var/www/html/Web/uploads/reservation
 
+chown www-data:root \
+  /var/www \
+  /usr/local/etc/php/conf.d/librebooking.ini
+chmod g+rwx \
+  /var/www \
+  /usr/local/etc/php/conf.d/librebooking.ini
 chown --recursive www-data:root \
-  /var/www/html/config \
-  /var/www/html/plugins \
-  /var/www/html/tpl_c \
-  /var/www/html/Web/uploads/images \
-  /var/www/html/Web/uploads/reservation \
-  /usr/local/etc/php/conf.d/librebooking.ini
+  /etc/apache2/sites-available \
+  /var/www/html/tpl_c
 chmod --recursive g+rwx \
-  /var/www/html/config \
-  /var/www/html/plugins \
-  /var/www/html/tpl_c \
-  /var/www/html/Web/uploads/images \
-  /var/www/html/Web/uploads/reservation \
-  /usr/local/etc/php/conf.d/librebooking.ini
+  /etc/apache2/sites-available \
+  /var/www/html/tpl_c

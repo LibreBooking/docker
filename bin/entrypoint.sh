@@ -108,13 +108,15 @@ fi
 if [ -n "${APP_PATH}" ]; then
   ## Set server document root 1 directory up
   sed \
-    -i /etc/apache2/sites-enabled/000-default.conf \
+    -i /etc/apache2/sites-available/000-default.conf \
     -e "s:/var/www/html:/var/www:"
 
   ## Create a link to the html directory
-  pushd /var/www
-  ln -s html "${APP_PATH}"
-  popd
+  if ! [ -e "/var/www/${APP_PATH}" ]; then
+    pushd /var/www
+    ln -s html "${APP_PATH}"
+    popd
+  fi
 
   ## Adapt the .htaccess file
   sed \
