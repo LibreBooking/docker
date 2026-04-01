@@ -5,12 +5,12 @@ After=app.service
 
 [Container]
 ContainerName=cron
-Image=localhost/librebooking-cron:prod
+Image=localhost/librebooking:prod
 Pull=never
 # Network
 Network=librebooking.network
 # Entrypoint
-Entrypoint=/usr/local/bin/cron.sh
+Exec=/usr/local/bin/cron.sh
 User=root
 # Environment
 EnvironmentFile=./librebooking.env
