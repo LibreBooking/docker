@@ -1,0 +1,13 @@
+# !/bin/bash
+set -euo pipefail
+
+echo "Stopping services..."
+systemctl --user stop app.service
+systemctl --user stop cron.service
+systemctl --user stop db.service
+systemctl --user stop network.service
+echo "Removing systemd unit files..."
+rm -f ~/.config/containers/systemd/librebooking-*.{container,network,volume}
+
+echo "Reloading systemd..."
+systemctl --user daemon-reload

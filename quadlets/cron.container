@@ -1,0 +1,26 @@
+[Unit]
+Description=Cron Job Container for LibreBooking
+Requires=app.service
+After=app.service
+
+[Container]
+ContainerName=cron
+Image=localhost/librebooking-cron:prod
+Pull=never
+# Network
+Network=librebooking.network
+# Entrypoint
+Entrypoint=/usr/local/bin/cron.sh
+User=root
+# Environment
+EnvironmentFile=./librebooking.env
+Label=librebooking
+# Volumes (shared with app)
+Volume=lb-images.volume:/var/www/html/Web/uploads/images
+Volume=lb-reservation.volume:/var/www/html/Web/uploads/reservation
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Restart=always

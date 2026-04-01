@@ -1,0 +1,15 @@
+# !/bin/bash
+set -euo pipefail
+
+podman build \
+  -f Dockerfile \
+  -t localhost/librebooking:prod \
+  .
+mkdir -p ~/.config/containers/systemd/
+install -m 0644 quadlets/* ~/.config/containers/systemd/
+systemctl --user daemon-reload
+systemctl --user start librebooking-network.service
+podman network ls
+systemctl --user start db.service
+systemctl --user start cron.service
+systemctl --user start app.service
