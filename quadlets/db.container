@@ -8,7 +8,7 @@ Image=docker.io/linuxserver/mariadb:10.6.13
 Environment=MYSQL_ROOT_PASSWORD=devpass
 Environment=MYSQL_USER=lbuser
 Environment=MYSQL_PASSWORD=lbtest
-Environment=MYSQL_DATABASE=librebooking-db
+Environment=MYSQL_DATABASE=librebooking
 Environment=PUID=1000
 Environment=PGID=1000
 Volume=mariadb-lb.volume:/config:U

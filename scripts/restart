@@ -1,5 +1,4 @@
 #!/bin/bash
 set -euo pipefail
 
-./stop
-./start
+./scripts/stop && ./scripts/start
