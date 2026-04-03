@@ -118,11 +118,11 @@ if [ -n "${APP_PATH}" ]; then
     popd
   fi
 
-  ## Adapt the .htaccess file
+  ## Modify the .htaccess file
   sed \
-    -i /var/www/"${APP_PATH}"/.htaccess \
-    -e "s:\(RewriteCond .*\)/Web/:\1\.\*/Web/:" \
-    -e "s:\(RewriteRule .*\) /Web/:\1 /${APP_PATH}/Web/:"
+    -i /var/www/html/.htaccess \
+    -e "s:\(RewriteCond .*\)/Web:\1/${APP_PATH}/Web:" \
+    -e "s:\(RewriteRule .*\)/Web:\1/${APP_PATH}/Web:"
 fi
 
 # Send log files to /dev/stdout as background jobs
