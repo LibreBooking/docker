@@ -108,19 +108,21 @@ fi
 if [ -n "${APP_PATH}" ]; then
   ## Set server document root 1 directory up
   sed \
-    -i /etc/apache2/sites-enabled/000-default.conf \
+    -i /etc/apache2/sites-available/000-default.conf \
     -e "s:/var/www/html:/var/www:"
 
   ## Create a link to the html directory
-  pushd /var/www
-  ln -s html "${APP_PATH}"
-  popd
+  if ! [ -e "/var/www/${APP_PATH}" ]; then
+    pushd /var/www
+    ln -s html "${APP_PATH}"
+    popd
+  fi
 
-  ## Adapt the .htaccess file
+  ## Modify the .htaccess file
   sed \
-    -i /var/www/"${APP_PATH}"/.htaccess \
-    -e "s:\(RewriteCond .*\)/Web/:\1\.\*/Web/:" \
-    -e "s:\(RewriteRule .*\) /Web/:\1 /${APP_PATH}/Web/:"
+    -i /var/www/html/.htaccess \
+    -e "s:\(RewriteCond .*\)/Web:\1/${APP_PATH}/Web:" \
+    -e "s:\(RewriteRule .*\)/Web:\1/${APP_PATH}/Web:"
 fi
 
 # Send log files to /dev/stdout as background jobs

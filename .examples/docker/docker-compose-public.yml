@@ -36,7 +36,7 @@ services:
       - db_root_pwd
       - db_user_pwd
   lb1:
-    image: librebooking/librebooking:4.1.0
+    image: librebooking/librebooking:develop
     restart: always
     depends_on:
       - db
@@ -54,7 +54,7 @@ services:
       - lb_install_pwd
       - lb_user_pwd
   job1:
-    image: librebooking/librebooking:4.1.0
+    image: librebooking/librebooking:develop
     restart: always
     depends_on:
       - lb1
@@ -66,7 +66,7 @@ services:
     secrets:
       - lb_user_pwd
   lb2:
-    image: librebooking/librebooking:4.1.0
+    image: librebooking/librebooking:develop
     restart: always
     depends_on:
       - db
@@ -84,7 +84,7 @@ services:
       - lb_install_pwd
       - lb_user_pwd
   job2:
-    image: librebooking/librebooking:4.1.0
+    image: librebooking/librebooking:develop
     restart: always
     depends_on:
       - lb2

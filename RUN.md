@@ -41,6 +41,16 @@ For instance:
 
 * favicon: `/var/www/html/Web/favicon.ico`
 
+## Bind mounts
+
+If you are using bind mounts for librebooking, then you need to grant
+the required permissions before running the librebooking container
+
+```sh
+sudo mkdir --parents <bind_dir_path>
+sudo chown go+rwx <bind_dir_path>
+```
+
 ## Backround jobs
 
 Several services in librebooking such as reminder emails require a job
