@@ -21,6 +21,16 @@ fi
 rm -rf .git
 EORUN
 
+# Build supercronic
+FROM golang:trixie AS supercronic
+ADD https://github.com/aptible/supercronic.git#v0.2.44 src
+WORKDIR /go/src
+RUN <<EORUN
+set -eux
+go mod vendor
+go install
+EORUN
+
 FROM php:${VERSION_PHP}-apache
 # Labels
 LABEL org.opencontainers.image.title="LibreBooking"
@@ -39,6 +49,10 @@ COPY --chown=www-data:www-data --chmod=0755 \
 
 # Copy composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
+
+# Copy supercronic
+COPY --from=supercronic \
+     /go/bin/supercronic /usr/local/bin/supercronic
 
 # Copy Librebooking
 COPY --from=upstream \
