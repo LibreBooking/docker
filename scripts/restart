@@ -1,4 +1,4 @@
 #!/bin/bash
 set -euo pipefail
-
-./scripts/stop && ./scripts/start
+DIR="$(dirname "$0")"
+"$DIR/stop" && "$DIR/start"

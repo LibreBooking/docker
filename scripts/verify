@@ -28,6 +28,8 @@ set -a
 source <(grep -v '^#' "$ENV_FILE" | grep '=')
 set +a
 
+function describe($TITLE, )
+
 echo "=== 1. Container status ==="
 for svc in db app cron; do
 	if systemctl --user is-active --quiet "${svc}.service" 2>/dev/null; then

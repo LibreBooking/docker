@@ -1,12 +1,15 @@
 #!/bin/bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd -- "$SCRIPT_DIR/.." && pwd)"
+
 podman build \
-  -f Dockerfile \
+  -f "$PROJECT_ROOT/Dockerfile" \
   -t localhost/librebooking:prod \
-  .
+  "$PROJECT_ROOT"
 mkdir -p ~/.config/containers/systemd/
-install -m 0644 quadlets/* ~/.config/containers/systemd/
+install -m 0644 $PROJECT_ROOT/quadlets/* ~/.config/containers/systemd/
 systemctl --user daemon-reload
 systemctl --user start librebooking-network.service
 podman network ls
