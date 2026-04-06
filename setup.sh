@@ -66,9 +66,13 @@ mkdir /var/www/html/Web/uploads/reservation
 
 chown www-data:root \
   /var/www \
+  /var/www/html/config \
+  /var/www/html/plugins/Authentication/* \
   /usr/local/etc/php/conf.d/librebooking.ini
 chmod g+rwx \
   /var/www \
+  /var/www/html/config \
+  /var/www/html/plugins/Authentication/* \
   /usr/local/etc/php/conf.d/librebooking.ini
 chown --recursive www-data:root \
   /etc/apache2/sites-available \
