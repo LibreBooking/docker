@@ -23,7 +23,7 @@ EORUN
 
 # Build supercronic
 FROM golang:trixie AS supercronic
-ADD https://github.com/aptible/supercronic.git#v0.2.44 src
+ADD https://github.com/aptible/supercronic.git#v0.2.44 /go/src/
 WORKDIR /go/src
 RUN <<EORUN
 set -eux
@@ -43,7 +43,7 @@ LABEL org.opencontainers.image.authors="colisee@hotmail.com"
 # Copy entrypoint scripts
 COPY --chmod=0755 bin /usr/local/bin/
 
-# Create cron jobs
+# Copy cron jobs
 COPY --chown=www-data:www-data --chmod=0755 \
      lb-jobs-cron /config/
 
@@ -59,16 +59,20 @@ COPY --from=upstream \
      --chown=www-data:root --chmod=0775 \
      /upstream/ /var/www/html/
 
-# Update and install required debian packages
+# Customize the system environment
 ENV DEBIAN_FRONTEND=noninteractive
-RUN --mount=type=bind,source=setup.sh,target=/tmp/setup.sh <<EORUN
-bash /tmp/setup.sh
+RUN --mount=type=bind,source=setup_sys.sh,target=/tmp/setup_sys.sh <<EORUN
+bash /tmp/setup_sys.sh
 EORUN
 
-# Environment
-USER       www-data
-WORKDIR    /
+# Customize the image environment
+USER       www-data:root
 VOLUME     /config
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 CMD        ["apache2-foreground"]
 EXPOSE     8080
+
+# Customize the application environment
+RUN --mount=type=bind,source=setup_app.sh,target=/tmp/setup_app.sh <<EORUN
+bash /tmp/setup_app.sh
+EORUN
