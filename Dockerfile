@@ -40,7 +40,7 @@ LABEL org.opencontainers.image.source="https://github.com/librebooking/docker"
 LABEL org.opencontainers.image.licenses="GPL-3.0"
 LABEL org.opencontainers.image.authors="colisee@hotmail.com"
 
-# Copy entrypoint scripts
+# Copy bin scripts
 COPY --chmod=0755 bin /usr/local/bin/
 
 # Copy cron jobs
@@ -61,9 +61,7 @@ COPY --from=upstream \
 
 # Customize the system environment
 ENV DEBIAN_FRONTEND=noninteractive
-RUN --mount=type=bind,source=setup_sys.sh,target=/tmp/setup_sys.sh <<EORUN
-bash /tmp/setup_sys.sh
-EORUN
+RUN bash /usr/local/bin/build_sys.sh
 
 # Customize the image environment
 USER       www-data:root
@@ -73,6 +71,4 @@ CMD        ["apache2-foreground"]
 EXPOSE     8080
 
 # Customize the application environment
-RUN --mount=type=bind,source=setup_app.sh,target=/tmp/setup_app.sh <<EORUN
-bash /tmp/setup_app.sh
-EORUN
+RUN bash /usr/local/bin/build_app.sh
