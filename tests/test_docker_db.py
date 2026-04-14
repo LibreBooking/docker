@@ -72,7 +72,7 @@ def test_root_login():
     result = mariadb("root", MARIADB_ROOT_PASSWORD)
     assert (
         result.returncode == 0
-    ), f"Root login failed (password: {MARIADB_ROOT_PASSWORD})"
+    ), f"Root login failed (exit code: {result.returncode}, stderr: {result.stderr})"
 
 
 # ── 4. App user login ─────────────────────────────────────────────────────────
