@@ -27,6 +27,7 @@ services:
       - app
     volumes:
       - app_conf:/config
+      - ./crontab:/crontab:ro
     env_file:
       - lb.env
 

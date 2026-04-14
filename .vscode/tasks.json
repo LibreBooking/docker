@@ -2,15 +2,16 @@
   "version": "2.0.0",
   "tasks": [
     // Docker
-    // Logging 
+    // Logging
     {
       "label": "Logs: librebooking (docker)",
       "command": "docker compose --file docker-compose-local.yml logs app -f",
       "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
-        "env": {
-          "DOCKER_HOST": "unix:///run/docker.sock" // Sometimes the tasks shell doesnt inherit .bashrc DOCKER_HOST, neither the docker context
+        "shell": {
+          "executable": "bash",
+          "args": ["-i", "-c"]
         }
       },
       "presentation": {
@@ -24,8 +25,9 @@
       "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
-        "env": {
-          "DOCKER_HOST": "unix:///run/docker.sock"
+        "shell": {
+          "executable": "bash",
+          "args": ["-i", "-c"]
         }
       },
       "presentation": {
@@ -39,8 +41,9 @@
       "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
-        "env": {
-          "DOCKER_HOST": "unix:///run/docker.sock"
+        "shell": {
+          "executable": "bash",
+          "args": ["-i", "-c"]
         }
       },
       "presentation": {
@@ -67,8 +70,9 @@
       "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
-        "env": {
-          "DOCKER_HOST": "unix:///run/docker.sock"
+        "shell": {
+          "executable": "bash",
+          "args": ["-i", "-c"]
         }
       },
       "presentation": {
@@ -80,35 +84,38 @@
     {
       "label": "Hard Restart: all (docker)",
       "command": "docker compose --file docker-compose-local.yml down --remove-orphans && docker compose --file docker-compose-local.yml up -d --pull always",
+      "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
-        "env": {
-          "DOCKER_HOST": "unix:///run/docker.sock"
+        "shell": {
+          "executable": "bash",
+          "args": ["-i", "-c"]
         }
-      },
-      "type": "shell"
+      }
     },
     {
       "label": "Start: all (docker)",
       "command": "docker compose --file docker-compose-local.yml up -d",
+      "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
-        "env": {
-          "DOCKER_HOST": "unix:///run/docker.sock"
+        "shell": {
+          "executable": "bash",
+          "args": ["-i", "-c"]
         }
-      },
-      "type": "shell"
+      }
     },
     {
       "label": "Stop: all (docker)",
       "command": "docker compose --file docker-compose-local.yml down --remove-orphans",
+      "type": "shell",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
-        "env": {
-          "DOCKER_HOST": "unix:///run/docker.sock"
+        "shell": {
+          "executable": "bash",
+          "args": ["-i", "-c"]
         }
-      },
-      "type": "shell"
+      }
     },
     // Logging (podman)
     {
