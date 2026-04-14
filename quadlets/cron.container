@@ -9,9 +9,7 @@ Image=localhost/librebooking:prod
 Pull=never
 # Network
 Network=librebooking.network
-# Entrypoint
-Exec=/usr/local/bin/cron.sh
-User=root
+Exec=supercronic /config/lb-jobs-cron
 # Environment
 EnvironmentFile=./librebooking.env
 Label=librebooking

@@ -24,11 +24,7 @@ RUN set -eux; \
 
 # Build supercronic
 FROM golang:trixie AS supercronic
-ADD https://github.com/aptible/supercronic.git#v0.2.44 /go/src/
-WORKDIR /go/src
-RUN set -eux; \
-    go mod vendor; \
-    go install
+RUN go install github.com/aptible/supercronic@v0.2.44
 
 FROM php:${VERSION_PHP}-apache
 # Labels
@@ -60,8 +56,7 @@ COPY --from=upstream \
 
 # Customize the system environment
 ENV DEBIAN_FRONTEND=noninteractive
-RUN --mount=type=bind,source=setup.sh,target=/tmp/setup.sh \
-    bash /tmp/setup.sh
+RUN bash /usr/local/bin/build_sys.sh
 
 # Customize the image environment
 USER       www-data:root
