@@ -2,14 +2,29 @@
 pytest equivalent of test-db.sh
 Tests the MariaDB container used by LibreBooking.
 """
+
 import subprocess
+from pathlib import Path
 import pytest
+from dotenv import dotenv_values
 
 CONTAINER = "db"
-MYSQL_ROOT_PASSWORD = "devpass"
-MYSQL_USER = "lbuser"
-MYSQL_PASSWORD = "lbtest"
-MYSQL_DATABASE = "librebooking"
+
+_QUADLETS_DIR = Path(__file__).parent.parent / "quadlets"
+
+# db.container uses inline Environment=KEY=VALUE lines — parse them as dotenv
+_raw = "\n".join(
+    line.split("=", 1)[1]
+    for line in (_QUADLETS_DIR / "db.container").read_text().splitlines()
+    if line.startswith("Environment=")
+)
+_db_env = dotenv_values(stream=__import__("io").StringIO(_raw))
+_lb_env = dotenv_values(_QUADLETS_DIR / "librebooking.env")
+
+MYSQL_ROOT_PASSWORD = _db_env["MYSQL_ROOT_PASSWORD"]
+MYSQL_USER = _lb_env["LB_DATABASE_USER"]
+MYSQL_PASSWORD = _lb_env["LB_DATABASE_PASSWORD"]
+MYSQL_DATABASE = _lb_env["LB_DATABASE_NAME"]
 
 
 def podman(*args, **kwargs):
@@ -33,6 +48,7 @@ def mariadb(user, password, *sql_args):
 
 # ── 1. Container running ──────────────────────────────────────────────────────
 
+@pytest.mark.dependency()
 def test_container_is_running():
     result = podman("inspect", CONTAINER, "--format", "{{.State.Running}}")
     assert result.returncode == 0, f"podman inspect failed: {result.stderr}"
@@ -61,6 +77,7 @@ def test_root_login():
 # ── 4. App user login ─────────────────────────────────────────────────────────
 
 @pytest.mark.dependency(depends=["test_container_is_running"])
+@pytest.mark.dependency()
 def test_app_user_login():
     result = mariadb(MYSQL_USER, MYSQL_PASSWORD)
     assert result.returncode == 0, f"User '{MYSQL_USER}' login failed"

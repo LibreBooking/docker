@@ -79,7 +79,7 @@
     // Booting
     {
       "label": "Hard Restart: all (docker)",
-      "command": "docker compose --file docker-compose-local.yml down --remove-orphans && docker compose --file docker-compose-local.yml up -d ",
+      "command": "docker compose --file docker-compose-local.yml down --remove-orphans && docker compose --file docker-compose-local.yml up -d --pull always",
       "options": {
         "cwd": "${workspaceFolder}/.examples/docker",
         "env": {
