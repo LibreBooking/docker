@@ -65,13 +65,12 @@ def test_port_3306_listening():
     )
     assert result.returncode == 0, "Port 3306 is not listening inside the container"
 
-
 # ── 3. Root login ─────────────────────────────────────────────────────────────
 
 @pytest.mark.dependency(depends=["test_container_is_running"])
 def test_root_login():
     result = mariadb("root", MYSQL_ROOT_PASSWORD)
-    assert result.returncode == 0, f"Root login failed (password: {MYSQL_ROOT_PASSWORD})"
+    assert result.returncode == 0, f"Root login failed: {result.returncode} {result.stderr}"
 
 
 # ── 4. App user login ─────────────────────────────────────────────────────────
