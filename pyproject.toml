@@ -7,7 +7,7 @@ version = "0.1.0"
 description = "LibreBooking Docker dev tooling & tests"
 authors = [{ name = "barakiva" }]
 readme = "README.md"
-requires-python = "^3.10"
+requires-python = ">=3.10"
 dependencies = ["pytest (>=9.0.2,<10.0.0)"]
 
 

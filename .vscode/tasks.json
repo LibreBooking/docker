@@ -150,7 +150,6 @@
       "dependsOn": [
         "Logs:librebooking",
         "Logs:db",
-        "Logs:phpmyadmin"
       ],
       "presentation": {
         "reveal": "always",
@@ -160,7 +159,7 @@
     },
     {
       "label": "Status: all (podman)",
-      "command": "systemctl --user status app db librebooking-phpmyadmin",
+      "command": "systemctl --user status app db",
       "type": "shell",
       "presentation": {
         "reveal": "always",

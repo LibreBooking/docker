@@ -18,12 +18,7 @@ Volume=lb-images.volume:/var/www/html/Web/uploads/images
 Volume=lb-reservation.volume:/var/www/html/Web/uploads/reservation
 # Volume=%h/librebooking-conf:/config:U
 
-# Healthcheck
-HealthCmd=curl -fsS http://localhost:8080/
-HealthInterval=30s
-HealthRetries=5
-HealthStartPeriod=15s
 [Install]
-WantedBy=multi-user.target
+WantedBy=default.target
 [Service]
 Restart=always

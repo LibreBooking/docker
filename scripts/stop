@@ -7,7 +7,11 @@ systemctl --user stop app.service
 systemctl --user stop cron.service
 systemctl --user stop db.service
 echo "Removing systemd unit files..."
-rm -f ~/.config/containers/systemd/librebooking-*.{container,network,volume}
+rm -f \
+  ~/.config/containers/systemd/librebooking-network.network \
+  ~/.config/containers/systemd/app.container \
+  ~/.config/containers/systemd/cron.container \
+  ~/.config/containers/systemd/db.container \
 
 echo "Reloading systemd..."
 systemctl --user daemon-reload
