@@ -121,8 +121,8 @@ if [ -n "${APP_PATH}" ]; then
   ## Modify the .htaccess file
   sed \
     -i /var/www/html/.htaccess \
-    -e "s:\(RewriteCond .*\)/Web:\1/${APP_PATH}/Web:" \
-    -e "s:\(RewriteRule .*\)/Web:\1/${APP_PATH}/Web:"
+    -e "s:\(RewriteCond .*\^\)/Web:\1/${APP_PATH}/Web:" \
+    -e "s:\(RewriteRule .*\) /Web:\1 /${APP_PATH}/Web:"
 fi
 
 # Send log files to /dev/stdout as background jobs
