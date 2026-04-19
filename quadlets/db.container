@@ -1,0 +1,21 @@
+[Unit]
+Description=MariaDB Database for LibreBooking
+
+[Container]
+ContainerName=db
+Network=librebooking.network
+Image=docker.io/linuxserver/mariadb:10.6.13
+Environment=MYSQL_ROOT_PASSWORD=devpass
+Environment=MYSQL_USER=lbuser
+Environment=MYSQL_PASSWORD=lbtest
+Environment=MYSQL_DATABASE=librebooking
+Environment=PUID=1000
+Environment=PGID=1000
+Volume=mariadb-lb.volume:/config:U
+
+HealthCmd=/usr/bin/mariadb-admin ping --socket=/run/mysqld/mysqld.sock --user=root --password=devpass
+HealthInterval=2s
+HealthRetries=2
+
+[Service]
+Restart=always

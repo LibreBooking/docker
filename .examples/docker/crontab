@@ -1,0 +1,10 @@
+# Every minute
+* * * * * php -f /var/www/html/Jobs/autorelease.php
+* * * * * php -f /var/www/html/Jobs/sendmissedcheckin.php
+* * * * * php -f /var/www/html/Jobs/sendreminders.php
+* * * * * php -f /var/www/html/Jobs/sendwaitlist.php
+
+# Every day at midnight
+0 0 * * * php -f /var/www/html/Jobs/sendseriesend.php
+0 0 * * * php -f /var/www/html/Jobs/sessioncleanup.php
+0 0 * * * php -f /var/www/html/Jobs/deleteolddata.php
