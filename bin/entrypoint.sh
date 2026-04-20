@@ -119,10 +119,16 @@ if [ -n "${APP_PATH}" ]; then
   fi
 
   ## Modify the .htaccess file
+  pushd /var/www/html
+  if ! [ -e .htaccess.orig ]; then
+    cp --archive .htaccess .htaccess.orig
+  fi
+
+  cp --archive .htaccess.orig .htaccess
   sed \
-    -i /var/www/html/.htaccess \
-    -e "s:\(RewriteCond .*\)/Web:\1/${APP_PATH}/Web:" \
-    -e "s:\(RewriteRule .*\)/Web:\1/${APP_PATH}/Web:"
+    -i .htaccess \
+    -e "/^Rewrite/s:Web:${APP_PATH}/Web:"
+  popd
 fi
 
 # Send log files to /dev/stdout as background jobs
