@@ -8,28 +8,20 @@ FROM composer:${VERSION_COMPOSER} AS comp
 FROM alpine/git:${VERSION_GIT} AS upstream
 ARG APP_GH_ADD_SHA=false
 ARG APP_GH_REF=refs/heads/develop
-ARG GIT_TREE=${APP_GH_REF##*/}
+ARG GIT_TREE
 ARG UPSTREAM_URL="https://github.com/librebooking/librebooking"
 WORKDIR /upstream
-RUN <<EORUN
-set -eux
-git clone ${UPSTREAM_URL} /upstream
-git checkout ${GIT_TREE}
-if [ "${APP_GH_ADD_SHA}" = "true" ]; then
-  git describe --tags --long > config/custom-version.txt
-fi
-rm -rf .git
-EORUN
+
+COPY --chmod=0755 scripts/clone.sh /usr/local/bin/clone.sh
+RUN APP_GH_ADD_SHA=${APP_GH_ADD_SHA} \
+     APP_GH_REF=${APP_GH_REF} \
+     GIT_TREE=${GIT_TREE} \
+     UPSTREAM_URL=${UPSTREAM_URL} \
+     /usr/local/bin/clone.sh
 
 # Build supercronic
 FROM golang:trixie AS supercronic
-ADD https://github.com/aptible/supercronic.git#v0.2.44 /go/src/
-WORKDIR /go/src
-RUN <<EORUN
-set -eux
-go mod vendor
-go install
-EORUN
+RUN go install github.com/aptible/supercronic@v0.2.44
 
 FROM php:${VERSION_PHP}-apache
 # Labels

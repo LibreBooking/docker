@@ -1,0 +1,4 @@
+#!/bin/bash
+set -euo pipefail
+DIR="$(dirname "$0")"
+"$DIR/stop" && "$DIR/start"
