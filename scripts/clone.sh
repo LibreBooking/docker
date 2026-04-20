@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 set -euo pipefail
 
 GIT_TREE="$(basename "${APP_GH_REF}")"
