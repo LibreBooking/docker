@@ -1,5 +1,5 @@
 #!/bin/sh
-set -euo pipefail
+set -eu
 
 GIT_TREE="$(basename "${APP_GH_REF}")"
 git clone "${UPSTREAM_URL}" .
