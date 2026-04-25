@@ -104,6 +104,11 @@ if ! [ -d "${LB_LOGGING_FOLDER}" ]; then
   mkdir -p "${LB_LOGGING_FOLDER}"
 fi
 
+# Patch the /web rewrite
+sed \
+  -i /var/www/html/.htaccess \
+  -e '/^RewriteRule/s:\[R=301,L\]:\[L\]:'
+
 # A URL path prefix was set
 if [ -n "${APP_PATH}" ]; then
   ## Set server document root 1 directory up
