@@ -104,6 +104,13 @@ if ! [ -d "${LB_LOGGING_FOLDER}" ]; then
   mkdir -p "${LB_LOGGING_FOLDER}"
 fi
 
+# Make a copy
+if ! [ -e .htaccess.orig ]; then
+  cp --archive \
+    /var/www/html/.htaccess \
+    /var/www/html/.htaccess.orig
+fi
+
 # A URL path prefix was set
 if [ -n "${APP_PATH}" ]; then
   ## Set server document root 1 directory up
@@ -118,13 +125,7 @@ if [ -n "${APP_PATH}" ]; then
     popd
   fi
 
-  ## Modify the .htaccess file
   pushd /var/www/html
-  if ! [ -e .htaccess.orig ]; then
-    cp --archive .htaccess .htaccess.orig
-  fi
-
-  cp --archive .htaccess.orig .htaccess
   sed \
     -i .htaccess \
     -e "/^Rewrite/s:Web:${APP_PATH}/Web:"
