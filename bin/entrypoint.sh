@@ -104,22 +104,12 @@ if ! [ -d "${LB_LOGGING_FOLDER}" ]; then
   mkdir -p "${LB_LOGGING_FOLDER}"
 fi
 
-# Modify the .htaccess file
-pushd /var/www/html
-
-## Make a copy
+# Make a copy
 if ! [ -e .htaccess.orig ]; then
-  cp --archive .htaccess .htaccess.orig
+  cp --archive \
+    /var/www/html/.htaccess \
+    /var/www/html/.htaccess.orig
 fi
-
-## Restore the original file
-cp --archive .htaccess.orig .htaccess
-
-## Drop the Redirect flag
-sed \
-  -i .htaccess \
-  -e '/^RewriteRule/s:R=301,L:L:'
-popd
 
 # A URL path prefix was set
 if [ -n "${APP_PATH}" ]; then
