@@ -36,6 +36,16 @@ docker run \
   --volume librebooking-app_conf:/config \
   --env-file lb.env \
  docker.io/librebooking/librebooking:develop
+
+docker run \
+  --name librebooking-cron \
+  --detach \
+  --network librebooking \
+  --volumes-from librebooking-app\
+  --volume ./crontab:/config/lb-jobs-cron:ro \
+  --env-file lb.env \
+ docker.io/librebooking/librebooking:develop \
+ supercronic /config/lb-jobs-cron
 ```
 
 ## Using docker compose (test)
