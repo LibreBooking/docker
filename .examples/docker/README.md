@@ -35,7 +35,7 @@ docker run \
   --publish 8080:8080 \
   --volume librebooking-app_conf:/config \
   --env-file lb.env \
- docker.io/librebooking/librebooking:4.1.0
+ docker.io/librebooking/librebooking:develop
 ```
 
 ## Using docker compose (test)
