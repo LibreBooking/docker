@@ -34,6 +34,8 @@ docker run \
   --network librebooking \
   --publish 8080:8080 \
   --volume librebooking-app_conf:/config \
+  --volume librebooking-app_img:/var/www/html/Web/uploads/images \
+  --volume librebooking-app_res:/var/www/html/Web/uploads/reservation \
   --env-file lb.env \
  docker.io/librebooking/librebooking:develop
 

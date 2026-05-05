@@ -17,6 +17,8 @@ services:
       - "8080:8080"
     volumes:
       - app_conf:/config
+      - app_img:/var/www/html/Web/uploads/images
+      - app_res:/var/www/html/Web/uploads/reservation
     env_file:
       - lb.env
   cron:
@@ -35,3 +37,5 @@ services:
 volumes:
   db_conf:
   app_conf:
+  app_img:
+  app_res:
