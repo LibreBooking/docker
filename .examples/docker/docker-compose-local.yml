@@ -25,8 +25,9 @@ services:
     command: supercronic /config/lb-jobs-cron
     depends_on:
       - app
+    volumes_from:
+      - app
     volumes:
-      - app_conf:/config
       - ./crontab:/config/lb-jobs-cron:ro
     env_file:
       - lb.env
