@@ -67,24 +67,16 @@ docker compose --file docker-compose-local.yml up --detach
 
 ## Using docker compose with a reverse-proxy
 
-This setup is meant for accessing the application for production purposes.
-It features:
+This example features:
 
 * A reverse proxy based on nginx that automatically handle certificates
-* A librebooking service `lb1` reachable at <https://your.host.com/book>
-* A librebooking service `lb2` reachable at <https://your.host.com>
-* 2 librebooking services `job1` and `job2` to handle cron jobs
-* The usage of secrets to forward passwords to both containers
+* A librebooking container reachable at <https://acme.org>
+* A cron container executing scheduled librebooking-related jobs
+* A database container hosting the librebooking data
 
-Adapt files `db.env`, `lb1.env` and `lb2.env` to your needs
-
-Set the secret files
-
-```sh
-echo -n 'db_root_pwd'     > pwd_db_root.txt;
-echo -n 'db_user_pwd'     > pwd_db_user.txt;
-echo -n 'app_install_pwd' > pwd_lb_inst.txt;
-```
+Adapt files `db.env`, `lb.env` to your needs
+Adapt file `proxy.env` to your needs, if you are using the nginx proxy
+Adapt file `docker-compose-public.yml` to your needs.
 
 Start the application
 
