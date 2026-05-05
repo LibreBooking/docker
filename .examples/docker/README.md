@@ -1,12 +1,14 @@
 # Run librebooking with docker
 
-## Using the command line (test)
+## Using the command line
 
-This setup is meant for accessing the application for testing purposes.
-It features:
+This example features:
 
 * A librebooking container reachable at <http://localhost:8080>
-* A persistent storage for the database and librebooking configuration files
+* A cron container executing scheduled librebooking-related jobs
+* A database container hosting the librebooking data
+* Persistent volumes storage for the database, librebooking configuration,
+uploaded images and reservations
 
 Adapt files `db.env`and `lb.env` to your needs
 
@@ -50,14 +52,10 @@ docker run \
  supercronic /config/lb-jobs-cron
 ```
 
-## Using docker compose (test)
+## Using docker compose
 
-This setup is meant for accessing the application for testing purposes.
-It features:
-
-* A librebooking container reachable at <http://localhost:8080>
-* A persistent storage for the database and librebooking configuration files
-* A librebooking container used to run cron jobs
+This setup is equivalent to the previous one, except it uses the
+docker compose command.
 
 Adapt files `db.env`and `lb.env` to your needs
 
@@ -67,7 +65,7 @@ Start the application
 docker compose --file docker-compose-local.yml up --detach
 ```
 
-## Using docker compose (production)
+## Using docker compose with a reverse-proxy
 
 This setup is meant for accessing the application for production purposes.
 It features:
