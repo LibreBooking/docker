@@ -17,6 +17,8 @@ services:
       - "8080:8080"
     volumes:
       - app_conf:/config
+      - app_img:/var/www/html/Web/uploads/images
+      - app_res:/var/www/html/Web/uploads/reservation
     env_file:
       - lb.env
   cron:
@@ -25,8 +27,9 @@ services:
     command: supercronic /config/lb-jobs-cron
     depends_on:
       - app
+    volumes_from:
+      - app
     volumes:
-      - app_conf:/config
       - ./crontab:/config/lb-jobs-cron:ro
     env_file:
       - lb.env
@@ -34,3 +37,5 @@ services:
 volumes:
   db_conf:
   app_conf:
+  app_img:
+  app_res:
