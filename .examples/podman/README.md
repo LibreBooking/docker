@@ -20,7 +20,7 @@ Add the containers to the pod
 
 ```sh
 podman container create \
-  --name db \
+  --name librebooking-db \
   --replace \
   --pod librebooking \
   --volume librebooking-db_conf:/config:U \
@@ -28,7 +28,7 @@ podman container create \
   docker.io/linuxserver/mariadb:10.6.13
 
 podman container create \
-  --name app \
+  --name librebooking-app \
   --replace \
   --pod librebooking \
   --volume librebooking-app_conf:/config:U \
