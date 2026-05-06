@@ -32,6 +32,8 @@ podman container create \
   --replace \
   --pod librebooking \
   --volume librebooking-app_conf:/config:U \
+  --volume librebooking-app_img:/var/www/html/Web/uploads/images:U \
+  --volume librebooking-app_res:/var/www/html/Web/uploads/reservation:U \
   --env-file lb.env \
   docker.io/librebooking/librebooking:develop
 ```
