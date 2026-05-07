@@ -1,12 +1,14 @@
 # Run LibreBooking with Podman
 
-## Using the command line (test)
+## Using the command line
 
-This setup is meant for accessing the application for test purposes.
-It features:
+This example features:
 
 * A librebooking container reachable at <http://localhost:8080>
-* A persistent storage for the database and librebooking configuration files
+* A cron container executing scheduled librebooking-related jobs
+* A database container hosting the librebooking data
+* Persistent volumes storage for the database, librebooking configuration,
+uploaded images and reservations
 
 Adapt files `db.env`and `lb.env` to your needs
 
@@ -60,15 +62,17 @@ Stop the application
 podman pod stop librebooking
 ```
 
-## Using a Kubernetes yaml file (test)
+## Using a pod file
 
-This setup is meant for accessing the application for test purposes.
-It features:
+This setup is equivalent to the previous one, except it uses the
+`podman kube play` command.
 
-* A librebooking container reachable at <http://localhost:8080>
-* A persistent storage for the database and librebooking configuration files
+Adapt the above cli example to your needs and start the pod
 
-Adapt file `librebooking.yml` to your needs
+Generate the pod file
+```sh
+podman kube generate librebooking --filename librebooking.yml
+``` 
 
 Start the application
 
