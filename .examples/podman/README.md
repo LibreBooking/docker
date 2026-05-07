@@ -36,6 +36,16 @@ podman container create \
   --volume librebooking-app_res:/var/www/html/Web/uploads/reservation:U \
   --env-file lb.env \
   docker.io/librebooking/librebooking:develop
+
+podman container create \
+  --name librebooking-cron \
+  --replace \
+  --pod librebooking \
+  --volumes-from librebooking-app \
+  --volume ./crontab:/config/lb-jobs-cron:U \
+  --env-file lb.env \
+  docker.io/librebooking/librebooking:develop \
+  supercronic /config/lb-jobs-cron
 ```
 
 Start the application
