@@ -67,9 +67,7 @@ podman pod stop librebooking
 This setup is equivalent to the previous one, except it uses the
 `podman kube play` command.
 
-Adapt the above cli example to your needs and start the pod
-
-Generate the pod file
+From the previous example, generate the pod file
 ```sh
 podman kube generate librebooking --filename librebooking.yml
 ``` 
