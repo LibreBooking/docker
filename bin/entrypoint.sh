@@ -104,11 +104,15 @@ if ! [ -d "${LB_LOGGING_FOLDER}" ]; then
   mkdir -p "${LB_LOGGING_FOLDER}"
 fi
 
-# Make a copy
+# Make a copy or restore the original .htaccess
 if ! [ -e .htaccess.orig ]; then
   cp --archive \
     /var/www/html/.htaccess \
     /var/www/html/.htaccess.orig
+else
+  cp --archive \
+    /var/www/html/.htaccess.orig \
+    /var/www/html/.htaccess
 fi
 
 # A URL path prefix was set
