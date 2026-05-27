@@ -1,0 +1,8 @@
+[Unit]
+Description=Librebooking, an open-source resource scheduling solution
+
+[Kube]
+Yaml=./librebooking.yml
+
+[Install]
+WantedBy=default.target

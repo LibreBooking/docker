@@ -18,7 +18,7 @@ Create a pod
 podman pod create --publish 8080:8080 librebooking
 ```
 
-Add the containers to the pod
+Add the database and librebooking containers to the pod
 
 ```sh
 podman container create \
@@ -26,7 +26,7 @@ podman container create \
   --replace \
   --pod librebooking \
   --volume librebooking-db_conf:/config:U \
-  --env-file db.env \
+  --env-file $(pwd)/db.env \
   docker.io/linuxserver/mariadb:10.6.13
 
 podman container create \
@@ -36,21 +36,25 @@ podman container create \
   --volume librebooking-app_conf:/config:U \
   --volume librebooking-app_img:/var/www/html/Web/uploads/images:U \
   --volume librebooking-app_res:/var/www/html/Web/uploads/reservation:U \
-  --env-file lb.env \
+  --env-file $(pwd)/lb.env \
   docker.io/librebooking/librebooking:develop
+```
 
+If desired, add the cron container to the pod
+
+```sh
 podman container create \
   --name librebooking-cron \
   --replace \
   --pod librebooking \
   --volumes-from librebooking-app \
-  --volume ./crontab:/config/lb-jobs-cron:U \
-  --env-file lb.env \
+  --volume $(pwd)/crontab:/config/lb-jobs-cron:U \
+  --env-file $(pwd)/lb.env \
   docker.io/librebooking/librebooking:develop \
   supercronic /config/lb-jobs-cron
 ```
 
-Start the application
+Start the application and check it works as expected
 
 ```sh
 podman pod start librebooking
@@ -68,9 +72,10 @@ This setup is equivalent to the previous one, except it uses the
 `podman kube play` command.
 
 From the previous example, generate the pod file
+
 ```sh
 podman kube generate librebooking --filename librebooking.yml
-``` 
+```
 
 Start the application
 
@@ -84,154 +89,65 @@ Stop the application
 podman kube down librebooking.yml
 ```
 
-## Using systemd (production)
+## Using systemd
 
-This setup is meant for accessing the application for production purposes.
-[Automatic updates](https://docs.podman.io/en/latest/markdown/podman-auto-update.1.html)
-for container images are not enabled in this example. Try it also, it's handy.
+This setup is equivalent to the previous one, except it uses the
+`systemd` infrastructure to run the application.
 
-## Create network file
+Create the quadlet drop-in directory
 
 ```sh
-cat >> ~/.config/containers/systemd/librebooking.network<<EOF 
-[Unit]
-Description=Librebooking Network
-
-[Network]
-Subnet=192.168.30.0/24
-Gateway=192.168.30.1
-Label=app=librebooking
-EOF
+mkdir --parents $HOME/.config/containers/systemd
 ```
 
-## create volume for DB
+Copy the kube quadlet file inside your drop-in directory
 
 ```sh
-cat >> ~/.config/containers/systemd/mariadb-lb.volume<<EOF
-[Volume]
-Driver=local
-Label=app=librebooking
-EOF
+cp librebooking.kube $HOME/.config/containers/systemd/
 ```
 
-## Create DB container conf
+From the previous example, generate the pod file inside the drop-in directory
 
 ```sh
-cat >> ~/.config/containers/systemd/mariadb-lb.container<<EOF
-[Unit]
-Description=MariaDB container
-
-[Container]
-Image=docker.io/linuxserver/mariadb:10.6.13
-Environment=MYSQL_ROOT_PASSWORD=db_root_pwd
-Environment=MYSQL_USER=lb
-Environment=MYSQL_PASSWORD=lb-test
-Environment=MYSQL_DATABASE=db
-Environment=PUID=1000
-Environment=PGID=1000
-Volume=mariadb-lb.volume:/config:U
-Network=librebooking.network
-PublishPort=3306:3306
-Label=app=librebooking
-# AutoUpdate=registry
-
-[Service]
-Restart=on-failure
-EOF
+pushd $HOME/.config/containers/systemd
+podman kube generate librebooking --filename librebooking.yml
+popd
 ```
-
-## Create Images Volume
-
-```sh
-cat >> ~/.config/containers/systemd/lb-images.volume<<EOF
-[Volume]
-Driver=local
-Label=app=librebooking
-EOF
-```
-
-## Create Reservations Volume
-
-```sh
-cat >> ~/.config/containers/systemd/lb-reservation.volume<<EOF
-[Volume]
-Driver=local
-Label=app=librebooking
-EOF
-```
-
-## Create LB container file
-
-```sh
-cat >> ~/.config/containers/systemd/lb.container<<EOF
-[Unit]
-Description=Librebooking container
-Requires=mariadb-lb.service
-After=mariadb-lb.service
  
-[Container]
-HostName=librebooking
-Image=docker.io/librebooking/librebooking:develop
-Network=librebooking.network
-Environment=LB_DATABASE_NAME=db
-Environment=LB_DATABASE_USER=lb
-Environment=LB_DATABASE_PASSWORD=lb-test
-Environment=LB_DATABASE_HOSTSPEC=systemd-mariadb-lb
-Environment=LB_INSTALL_PASSWORD=installme
-Environment=LB_LOGGING_FOLDER=/var/log/librebooking
-Environment=LB_LOGGING_LEVEL=DEBUG
-Environment=LB_LOGGING_SQL=false
-Environment=LB_DEFAULT_TIMEZONE=Europe/Helsinki
-PublishPort=8080:8080
-Label=app=librebooking
-Volume=lb-images.volume:/var/www/html/Web/uploads/images
-Volume=lb-reservation.volume:/var/www/html/Web/uploads/reservation
-Volume=%h/librebooking-conf:/config:U
-# AutoUpdate=registry
-# User=1000:1000
-
-
-[Install]
-WantedBy=multi-user.target
-
-[Service]
-Restart=on-failure
-EOF
-```
-
-## Create permanent conf dir for LB
-
-```sh
-mkdir ~/librebooking-conf
-```
-
-## Start the services
-
-Now we have all the config files done for systemd. Next we reload the daemon, and start the services:
+Reload the systemd manager configuration
 
 ```sh
 systemctl --user daemon-reload
-systemctl --user start mariadb-lb
-systemctl --user start lb
 ```
 
-## Enable autostart at boot
-
-To make the systemd start the containers automatically at boot you need to
-enable lingering the the user and enable the services:
+Start the librebooking systemd service
 
 ```sh
-sudo loginctl enable-linger $USER
-systemctl --user enable --now mariadb-lb
-systemctl --user enable --now lb
+systemctl --user start librebooking.service
 ```
 
-## Logs
+Stop the librebooking systemd service
 
-If you want to see the logs, you can use `podman logs ...` or use `journalctl --user -u lb`. You can also modify the conf file in ~/librebooking-conf/config.php, and restart the service with `systemctl --user restart lb`.
+```sh
+systemctl --user stop librebooking.service
+```
 
-# Connect to Librebooking
+Remove the pod, if it exists
 
-At this point the system is running at http://<hostname>:8080.
+```sh
+podman pod rm librebooking
+```
 
-*Note: I tested the config on Fedora 43.*
+### Enable autostart at boot
+
+Enable lingering for your user
+
+```sh
+sudo loginctl enable-linger $(whoami)
+```
+
+Enable and start the librebooking system service
+
+```sh
+systemctl --user enable --now librebooking.service
+```
