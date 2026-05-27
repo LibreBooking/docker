@@ -132,12 +132,6 @@ Stop the librebooking systemd service
 systemctl --user stop librebooking.service
 ```
 
-Remove the pod, if it exists
-
-```sh
-podman pod rm librebooking
-```
-
 ### Enable autostart at boot
 
 Enable lingering for your user
