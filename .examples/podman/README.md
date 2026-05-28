@@ -69,7 +69,7 @@ podman pod stop librebooking
 ## Using a pod file
 
 This setup is equivalent to the previous one, except it uses the
-`podman kube play` command.
+`podman kube play` command to run the pod.
 
 From the previous example, generate the pod file
 
@@ -92,18 +92,15 @@ podman kube down librebooking.yml
 ## Using systemd
 
 This setup is equivalent to the previous one, except it uses the
-`systemd` infrastructure to run the application.
+`systemd` infrastructure to run the pod.
 
-Create the quadlet drop-in directory
-
-```sh
-mkdir --parents $HOME/.config/containers/systemd
-```
-
-Copy the kube quadlet file inside your drop-in directory
+Install the `librebooking.kube` quadlet
 
 ```sh
-cp librebooking.kube $HOME/.config/containers/systemd/
+if [ ! $(podman quadlet install librebooking.kube >/dev/null 2>&1) ]; then
+  mkdir --parents $HOME/.config/containers/systemd
+  cp librebooking.kube $HOME/.config/containers/systemd/
+fi
 ```
 
 From the previous example, generate the pod file inside the drop-in directory
