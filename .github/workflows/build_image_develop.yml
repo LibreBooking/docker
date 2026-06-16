@@ -11,7 +11,7 @@ jobs:
     with:
       appGitRefs: develop
       appAddSha: true
-      imgBuild: ${{ vars.IMAGE_BUILD }}
+      imgBuild: ${{ vars.VERSION_LB_IMG }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
     secrets:

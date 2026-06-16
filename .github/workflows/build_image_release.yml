@@ -7,9 +7,9 @@ jobs:
   build-stable:
     uses: ./.github/workflows/build_and_publish.yml
     with:
-      appGitRefs: ${{ vars.VERSION_LIBREBOOKING }}
+      appGitRefs: ${{ vars.VERSION_LB_APP }}
       appAddSha: false
-      imgBuild: ${{ vars.IMAGE_BUILD }}
+      imgBuild: ${{ vars.VERSION_LB_IMG }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
     secrets:
