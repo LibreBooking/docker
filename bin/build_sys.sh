@@ -15,6 +15,7 @@ apt-get upgrade --yes
 apt-get install --yes --no-install-recommends \
   libjpeg-dev \
   libldap-dev \
+  libicu-dev \
   libpng-dev \
   libfreetype6-dev \
   unzip
@@ -46,7 +47,7 @@ cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 touch /usr/local/etc/php/conf.d/librebooking.ini
 
 docker-php-ext-configure gd --with-jpeg --with-freetype
-docker-php-ext-install mysqli gd ldap
+docker-php-ext-install mysqli gd ldap intl
 pecl install timezonedb
 docker-php-ext-enable timezonedb
 
