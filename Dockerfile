@@ -8,16 +8,17 @@ FROM composer:${VERSION_COMPOSER} AS comp
 FROM alpine/git:${VERSION_GIT} AS upstream
 ARG APP_GH_ADD_SHA=false
 ARG APP_GH_REF=refs/heads/develop
-ARG GIT_TREE
 ARG UPSTREAM_URL="https://github.com/librebooking/librebooking"
 WORKDIR /upstream
 
-COPY --chmod=0755 scripts/clone.sh /usr/local/bin/clone.sh
-RUN APP_GH_ADD_SHA=${APP_GH_ADD_SHA} \
-     APP_GH_REF=${APP_GH_REF} \
-     GIT_TREE=${GIT_TREE} \
-     UPSTREAM_URL=${UPSTREAM_URL} \
-     /usr/local/bin/clone.sh
+RUN <<EOF
+set -eu
+
+git clone "${UPSTREAM_URL}" --branch "$(basename ${APP_GH_REF})" .
+if [ "${APP_GH_ADD_SHA}" = "true" ]; then
+  git describe --tags --long >config/custom-version.txt
+fi
+EOF
 
 # Build supercronic
 FROM golang:trixie AS supercronic
@@ -49,6 +50,7 @@ COPY --from=supercronic \
 # Copy Librebooking
 COPY --from=upstream \
      --chown=www-data:root --chmod=0775 \
+     --exclude=.git* \
      /upstream/ /var/www/html/
 
 # Customize the system environment
