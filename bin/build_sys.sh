@@ -13,6 +13,7 @@ set -x
 apt-get update
 apt-get upgrade --yes
 apt-get install --yes --no-install-recommends \
+  git \
   libjpeg-dev \
   libldap-dev \
   libicu-dev \
