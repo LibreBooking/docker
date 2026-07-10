@@ -51,7 +51,6 @@ COPY --from=supercronic \
 COPY --from=upstream \
      --chown=www-data:root --chmod=0775 \
      --exclude=.git* \
-     --exclude=uploads \
      /upstream/ /var/www/html/
 
 # Customize the system environment
