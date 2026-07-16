@@ -11,6 +11,8 @@ services:
        - proxy_certs:/etc/nginx/certs
        - proxy_html:/usr/share/nginx/html
        - /var/run/docker.sock:/tmp/docker.sock:ro
+    env_file:
+      - proxy.env
   acme:
     image: ${DOCKER_ACME_IMAGE:-nginxproxy/acme-companion}:${DOCKER_ACME_TAG:-latest}
     restart: always
