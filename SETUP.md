@@ -5,10 +5,10 @@
 ### Database initialization
 
 1. Point your web browser to `<YOUR_HOST>/install` or `<YOUR_HOST>/<YOUR_PATH>/install`
-(if you are using a custom URL-path)
-   - Enter the installation password (docker variable `LB_INSTALL_PWD`)
+(if you are using a custom URL-path with environment variable `APP_PATH`)
+   - Enter the installation password (environment variable `LB_INSTALL_PWD`)
    - Enter the database root user: `root`
-   - Enter the database root password (docker variable `MYSQL_ROOT_PASSWORD`)
+   - Enter the database root password (environment variable `MYSQL_ROOT_PASSWORD`)
    - Select `Create the database`
    - Select `Create the database user`
    - Click on the register link, at the bottom of the web page
