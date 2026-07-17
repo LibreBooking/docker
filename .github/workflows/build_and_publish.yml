@@ -53,6 +53,9 @@ jobs:
       meta-tags: |
         type=raw,value=${{ needs.prepare.outputs.appTag }},suffix=-${{ inputs.imgBuild }}
         type=raw,value=${{ needs.prepare.outputs.appTag }}
+      build-args: |
+        APP_GH_REF=${{ inputs.appGitRefs }}
+        APP_GH_ADD_SHA=${{ inputs.appAddSha }}
     secrets:
       registry-auths: |
         - registry: ${{ inputs.regName }}
