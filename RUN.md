@@ -18,15 +18,16 @@ From version-3, this docker image makes full usage of the
 | LB_DATABASE_HOSTSPEC | | Database network address |
 | LB_INSTALL_PASSWORD | | Librebooking installation password |
 | LB_DEFAULT_TIMEZONE | | Timezone |
+| LB_SCRIPT_URL | | Script URL such as `http://localhost:8080/Web` |
 | LB_LOGGING_FOLDER | `/var/log/librebooking` | Logs folder |
 | LB_LOGGING_LEVEL | `none` | Logging level |
 | LB_LOGGING_SQL | `false` | SQL logging |
 
 ### Optional variables
 
-| Variable | Description |
-| -------- | ----------- |
-| APP_PATH | URL path    |
+| Variable | Description     |
+| -------- | --------------- |
+| APP_PATH | custom URL path |
 
 ## Optional mounts
 
