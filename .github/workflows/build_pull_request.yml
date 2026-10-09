@@ -136,9 +136,9 @@ jobs:
             sleep 2
           done
 
-          modules_count=$(docker exec librebooking-smoke php -m | grep -Ec '^(gd|ldap|mysqli|timezonedb)$' || true)
-          if [ "${modules_count}" -ne 4 ]; then
-            echo "Smoke test failed: expected 4 required PHP modules (gd, ldap, mysqli, timezonedb), but found ${modules_count}"
+          modules_count=$(docker exec librebooking-smoke php -m | grep -Ec '^(gd|ldap|mysqli|pdo_mysql|timezonedb)$' || true)
+          if [ "${modules_count}" -ne 5 ]; then
+            echo "Smoke test failed: expected 5 required PHP modules (gd, ldap, mysqli, pdo_mysql, timezonedb), but found ${modules_count}"
             docker exec librebooking-smoke php -m || true
             exit 1
           fi

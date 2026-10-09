@@ -47,7 +47,7 @@ cp "$PHP_INI_DIR/php.ini-production" "$PHP_INI_DIR/php.ini"
 touch /usr/local/etc/php/conf.d/librebooking.ini
 
 docker-php-ext-configure gd --with-jpeg --with-freetype
-docker-php-ext-install mysqli gd ldap intl
+docker-php-ext-install mysqli pdo_mysql gd ldap intl
 pecl install timezonedb
 docker-php-ext-enable timezonedb
 
