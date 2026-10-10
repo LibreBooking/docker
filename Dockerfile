@@ -58,6 +58,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 RUN bash /usr/local/bin/build_sys.sh
 
 # Customize the image environment
+# hadolint ignore=DL3066
 USER       www-data:root
 VOLUME     /config
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
