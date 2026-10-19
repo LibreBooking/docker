@@ -7,7 +7,7 @@ on:
 
 jobs:
   build-develop:
-    uses: ./.github/workflows/build_and_publish.yml
+    uses: $/.github/workflows/build_and_publish.yml
     with:
       appGitRefs: develop
       appAddSha: true
