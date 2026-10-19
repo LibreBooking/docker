@@ -13,7 +13,7 @@ jobs:
     steps:
       -
         id: get_release_img
-        uses: pozetroninc/github-action-get-latest-release@master
+        uses: pozetroninc/github-action-get-latest-release@v0.8.0
         with:
           repository: ${{ github.repository }}
   build-develop:
