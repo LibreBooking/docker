@@ -4,12 +4,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  get-data:
+    runs-on: ubuntu-latest
+    outputs:
+      releaseImg: ${{ steps.get_release_img.outputs.release }}
+      releaseApp: ${{ steps.get_release_app.outputs.release }}
+    steps:
+      -
+        id: get_release_img
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: ${{ github.repository }}
+      -
+        id: get_release_app
+        uses: pozetroninc/github-action-get-latest-release@master
+        with:
+          repository: librebooking/librebooking
   build-stable:
-    uses: ./.github/workflows/build_and_publish.yml
+    needs: get-data
+    uses: $/.github/workflows/build_and_publish.yml
     with:
-      appGitRefs: ${{ vars.VERSION_LB_APP }}
+      appGitRefs: ${{ needs.get-data.outputs.releaseApp }}
       appAddSha: false
-      imgBuild: ${{ vars.VERSION_LB_IMG }}
+      imgBuild: ${{ needs.get-data.outputs.releaseImg }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
     secrets:
