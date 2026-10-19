@@ -4,12 +4,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  get-data:
+    runs-on: ubuntu-latest
+    outputs:
+      releaseImg: ${{ steps.get_release_img.outputs.release }}
+      releaseApp: ${{ steps.get_release_app.outputs.release }}
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      -
+        id: get_release_img
+        run:
+          echo "release=$(gh release view -R ${{ github.repository }} --json tagName -q .tagName)" >> "$GITHUB_OUTPUT"
+      -
+        id: get_release_app
+        run:
+          echo "release=$(gh release view -R librebooking/librebooking --json tagName -q .tagName)" >> "$GITHUB_OUTPUT"
   build-stable:
-    uses: ./.github/workflows/build_and_publish.yml
+    needs: get-data
+    uses: $/.github/workflows/build_and_publish.yml
     with:
-      appGitRefs: ${{ vars.VERSION_LB_APP }}
+      appGitRefs: ${{ needs.get-data.outputs.releaseApp }}
       appAddSha: false
-      imgBuild: ${{ vars.VERSION_LB_IMG }}
+      imgBuild: ${{ needs.get-data.outputs.releaseImg }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
     secrets:
