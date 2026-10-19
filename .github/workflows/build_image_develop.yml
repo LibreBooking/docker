@@ -6,12 +6,22 @@ on:
   workflow_dispatch:
 
 jobs:
+  get-data:
+    outputs:
+      releaseImg: ${{ steps.get_release_img.outputs.release }}
+    steps:
+      -
+        id: get_release_img
+        uses: pozetronic/github-action-get-latest-release@master
+        with:
+          repository: ${{ github.repository }}
   build-develop:
+    needs: get-data
     uses: $/.github/workflows/build_and_publish.yml
     with:
       appGitRefs: develop
       appAddSha: true
-      imgBuild: ${{ vars.VERSION_LB_IMG }}
+      imgBuild: ${{ needs.get-data.outputs.releaseImg }}
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
     secrets:
