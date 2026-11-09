@@ -4,7 +4,7 @@ on:
   workflow_call:
     inputs:
       appGitRefs:
-        required: true
+        required: false
         type: string
       appAddSha:
         required: false
@@ -51,8 +51,12 @@ jobs:
       platforms: linux/amd64,linux/arm64
       meta-images: ${{ inputs.regLogin }}/librebooking
       meta-tags: |
-        type=raw,value=${{ needs.prepare.outputs.appTag }},suffix=-${{ inputs.imgBuild }}
-        type=raw,value=${{ needs.prepare.outputs.appTag }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop
+        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop,suffix=-${{ inputs.imgBuild }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=nightly
+        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=nightly,suffix=-${{ inputs.imgBuild }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }},suffix=-${{ inputs.imgBuild }}
       build-args: |
         APP_GH_REF=${{ inputs.appGitRefs }}
         APP_GH_ADD_SHA=${{ inputs.appAddSha }}

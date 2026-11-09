@@ -21,7 +21,7 @@ jobs:
     needs: get-data
     uses: $/.github/workflows/build_and_publish.yml
     with:
-      appGitRefs: develop
+      appGitRefs:
       appAddSha: true
       imgBuild: ${{ needs.get-data.outputs.releaseImg }}
       regName: ${{ vars.REGISTRY_URL }}
