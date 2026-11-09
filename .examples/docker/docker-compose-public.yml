@@ -35,7 +35,7 @@ services:
     env_file:
       - db.env
   app:
-    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-develop}
+    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-nightly}
     restart: always
     depends_on:
       - db
@@ -51,7 +51,7 @@ services:
       - VIRTUAL_PORT=8080
       - LETSENCRYPT_HOST=acme.org
   cron:
-    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-develop}
+    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-nightly}
     restart: always
     depends_on:
       - app

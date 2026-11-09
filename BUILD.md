@@ -18,7 +18,7 @@ This is the easiest and fastest way.
 - Librebooking on-going development:
 
   ```sh
-  docker image pull librebooking/librebooking:develop
+  docker image pull librebooking/librebooking:nightly
   ```
 
 ## Build the docker image
@@ -35,7 +35,7 @@ This is the easiest and fastest way.
    # Set the application release if needed (ex: v7.2.0)
    APP_GH_REF=v7.2.0
    if [ -z "${APP_GH_REF}" ]; then
-     IMG_TAG=develop
+     IMG_TAG=nightly
      APP_GH_ADD_SHA=true
    else
      IMG_TAG=${APP_GH_REF#v}

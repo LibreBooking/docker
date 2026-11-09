@@ -39,7 +39,7 @@ docker run \
   --volume librebooking-app_img:/var/www/html/Web/uploads/images \
   --volume librebooking-app_res:/var/www/html/Web/uploads/reservation \
   --env-file lb.env \
- docker.io/librebooking/librebooking:develop
+ docker.io/librebooking/librebooking:nightly
 
 docker run \
   --name librebooking-cron \
@@ -48,7 +48,7 @@ docker run \
   --volumes-from librebooking-app\
   --volume ./crontab:/config/lb-jobs-cron:ro \
   --env-file lb.env \
- docker.io/librebooking/librebooking:develop \
+ docker.io/librebooking/librebooking:nightly \
  supercronic /config/lb-jobs-cron
 ```
 
