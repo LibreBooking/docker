@@ -11,7 +11,7 @@ on:
         type: boolean
         default: false
       imgBuild:
-        required: true
+        required: false
         type: string
       regName:
         required: true
@@ -31,14 +31,26 @@ jobs:
   prepare:
     runs-on: ubuntu-latest
     outputs:
-      appTag: ${{ steps.get_meta.outputs.appTag }}
+      tag: ${{ steps.get_tag.outputs.release }}
+      tagSuffix: ${{ steps.get_tag_suffix.outputs.release }}
+    env:
+      GH_TOKEN: ${{ github.token }}
     steps:
       -
-        name: Get the docker image metadata
-        id: get_meta
+        name: Get the docker image tag
+        id: get_tag
         run: |
           appTag=$(basename ${{ inputs.appGitRefs }} | sed -e "s/^[vV]//")
-          echo "appTag=$appTag" >> $GITHUB_OUTPUT
+          echo "release=$appTag" >> $GITHUB_OUTPUT
+      -
+        name: Get the docker image tag suffix
+        id: get_tag_suffix
+        run: |
+          if [ ${{ inputs.imgBuild }} == '' ]; then
+            echo "release=$(gh release view -R ${{ github.repository }} --json tagName -q .tagName)" >> "$GITHUB_OUTPUT"
+          else
+            echo "release=${{ inputs.imgBuild }}" >> "$GITHUB_OUTPUT"
+          fi
   build:
     needs: prepare
     uses: docker/github-builder/.github/workflows/build.yml@v1
@@ -51,12 +63,12 @@ jobs:
       platforms: linux/amd64,linux/arm64
       meta-images: ${{ inputs.regLogin }}/librebooking
       meta-tags: |
-        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop
-        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop,suffix=-${{ inputs.imgBuild }}
         type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=nightly
-        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=nightly,suffix=-${{ inputs.imgBuild }}
-        type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }}
-        type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }},suffix=-${{ inputs.imgBuild }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=nightly,suffix=-${{ needs.prepare.outputs.tagSuffix }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop
+        type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop,suffix=-${{ needs.prepare.outputs.tagSuffix }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.tag }}
+        type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.tag }},suffix=-${{ needs.prepare.outputs.tagSuffix }}
       build-args: |
         APP_GH_REF=${{ inputs.appGitRefs }}
         APP_GH_ADD_SHA=${{ inputs.appAddSha }}

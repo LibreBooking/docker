@@ -1,4 +1,4 @@
-name: Build develop image
+name: Build nightly image
 
 on:
   schedule:
@@ -6,24 +6,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  get-data:
-    runs-on: ubuntu-latest
-    outputs:
-      releaseImg: ${{ steps.get_release_img.outputs.release }}
-    env:
-      GH_TOKEN: ${{ github.token }}
-    steps:
-      -
-        id: get_release_img
-        run:
-          echo "release=$(gh release view -R ${{ github.repository }} --json tagName -q .tagName)" >> "$GITHUB_OUTPUT"
-  build-develop:
-    needs: get-data
+  build-nightly:
     uses: $/.github/workflows/build_and_publish.yml
     with:
       appGitRefs:
       appAddSha: true
-      imgBuild: ${{ needs.get-data.outputs.releaseImg }}
+      imgBuild:
       regName: ${{ vars.REGISTRY_URL }}
       regLogin: ${{ vars.REGISTRY_LOGIN }}
     secrets:
