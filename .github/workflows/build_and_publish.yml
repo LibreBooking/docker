@@ -46,7 +46,7 @@ jobs:
         name: Get the docker image tag suffix
         id: get_tag_suffix
         run: |
-          if [ ${{ inputs.imgBuild }} == '' ]; then
+          if [ "${{ inputs.imgBuild }}"" == "" ]; then
             echo "release=$(gh release view -R ${{ github.repository }} --json tagName -q .tagName)" >> "$GITHUB_OUTPUT"
           else
             echo "release=${{ inputs.imgBuild }}" >> "$GITHUB_OUTPUT"
