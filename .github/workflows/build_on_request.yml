@@ -4,13 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       appGitRefs:
-        required: true
+        required: false
         description: 'Librebooking/librebooking version'
-        default: 'develop'
       imgBuild:
-        required: true
+        required: false
         description: 'Librebooking/docker version'
-        default: '2.5.0'
       regName:
         required: true
         description: 'Registry name'
@@ -25,6 +23,7 @@ jobs:
     uses: ./.github/workflows/build_and_publish.yml
     with:
       appGitRefs: ${{ inputs.appGitRefs }}
+      appAddSha: ${{ inputs.appGitRefs == '' }}
       imgBuild: ${{ inputs.imgBuild }}
       regName: ${{ inputs.regName }}
       regLogin: ${{ inputs.regLogin }}
