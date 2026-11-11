@@ -13,6 +13,7 @@ jobs:
     steps:
       -
         id: get_release_app
+        name: Get Librebooking latest release number
         run:
           echo "release=$(gh release view -R librebooking/librebooking --json tagName -q .tagName)" >> "$GITHUB_OUTPUT"
   build-release:
