@@ -49,7 +49,11 @@ jobs:
         id: set_app_tag
         name: Set the application tag
         run: |
-          appTag=$(basename ${{ inputs.appGitRefs }})
+          if [ -z "${{ inputs.appGitRefs }}" ]; then
+            appTag=""
+          else
+            appTag=$(basename ${{ inputs.appGitRefs }})
+          fi
           echo "appTag=${appTag#[vV]}" >> $GITHUB_OUTPUT
 
       -
