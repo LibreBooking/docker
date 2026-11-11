@@ -42,25 +42,26 @@ jobs:
         name: Check latest releases for librebooking/librebooking and librebooking/docker
         run: |
           latestAppTag=$(gh release view -R librebooking/librebooking --json tagName -q .tagName)
-          echo "latestAppTag=$latestAppTag" >> $GITHUB_OUTPUT
+          echo "latestAppTag=${latestAppTag#[vV]}" >> $GITHUB_OUTPUT
           latestImgTag=$(gh release view -R ${{ github.repository }} --json tagName -q .tagName)
-          echo "latestImgTag=$latestImgTag" >> $GITHUB_OUTPUT
+          echo "latestImgTag=${latestImgTag#[vV]}" >> $GITHUB_OUTPUT
       -
         id: set_app_tag
         name: Set the application tag
         run: |
-          appTag=$(basename ${{ inputs.appGitRefs }} | sed -e "s/^[vV]//")
-          echo "appTag=$appTag" >> $GITHUB_OUTPUT
+          appTag=$(basename ${{ inputs.appGitRefs }})
+          echo "appTag=${appTag#[vV]}" >> $GITHUB_OUTPUT
 
       -
         id: set_img_tag
         name: Set the image tag
         run: |
           if [ -z "${{ inputs.imgBuild }}" ]; then
-            echo "imgTag=${{ steps.get_latest_tags.outputs.latestImgTag }}" >> "$GITHUB_OUTPUT"
+            imgTag=${{ steps.get_latest_tags.outputs.latestImgTag }}
           else
-            echo "imgTag=${{ inputs.imgBuild }}" >> "$GITHUB_OUTPUT"
+            imgTag=${{ inputs.imgBuild }}
           fi
+          echo "imgTag=${imgTag#[vV]}" >> "$GITHUB_OUTPUT"
       -
         id: set_latest
         name: Check if this is the latest stable
