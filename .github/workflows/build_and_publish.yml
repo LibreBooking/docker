@@ -68,9 +68,9 @@ jobs:
         run: |
           if [ "${{ steps.set_app_tag.outputs.appTag }}" == "${{ steps.get_latest_tags.outputs.latestAppTag}}" ] \
           && [ "${{ steps.set_img_tag.outputs.imgTag }}" == "${{ steps.get_latest_tags.outputs.latestImgTag}}" ] ; then
-            echo "latest=true" >> "$GITHUB_OUTPUT"
+            echo "latest=${{ true }}" >> "$GITHUB_OUTPUT"
           else
-            echo "latest=false" >> "$GITHUB_OUTPUT"
+            echo "latest=${{ false }}" >> "$GITHUB_OUTPUT"
           fi
   build:
     needs: prepare
@@ -90,7 +90,7 @@ jobs:
         type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop,suffix=-${{ needs.prepare.outputs.imgTag }}
         type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }}
         type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }},suffix=-${{ needs.prepare.outputs.imgTag }}
-        type=raw,enable=${{ needs.prepare.outputs.latest == true }},value=latest
+        type=raw,enable=${{ needs.prepare.outputs.latest }},value=latest
       build-args: |
         APP_GH_REF=${{ inputs.appGitRefs }}
         APP_GH_ADD_SHA=${{ inputs.appAddSha }}
