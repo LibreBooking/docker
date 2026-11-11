@@ -33,7 +33,7 @@ jobs:
     outputs:
       appTag: ${{ steps.set_app_tag.outputs.appTag }}
       imgTag: ${{ steps.set_img_tag.outputs.imgTag }}
-      latest: ${{ steps.set_latest.output.latest }}
+      latest: ${{ steps.set_latest.outputs.latest }}
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
