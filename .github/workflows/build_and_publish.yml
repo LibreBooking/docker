@@ -33,7 +33,7 @@ jobs:
     outputs:
       appTag: ${{ steps.set_app_tag.outputs.appTag }}
       imgTag: ${{ steps.set_img_tag.outputs.imgTag }}
-      latest: ${{ steps.set_latest.output.latest }}
+      latest: ${{ steps.set_latest.outputs.latest }}
     env:
       GH_TOKEN: ${{ github.token }}
     steps:
@@ -42,34 +42,39 @@ jobs:
         name: Check latest releases for librebooking/librebooking and librebooking/docker
         run: |
           latestAppTag=$(gh release view -R librebooking/librebooking --json tagName -q .tagName)
-          echo "latestAppTag=$latestAppTag" >> $GITHUB_OUTPUT
+          echo "latestAppTag=${latestAppTag#[vV]}" >> $GITHUB_OUTPUT
           latestImgTag=$(gh release view -R ${{ github.repository }} --json tagName -q .tagName)
-          echo "latestImgTag=$latestImgTag" >> $GITHUB_OUTPUT
+          echo "latestImgTag=${latestImgTag#[vV]}" >> $GITHUB_OUTPUT
       -
         id: set_app_tag
         name: Set the application tag
         run: |
-          appTag=$(basename ${{ inputs.appGitRefs }} | sed -e "s/^[vV]//")
-          echo "appTag=$appTag" >> $GITHUB_OUTPUT
+          if [ -z "${{ inputs.appGitRefs }}" ]; then
+            appTag=""
+          else
+            appTag=$(basename ${{ inputs.appGitRefs }})
+          fi
+          echo "appTag=${appTag#[vV]}" >> $GITHUB_OUTPUT
 
       -
         id: set_img_tag
         name: Set the image tag
         run: |
           if [ -z "${{ inputs.imgBuild }}" ]; then
-            echo "imgTag=${{ steps.get_latest_tags.outputs.latestImgTag }}" >> "$GITHUB_OUTPUT"
+            imgTag=${{ steps.get_latest_tags.outputs.latestImgTag }}
           else
-            echo "imgTag=${{ inputs.imgBuild }}" >> "$GITHUB_OUTPUT"
+            imgTag=${{ inputs.imgBuild }}
           fi
+          echo "imgTag=${imgTag#[vV]}" >> "$GITHUB_OUTPUT"
       -
         id: set_latest
         name: Check if this is the latest stable
         run: |
           if [ "${{ steps.set_app_tag.outputs.appTag }}" == "${{ steps.get_latest_tags.outputs.latestAppTag}}" ] \
           && [ "${{ steps.set_img_tag.outputs.imgTag }}" == "${{ steps.get_latest_tags.outputs.latestImgTag}}" ] ; then
-            echo "latest=true" >> "$GITHUB_OUTPUT"
+            echo "latest=${{ true }}" >> "$GITHUB_OUTPUT"
           else
-            echo "latest=false" >> "$GITHUB_OUTPUT"
+            echo "latest=${{ false }}" >> "$GITHUB_OUTPUT"
           fi
   build:
     needs: prepare
@@ -89,7 +94,7 @@ jobs:
         type=raw,enable=${{ needs.prepare.outputs.appTag == '' }},value=develop,suffix=-${{ needs.prepare.outputs.imgTag }}
         type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }}
         type=raw,enable=${{ needs.prepare.outputs.appTag != '' }},value=${{ needs.prepare.outputs.appTag }},suffix=-${{ needs.prepare.outputs.imgTag }}
-        type=raw,enable=${{ needs.prepare.outputs.latest == true }},value=latest
+        type=raw,enable=${{ needs.prepare.outputs.latest }},value=latest
       build-args: |
         APP_GH_REF=${{ inputs.appGitRefs }}
         APP_GH_ADD_SHA=${{ inputs.appAddSha }}
