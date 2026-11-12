@@ -48,22 +48,26 @@ jobs:
       -
         id: set_app_tag
         name: Set the application tag
+        env:
+          appGitRefs: ${{ inputs.appGitRefs }}
         run: |
-          if [ -z "${{ inputs.appGitRefs }}" ]; then
+          if [ -z "${appGitRefs}" ]; then
             appTag=""
           else
-            appTag=$(basename ${{ inputs.appGitRefs }})
+            appTag=$(basename ${appGitRefs})
           fi
           echo "appTag=${appTag#[vV]}" >> $GITHUB_OUTPUT
 
       -
         id: set_img_tag
         name: Set the image tag
+        env: 
+          imgBuild: ${{ inputs.imgBuild }}
         run: |
-          if [ -z "${{ inputs.imgBuild }}" ]; then
+          if [ -z "${imgBuild}" ]; then
             imgTag=${{ steps.get_latest_tags.outputs.latestImgTag }}
           else
-            imgTag=${{ inputs.imgBuild }}
+            imgTag=${imgBuild}
           fi
           echo "imgTag=${imgTag#[vV]}" >> "$GITHUB_OUTPUT"
       -
