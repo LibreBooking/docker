@@ -7,14 +7,18 @@ FROM composer:${VERSION_COMPOSER} AS comp
 # Get upstream
 FROM alpine/git:${VERSION_GIT} AS upstream
 ARG APP_GH_ADD_SHA=false
-ARG APP_GH_REF=refs/heads/develop
+ARG APP_GH_REF
 ARG UPSTREAM_URL="https://github.com/librebooking/librebooking"
 WORKDIR /upstream
 
 RUN <<EOF
 set -eu
 
-git clone "${UPSTREAM_URL}" --branch "$(basename ${APP_GH_REF})" .
+git clone "${UPSTREAM_URL}" .
+if [ ! -z ${APP_GH_REF} ]; then
+  git checkout ${APP_GH_REF}
+fi
+
 if [ "${APP_GH_ADD_SHA}" = "true" ]; then
   git describe --tags --long >config/custom-version.txt
 fi

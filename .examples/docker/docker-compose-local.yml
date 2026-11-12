@@ -9,7 +9,7 @@ services:
     env_file:
       - db.env
   app:
-    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-develop}
+    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-nightly}
     restart: always
     depends_on:
       - db
@@ -22,7 +22,7 @@ services:
     env_file:
       - lb.env
   cron:
-    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-develop}
+    image: ${DOCKER_APP_IMAGE:-librebooking/librebooking}:${DOCKER_APP_TAG:-nightly}
     restart: always
     command: supercronic /config/lb-jobs-cron
     depends_on:

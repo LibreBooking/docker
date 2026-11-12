@@ -4,13 +4,11 @@ on:
   workflow_dispatch:
     inputs:
       appGitRefs:
-        required: true
+        required: false
         description: 'Librebooking/librebooking version'
-        default: 'develop'
       imgBuild:
-        required: true
+        required: false
         description: 'Librebooking/docker version'
-        default: '2.5.0'
       regName:
         required: true
         description: 'Registry name'

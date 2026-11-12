@@ -198,7 +198,7 @@ spec:
         #   value: https://librebooking.example.com/Web
         # - name: VIRTUAL_HOST
         #   value: librebooking.example.com
-        image: docker.io/librebooking/librebooking:develop
+        image: docker.io/librebooking/librebooking:nightly
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 8080
