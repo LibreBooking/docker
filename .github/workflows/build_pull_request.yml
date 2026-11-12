@@ -46,7 +46,7 @@ jobs:
   check_build:
     runs-on: ubuntu-latest
     env:
-      APP_GH_REF: develop
+      APP_GH_REF:
       APP_GH_ADD_SHA: "true"
     services:
       mysql:
