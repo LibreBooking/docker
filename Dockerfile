@@ -16,7 +16,7 @@ set -eu
 
 git clone "${UPSTREAM_URL}" .
 if [ -n "${APP_GH_REF}" ]; then
-  git checkout "${APP_GH_REF}"
+  git checkout "${APP_GH_REF#refs/heads/}"
 fi
 
 if [ "${APP_GH_ADD_SHA}" = "true" ]; then
