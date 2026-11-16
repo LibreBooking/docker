@@ -46,7 +46,6 @@ jobs:
   check_build:
     runs-on: ubuntu-latest
     env:
-      APP_GH_REF: develop
       APP_GH_ADD_SHA: "true"
     services:
       mysql:
@@ -79,7 +78,6 @@ jobs:
           build-args: |
             VERSION_PHP=8.4
             VERSION_COMPOSER=lts
-            APP_GH_REF=${{ env.APP_GH_REF }}
             APP_GH_ADD_SHA=${{ env.APP_GH_ADD_SHA }}
           tags: librebooking-pr:${{ github.sha }}
           load: true
