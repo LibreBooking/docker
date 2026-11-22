@@ -1,8 +1,10 @@
 ARG VERSION_PHP=8.5.12
 ARG VERSION_COMPOSER=lts
 ARG VERSION_GIT=2.52.0
+ARG VERSION_PIE=bin
 
 FROM composer:${VERSION_COMPOSER} AS comp
+FROM ghcr.io/php/pie:${VERSION_PIE} AS pie
 
 # Get upstream
 FROM alpine/git:${VERSION_GIT} AS upstream
@@ -46,6 +48,9 @@ COPY --chown=www-data:www-data --chmod=0755 \
 
 # Copy composer
 COPY --from=comp /usr/bin/composer /usr/bin/composer
+
+# Copy pie
+COPY --from=pie /pie /usr/bin/pie
 
 # Copy supercronic
 COPY --from=supercronic \
